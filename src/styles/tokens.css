@@ -23,3 +23,8 @@
   --font-ui: 'Sora', system-ui, sans-serif;
   --font-mono: 'IBM Plex Mono', ui-monospace, monospace;
 }
+
+:root {
+  --vel-r: #6b6b72; /* pad velocity bars */
+  --vel-l: #c8c8cc;
+}

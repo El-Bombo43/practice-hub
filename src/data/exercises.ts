@@ -74,3 +74,13 @@ export const exerciseById = (id: string): Exercise => {
 };
 
 export const hasLanes = (ex: Exercise): boolean => ex.pattern.some((s) => s.lane !== undefined);
+
+const SWAP: Partial<Record<Lane, Lane>> = { L: 'R', R: 'L' };
+
+/** Same exercise with the sticking mirrored (R↔L), for leading with the other hand. */
+export const mirrorExercise = (ex: Exercise): Exercise => ({
+  ...ex,
+  pattern: ex.pattern.map((s) => (s.lane && SWAP[s.lane] ? { ...s, lane: SWAP[s.lane] } : s)),
+});
+
+export const firstLane = (ex: Exercise): Lane | undefined => ex.pattern.find((s) => s.play && s.lane)?.lane;

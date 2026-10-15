@@ -7,6 +7,7 @@ export function SettingsDialog(props: {
   onChange: (s: Settings) => void;
   onClose: () => void;
   freeze: () => void; // stop autosave before a reload
+  onMidi: () => void;
 }) {
   const { settings: s, onChange } = props;
   const [msg, setMsg] = useState('');
@@ -58,6 +59,10 @@ export function SettingsDialog(props: {
                 onClick={() => onChange({ ...s, windowMs: w })}>{w}</button>
             ))}
           </div>
+        </div>
+        <div className="field">
+          <span className="k">Input</span>
+          <div className="row"><button type="button" className="btn" onClick={props.onMidi}>MIDI pads &amp; calibration…</button></div>
         </div>
         <div className="field">
           <span className="k">Backup</span>

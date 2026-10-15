@@ -68,6 +68,23 @@ describe('clean rep', () => {
   });
 });
 
+describe('lane enforcement', () => {
+  const R: Slot = { play: true, lane: 'R' };
+  const L: Slot = { play: true, lane: 'L' };
+  it('wrong hand at the right time is out of window and not clean (when enforced)', () => {
+    const hits = [{ time: 0, lane: 'R' as const, velocity: 0.8 }, { time: 0.125, lane: 'R' as const, velocity: 0.7 }];
+    const on = scoreRep([R, L], times(2), hits, 15, { enforceLanes: true });
+    expect(on.slots[1].wrongLane).toBe(true);
+    expect(on.slots[1].inWindow).toBe(false);
+    expect(on.slots[1].hitLane).toBe('R');
+    expect(on.slots[1].velocity).toBe(0.7);
+    expect(on.clean).toBe(false);
+    expect(on.sequence).toEqual([true, false]);
+    const off = scoreRep([R, L], times(2), hits, 15);
+    expect(off.clean).toBe(true);
+  });
+});
+
 describe('combo', () => {
   it('counts on-time hits and resets on miss, out-of-window hit or extra', () => {
     const r = updateCombo(0, 0, [true, true, true, false, true, true]);

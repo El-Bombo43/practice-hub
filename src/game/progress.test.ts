@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { applyRep, emptyLive, emptyProfile, level, streak, tip } from './progress';
+import { applyRep, balance, drumTip, emptyLive, emptyProfile, level, streak, tip, type Live } from './progress';
 import { scoreRep } from '../scoring/score';
 import { exerciseById } from '../data/exercises';
 
@@ -61,5 +61,47 @@ describe('level / streak / tip', () => {
     expect(tip(8).tone).toBe('ok');
     expect(tip(-9).tone).toBe('early');
     expect(tip(null).tone).toBe('idle');
+  });
+});
+
+const handsLive = (l: [number, number, number], r: [number, number, number]): Live => {
+  // [meanVelocity, meanOffsetMs, count]
+  const live = emptyLive();
+  live.hands.L = { velSum: l[0] * l[2], velN: l[2], offSum: l[1] * l[2], offN: l[2] };
+  live.hands.R = { velSum: r[0] * r[2], velN: r[2], offSum: r[1] * r[2], offN: r[2] };
+  return live;
+};
+
+describe('hand stats from pad reps', () => {
+  it('accumulates velocity and offset per hand from hit lanes', () => {
+    const pads = exerciseById('pads-singles');
+    const times = Array.from({ length: 16 }, (_, i) => i * 0.125);
+    const hits = times.map((time, i) => ({ time: time + 0.004, lane: pads.pattern[i].lane, velocity: i % 2 ? 0.5 : 1 }));
+    const o = applyRep(emptyLive(), emptyProfile(), pads, 80, scoreRep(pads.pattern, times, hits, 15, { enforceLanes: true }));
+    expect(o.live.hands.R.velN).toBe(8);
+    expect(o.live.hands.L.velSum / o.live.hands.L.velN).toBe(0.5);
+    expect(o.live.hands.R.offSum / o.live.hands.R.offN).toBe(4);
+    expect(balance(o.live)).toEqual({ pct: 50, weaker: 'L' });
+  });
+});
+
+describe('drumTip', () => {
+  it('balance under 90% wins, naming the weaker hand', () => {
+    const t = drumTip(handsLive([0.6, 0, 10], [0.8, 20, 10]), false);
+    expect(t.title).toBe('Left hand is softer');
+    expect(t.text).toContain('25% quieter');
+    expect(t.offerLead).toBe('L');
+    expect(drumTip(handsLive([0.6, 0, 10], [0.8, 0, 10]), true).text).toContain('Next rep starts on the left hand');
+  });
+  it('then hand offsets more than 8 ms apart', () => {
+    const t = drumTip(handsLive([0.8, 2, 10], [0.8, 14, 10]), false);
+    expect(t.title).toBe('Right hand drags');
+    expect(t.text).toBe('Right hand drags by 12 ms.');
+    expect(drumTip(handsLive([0.8, -14, 10], [0.8, 0, 10]), false).title).toBe('Left hand rushes');
+  });
+  it('otherwise the plain rule; needs enough hits to judge balance', () => {
+    const late = { ...handsLive([0.8, 12, 10], [0.8, 10, 10]), offsetSum: 220, offsetN: 20 };
+    expect(drumTip(late, false).title).toBe('Mostly late');
+    expect(balance(handsLive([0.2, 0, 3], [0.9, 0, 3]))).toBeNull();
   });
 });

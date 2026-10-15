@@ -1,9 +1,17 @@
-import type { Slot } from '../data/types';
+import type { Lane, Slot } from '../data/types';
+
+/** A scored input. Plain numbers (seconds) are accepted too, for lane-less callers. */
+export type Hit = { time: number; lane?: Lane; velocity?: number };
+export type ScoreOptions = { enforceLanes?: boolean };
 
 export type SlotResult = {
   index: number;
   expected: boolean; // a hit is expected here (play && !ghost)
+  lane?: Lane; // expected lane
   hit: boolean;
+  hitLane?: Lane; // lane the matched hit came from
+  velocity?: number; // 0-1
+  wrongLane: boolean; // enforced lanes only: right time, wrong hand → counts as out of window
   offsetMs: number | null; // + = late, - = early
   inWindow: boolean;
 };
@@ -28,18 +36,22 @@ const round2 = (n: number): number => Math.round(n * 100) / 100;
  * calibration already applied. Each hit matches the nearest expected slot within
  * ±max(2×window, 60 ms); a hit whose slot is already taken, or that matches nothing, is an extra.
  */
-export function scoreRep(pattern: Slot[], slotTimes: number[], hits: number[], windowMs: number): RepResult {
+export function scoreRep(
+  pattern: Slot[], slotTimes: number[], hits: (number | Hit)[], windowMs: number, opts: ScoreOptions = {},
+): RepResult {
   const range = matchRangeMs(windowMs);
   const expectedIdx: number[] = [];
   pattern.forEach((s, i) => { if (s.play && !s.ghost) expectedIdx.push(i); });
 
   const slots: SlotResult[] = pattern.map((s, index) => ({
-    index, expected: !!s.play && !s.ghost, hit: false, offsetMs: null, inWindow: false,
+    index, expected: !!s.play && !s.ghost, lane: s.lane, hit: false, offsetMs: null, inWindow: false, wrongLane: false,
   }));
   const timed: { t: number; ok: boolean }[] = [];
   let extras = 0;
 
-  for (const h of [...hits].sort((a, b) => a - b)) {
+  const norm: Hit[] = hits.map((h) => (typeof h === 'number' ? { time: h } : h));
+  for (const hit of norm.sort((a, b) => a.time - b.time)) {
+    const h = hit.time;
     let best = -1;
     let bestDt = Infinity;
     for (const i of expectedIdx) {
@@ -55,7 +67,10 @@ export function scoreRep(pattern: Slot[], slotTimes: number[], hits: number[], w
     const r = slots[best];
     r.hit = true;
     r.offsetMs = off;
-    r.inWindow = Math.abs(off) <= windowMs;
+    r.hitLane = hit.lane;
+    r.velocity = hit.velocity;
+    r.wrongLane = !!opts.enforceLanes && !!pattern[best].lane && !!hit.lane && hit.lane !== pattern[best].lane;
+    r.inWindow = !r.wrongLane && Math.abs(off) <= windowMs;
   }
 
   let hitCount = 0;

@@ -1,19 +1,21 @@
 import { heardNow, resumeCtx } from '../audio/clock';
 import { Metronome, type BeatEvent } from '../audio/metronome';
+import { firstLane, mirrorExercise } from '../data/exercises';
 import type { Exercise } from '../data/types';
 import type { Settings } from '../data/store';
 import type { InputEvent } from '../input/types';
-import { scoreRep, slotTimesFromBeats, type RepResult } from '../scoring/score';
+import { scoreRep, slotTimesFromBeats, type Hit, type RepResult } from '../scoring/score';
 import {
-  applyRep, clampBpm, dateKey, emptyLive, upsertLog, accuracyPct, type Live, type Profile,
+  applyRep, balance, clampBpm, dateKey, emptyLive, upsertLog, accuracyPct, type Hand, type Live, type Profile,
 } from './progress';
 
-export type LastRep = { rep: RepResult; bpm: number; windowMs: number };
+export type LastRep = { rep: RepResult; bpm: number; windowMs: number; exercise: Exercise };
 
 export type Snapshot = {
   running: boolean;
   exercise: Exercise;
   burst: boolean; // stub toggle only in session 1
+  leadWeaker: boolean; // pads: start the sticking on the weaker hand (mirrors it when needed)
   bpm: number;
   settings: Settings;
   live: Live;
@@ -23,6 +25,7 @@ export type Snapshot = {
   elapsedSec: number; // practice time on the current routine step
   toast: string | null;
 };
+// `exercise` in the snapshot is the effective one: the routine's exercise, mirrored when leading with the weaker hand.
 
 type Listener = () => void;
 
@@ -35,7 +38,11 @@ export class Practice {
   private listeners = new Set<Listener>();
   private metro: Metronome;
   private bars = new Map<number, BeatEvent[]>();
-  private hits: number[] = [];
+  private hits: Hit[] = [];
+  private base: Exercise;
+  private barEx = new Map<number, Exercise>(); // pattern each bar started with (mirroring can change between bars)
+  /** Called on the first beat of every bar (MIDI clock re-sync). */
+  onBarline: (() => void) | null = null;
   private scorer: ReturnType<typeof setInterval> | null = null;
   private clock: ReturnType<typeof setInterval> | null = null;
   private lastClock = 0;
@@ -43,8 +50,9 @@ export class Practice {
   private toastTimer: ReturnType<typeof setTimeout> | null = null;
 
   constructor(profile: Profile, settings: Settings, exercise: Exercise, burst = false) {
+    this.base = exercise;
     this.snap = {
-      running: false, exercise, burst, bpm: profile.lastBpm[exercise.id] ?? exercise.startBpm, settings,
+      running: false, leadWeaker: false, exercise, burst, bpm: profile.lastBpm[exercise.id] ?? exercise.startBpm, settings,
       live: emptyLive(), lastRep: null, profile, sessionXp: 0, elapsedSec: 0, toast: null,
     };
     this.stintId = String(Date.now());
@@ -80,9 +88,10 @@ export class Practice {
   setExercise(exercise: Exercise, burst = false): void {
     const wasRunning = this.snap.running;
     this.halt();
+    this.base = exercise;
     const bpm = this.snap.profile.lastBpm[exercise.id] ?? exercise.startBpm;
     this.stintId = String(Date.now());
-    this.set({ exercise, burst, bpm, live: emptyLive(), lastRep: null, elapsedSec: 0 });
+    this.set({ exercise, burst, bpm, live: emptyLive(), lastRep: null, elapsedSec: 0, leadWeaker: false });
     this.metro.configure(this.metroConfig());
     this.metro.setBpm(bpm);
     if (wasRunning) void this.start();
@@ -90,10 +99,23 @@ export class Practice {
 
   setBurst(burst: boolean): void { this.set({ burst }); }
 
+  setLeadWeaker(leadWeaker: boolean): void {
+    this.set({ leadWeaker });
+    this.syncMirror(leadWeaker, balance(this.snap.live)?.weaker ?? null);
+  }
+
+  /** Mirror the sticking so it starts on the weaker hand; takes effect from the next bar. */
+  private syncMirror(lead: boolean, weaker: Hand | null): void {
+    const want = lead && weaker !== null && this.base.instrument === 'pads' && firstLane(this.base) !== weaker;
+    const mirrored = this.snap.exercise !== this.base;
+    if (want !== mirrored) this.set({ exercise: want ? mirrorExercise(this.base) : this.base });
+  }
+
   async start(): Promise<void> {
     if (this.snap.running) return;
     await resumeCtx();
     this.bars.clear();
+    this.barEx.clear();
     this.hits = [];
     this.metro.configure(this.metroConfig());
     this.metro.start();
@@ -109,6 +131,7 @@ export class Practice {
     if (this.clock) clearInterval(this.clock);
     this.scorer = this.clock = null;
     this.bars.clear();
+    this.barEx.clear();
     this.hits = [];
     if (this.snap.running) this.set({ running: false });
   }
@@ -136,20 +159,23 @@ export class Practice {
   hit(ev: InputEvent): void {
     if (!this.snap.running) return;
     const cal = this.snap.settings.calibrationMs[ev.source] ?? 0;
-    this.hits.push(ev.time - cal / 1000);
+    this.hits.push({ time: ev.time - cal / 1000, lane: ev.lane, velocity: ev.velocity });
   }
 
   private onBeat(e: BeatEvent): void {
     const beats = this.bars.get(e.bar) ?? [];
+    if (beats.length === 0) this.barEx.set(e.bar, this.snap.exercise);
     beats.push(e);
     this.bars.set(e.bar, beats);
-    for (const k of this.bars.keys()) if (k < e.bar - 3) this.bars.delete(k);
+    for (const k of this.bars.keys()) if (k < e.bar - 3) { this.bars.delete(k); this.barEx.delete(k); }
+    if (e.beat === 0) this.onBarline?.();
   }
 
   private finalizeBars(): void {
-    const { exercise: ex, settings } = this.snap;
+    const { settings } = this.snap;
     const now = heardNow();
     for (const [bar, beats] of [...this.bars]) {
+      const ex = this.barEx.get(bar) ?? this.snap.exercise;
       if (beats.length < ex.beatsPerBar) continue;
       const last = beats[beats.length - 1];
       const slotDur = 60 / last.bpm / ex.subdivision;
@@ -157,21 +183,24 @@ export class Practice {
       const end = last.time + 60 / last.bpm;
       if (now < end + margin + 0.03) continue;
       this.bars.delete(bar);
+      this.barEx.delete(bar);
       if (bar < 1) { // count-in: not scored
-        this.hits = this.hits.filter((h) => h >= end - margin);
+        this.hits = this.hits.filter((h) => h.time >= end - margin);
         continue;
       }
       const slotTimes = slotTimesFromBeats(beats, ex.subdivision);
       const from = slotTimes[0] - margin;
       const to = end - margin;
-      const repHits = this.hits.filter((h) => h >= from && h < to);
-      this.hits = this.hits.filter((h) => h >= to);
-      this.score(scoreRep(ex.pattern, slotTimes, repHits, settings.windowMs), beats[0].bpm);
+      const repHits = this.hits.filter((h) => h.time >= from && h.time < to);
+      this.hits = this.hits.filter((h) => h.time >= to);
+      // Lanes are enforced for pad exercises; for guitar they stay informational.
+      const rep = scoreRep(ex.pattern, slotTimes, repHits, settings.windowMs, { enforceLanes: ex.instrument === 'pads' });
+      this.score(rep, beats[0].bpm, ex);
     }
   }
 
-  private score(rep: RepResult, repBpm: number): void {
-    const { exercise, live, profile, settings } = this.snap;
+  private score(rep: RepResult, repBpm: number, exercise: Exercise): void {
+    const { live, profile, settings } = this.snap;
     const out = applyRep(live, profile, exercise, repBpm, rep);
     let toast: string | null = null;
     if (out.newBest) toast = `New personal best · ${repBpm} BPM`;
@@ -181,10 +210,11 @@ export class Practice {
       live: out.live,
       profile: this.withLog(out.profile, out.live),
       bpm: out.bpm,
-      lastRep: { rep, bpm: repBpm, windowMs: settings.windowMs },
+      lastRep: { rep, bpm: repBpm, windowMs: settings.windowMs, exercise },
       sessionXp: this.snap.sessionXp + out.xpGain,
       toast,
     });
+    this.syncMirror(this.snap.leadWeaker, balance(out.live)?.weaker ?? null);
     if (toast) {
       if (this.toastTimer) clearTimeout(this.toastTimer);
       this.toastTimer = setTimeout(() => this.set({ toast: null }), 2500);

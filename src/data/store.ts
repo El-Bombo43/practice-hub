@@ -1,6 +1,7 @@
 import { get, set } from 'idb-keyval';
 import { defaultRoutine, type Routine } from './routine';
 import { emptyProfile, type Profile } from '../game/progress';
+import { defaultMidiMapping, type MidiMapping } from '../input/midi';
 
 export type Settings = {
   accent: string;
@@ -8,6 +9,7 @@ export type Settings = {
   windowMs: 10 | 15 | 25;
   gapClick: boolean;
   calibrationMs: { keyboard: number; midi: number; audio: number };
+  midi: MidiMapping;
 };
 
 export const ACCENTS = ['#d4ff3a', '#3ee6d4', '#ff4fd8'];
@@ -15,6 +17,7 @@ export const ACCENTS = ['#d4ff3a', '#3ee6d4', '#ff4fd8'];
 export const defaultSettings = (): Settings => ({
   accent: ACCENTS[0], clickVolume: 0.6, windowMs: 15, gapClick: false,
   calibrationMs: { keyboard: 0, midi: 0, audio: 0 },
+  midi: defaultMidiMapping(),
 });
 
 export type AppData = { settings: Settings; profile: Profile; routine: Routine };
@@ -26,6 +29,7 @@ export function normalize(raw: unknown): AppData {
   const r = (raw && typeof raw === 'object' ? raw : {}) as Partial<AppData>;
   const settings = { ...defaultSettings(), ...r.settings };
   settings.calibrationMs = { ...defaultSettings().calibrationMs, ...r.settings?.calibrationMs };
+  settings.midi = { ...defaultMidiMapping(), ...r.settings?.midi };
   const profile = { ...emptyProfile(), ...r.profile };
   const routine = r.routine && Array.isArray(r.routine.items) && r.routine.items.length
     ? { ...defaultRoutine(), ...r.routine }

@@ -4,8 +4,11 @@ import { defaultRoutine, type Routine, type RoutineItem } from '../data/routine'
 import { loadData, saveData, type AppData } from '../data/store';
 import { Practice } from '../game/practice';
 import { dateKey, streak } from '../game/progress';
+import { inputBus } from '../input/bus';
 import { attachKeyboard } from '../input/keyboard';
+import { MidiManager } from '../input/midi';
 import { LeftPanel } from './LeftPanel';
+import { MidiDialog } from './MidiDialog';
 import { RoutineBar } from './RoutineBar';
 import { SettingsDialog } from './SettingsDialog';
 import { Stats } from './Stats';
@@ -34,17 +37,32 @@ function Loaded({ initial }: { initial: AppData }) {
     return new Practice(initial.profile, initial.settings, exerciseById(it.exerciseId), !!it.burst);
   });
   const snap = useSyncExternalStore(ctrl.subscribe, ctrl.getSnapshot);
-  const [showSettings, setShowSettings] = useState(false);
+  const [dialog, setDialog] = useState<null | 'settings' | 'midi'>(null);
+  const [midi] = useState(() => new MidiManager());
+  const nextRef = useRef<() => void>(() => {});
   const frozen = useRef(false);
   const latest = useRef<AppData>(initial);
   latest.current = { settings: snap.settings, profile: snap.profile, routine };
 
   useEffect(() => attachKeyboard({
     instrument: () => ctrl.getSnapshot().exercise.instrument,
-    onHit: (e) => ctrl.hit(e),
+    onHit: (e) => inputBus.emit(e),
     onToggle: () => ctrl.toggle(),
   }), [ctrl]);
   useEffect(() => () => ctrl.dispose(), [ctrl]);
+
+  // Every input source (keyboard, MIDI) arrives on the bus.
+  useEffect(() => inputBus.subscribe((e) => ctrl.hit(e)), [ctrl]);
+  useEffect(() => {
+    midi.onAction = (a) => { if (a === 'toggle') ctrl.toggle(); else nextRef.current(); };
+    midi.onDeviceChosen = (id) => {
+      const cur = ctrl.getSnapshot().settings;
+      if (cur.midi.deviceId !== id) ctrl.applySettings({ ...cur, midi: { ...cur.midi, deviceId: id } });
+    };
+    ctrl.onBarline = () => { if (midi.connected) midi.refreshClock(); };
+    if (initial.settings.midi.deviceId) void midi.init(); // reconnect the remembered device
+  }, [ctrl, midi, initial.settings.midi.deviceId]);
+  useEffect(() => { midi.setMapping(snap.settings.midi); }, [midi, snap.settings.midi]);
 
   useEffect(() => {
     const r = document.documentElement.style;
@@ -82,6 +100,8 @@ function Loaded({ initial }: { initial: AppData }) {
     startItem(routine.items[i]);
   };
 
+  nextRef.current = () => { if (routine.step < routine.items.length - 1) select(routine.step + 1); };
+
   const cur = routine.items[routine.step];
   const stepSec = cur.minutes * 60;
   const timeUp = snap.elapsedSec >= stepSec;
@@ -106,26 +126,28 @@ function Loaded({ initial }: { initial: AppData }) {
           step={routine.step + 1}
           steps={routine.items.length}
           minLeft={minLeft}
-          onSettings={() => setShowSettings(true)}
+          onSettings={() => setDialog('settings')}
         />
         <div className="main">
-          <LeftPanel ctrl={ctrl} snap={snap} nextBtn={nextBtn} />
+          <LeftPanel ctrl={ctrl} snap={snap} nextBtn={nextBtn} midi={midi} onRemap={() => setDialog('midi')} />
           <div className="right">
             <Timeline exercise={snap.exercise} last={snap.lastRep} />
-            <Stats live={snap.live} sessionXp={snap.sessionXp} />
+            <Stats snap={snap} ctrl={ctrl} />
           </div>
         </div>
         <RoutineBar routine={routine} onSelect={select} onChange={commit} />
       </div>
-      {showSettings && (
+      {dialog === 'settings' && (
         <SettingsDialog
           settings={snap.settings}
           getData={() => latest.current}
           onChange={(s) => ctrl.applySettings(s)}
-          onClose={() => setShowSettings(false)}
+          onClose={() => setDialog(null)}
           freeze={() => { frozen.current = true; }}
+          onMidi={() => setDialog('midi')}
         />
       )}
+      {dialog === 'midi' && <MidiDialog ctrl={ctrl} midi={midi} settings={snap.settings} onClose={() => setDialog(null)} />}
     </div>
   );
 }

@@ -1,10 +1,16 @@
 import { useEffect, useState } from 'react';
 import type { Practice, Snapshot } from '../game/practice';
+import type { MidiManager } from '../input/midi';
+import { useMidi } from './useMidi';
 
 const SUB_NAMES: Record<number, string> = { 2: '8ths', 3: 'triplets', 4: '16ths', 6: 'sextuplets' };
 const KIND_NAMES = { picking: 'Alternate picking', strum: 'Strumming', rudiment: 'Rudiments' } as const;
 
-export function LeftPanel({ ctrl, snap, nextBtn }: { ctrl: Practice; snap: Snapshot; nextBtn: React.ReactNode }) {
+export function LeftPanel(props: {
+  ctrl: Practice; snap: Snapshot; nextBtn: React.ReactNode; midi: MidiManager; onRemap: () => void;
+}) {
+  const { ctrl, snap, nextBtn, onRemap } = props;
+  const midi = useMidi(props.midi);
   const { exercise: ex, bpm, live, running, settings } = snap;
   const [beat, setBeat] = useState(-1);
 
@@ -46,6 +52,18 @@ export function LeftPanel({ ctrl, snap, nextBtn }: { ctrl: Practice; snap: Snaps
         </div>
         <span className="mono accent" style={{ fontSize: 14 }}>{more} more → {Math.min(300, bpm + ex.ramp.stepBpm)}</span>
       </div>
+      {ex.instrument === 'pads' && (
+        <div className="chips">
+          <span>MPK pads:</span>
+          <span className="chip">L = note {settings.midi.left}</span>
+          <span className="chip">R = note {settings.midi.right}</span>
+          <span className={`chip${midi.connected ? '' : ' warn'}`}>
+            {midi.devices().find((d) => d.id === settings.midi.deviceId)?.name ?? (midi.connected ? 'any device' : 'MIDI off · keyboard works')}
+          </span>
+          {!midi.connected && <button type="button" className="link-btn" onClick={() => void midi.init()}>Connect MIDI</button>}
+          <button type="button" className="link-btn" onClick={onRemap}>Remap</button>
+        </div>
+      )}
       <div className="controls">
         <button type="button" className="round" onClick={() => ctrl.adjustBpm(-4)} aria-label="Tempo down 4">−4</button>
         <button type="button" className="primary" onClick={() => ctrl.toggle()}>
@@ -60,6 +78,10 @@ export function LeftPanel({ ctrl, snap, nextBtn }: { ctrl: Practice; snap: Snaps
       <div className="toggles">
         <button type="button" className="toggle" aria-pressed={settings.gapClick}
           onClick={() => ctrl.applySettings({ ...settings, gapClick: !settings.gapClick })}>Gap click</button>
+        {ex.instrument === 'pads' && (
+          <button type="button" className="toggle" aria-pressed={snap.leadWeaker}
+            onClick={() => ctrl.setLeadWeaker(!snap.leadWeaker)}>Lead with weaker hand</button>
+        )}
         <button type="button" className="toggle" aria-pressed={snap.burst}
           onClick={() => ctrl.setBurst(!snap.burst)}>Burst mode</button>
         <label className="vol">Click
