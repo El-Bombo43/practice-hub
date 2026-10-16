@@ -1,6 +1,6 @@
 import { heardNow, resumeCtx } from '../audio/clock';
 import { Metronome, type BeatEvent } from '../audio/metronome';
-import { firstLane, mirrorExercise } from '../data/exercises';
+import { allowedSubdivisions, firstLane, mirrorExercise, withSubdivision } from '../data/exercises';
 import type { Exercise } from '../data/types';
 import type { Settings } from '../data/store';
 import type { InputEvent } from '../input/types';
@@ -15,6 +15,7 @@ export type Snapshot = {
   running: boolean;
   exercise: Exercise;
   burst: boolean; // stub toggle only in session 1
+  subOptions: Exercise['subdivision'][]; // counts this exercise can be played in
   leadWeaker: boolean; // pads: start the sticking on the weaker hand (mirrors it when needed)
   bpm: number;
   settings: Settings;
@@ -40,6 +41,8 @@ export class Practice {
   private bars = new Map<number, BeatEvent[]>();
   private hits: Hit[] = [];
   private base: Exercise;
+  private sub: Exercise['subdivision'];
+  private mirrored = false;
   private barEx = new Map<number, Exercise>(); // pattern each bar started with (mirroring can change between bars)
   /** Called on the first beat of every bar (MIDI clock re-sync). */
   onBarline: (() => void) | null = null;
@@ -51,8 +54,11 @@ export class Practice {
 
   constructor(profile: Profile, settings: Settings, exercise: Exercise, burst = false) {
     this.base = exercise;
+    this.sub = this.chosenSub(exercise, profile);
+    const eff = withSubdivision(exercise, this.sub);
     this.snap = {
-      running: false, leadWeaker: false, exercise, burst, bpm: profile.lastBpm[exercise.id] ?? exercise.startBpm, settings,
+      running: false, leadWeaker: false, exercise: eff, subOptions: allowedSubdivisions(exercise), burst,
+      bpm: profile.lastBpm[eff.id] ?? eff.startBpm, settings,
       live: emptyLive(), lastRep: null, profile, sessionXp: 0, elapsedSec: 0, toast: null,
     };
     this.stintId = String(Date.now());
@@ -65,6 +71,19 @@ export class Practice {
   };
   getSnapshot = (): Snapshot => this.snap;
   currentBeat = (): number => (this.snap.running ? this.metro.currentBeat() : -1);
+  /** Position within the bar, 0–1 (−1 when stopped), for the sweeping playhead. */
+  position = (): number => (this.snap.running ? this.metro.position() : -1);
+
+  private chosenSub(ex: Exercise, profile: Profile): Exercise['subdivision'] {
+    const want = profile.subdivision[ex.id] as Exercise['subdivision'] | undefined;
+    return want && allowedSubdivisions(ex).includes(want) ? want : ex.subdivision;
+  }
+
+  /** The exercise as played: re-counted, then mirrored when leading with the weaker hand. */
+  private build(): Exercise {
+    const ex = withSubdivision(this.base, this.sub);
+    return this.mirrored ? mirrorExercise(ex) : ex;
+  }
 
   private set(patch: Partial<Snapshot>): void {
     this.snap = { ...this.snap, ...patch };
@@ -89,12 +108,36 @@ export class Practice {
     const wasRunning = this.snap.running;
     this.halt();
     this.base = exercise;
-    const bpm = this.snap.profile.lastBpm[exercise.id] ?? exercise.startBpm;
+    this.sub = this.chosenSub(exercise, this.snap.profile);
+    this.mirrored = false;
     this.stintId = String(Date.now());
-    this.set({ exercise, burst, bpm, live: emptyLive(), lastRep: null, elapsedSec: 0, leadWeaker: false });
+    this.applyShape({ burst, leadWeaker: false, elapsedSec: 0 });
+    if (wasRunning) void this.start();
+  }
+
+  /** Re-count the current exercise (8ths, triplets, 16ths, sextuplets). Keeps playing if it was playing. */
+  setSubdivision(sub: Exercise['subdivision']): void {
+    if (sub === this.sub || !allowedSubdivisions(this.base).includes(sub)) return;
+    const wasRunning = this.snap.running;
+    this.halt();
+    this.sub = sub;
+    this.mirrored = false;
+    this.stintId = String(Date.now());
+    const p = this.snap.profile;
+    this.snap = { ...this.snap, profile: { ...p, subdivision: { ...p.subdivision, [this.base.id]: sub } } };
+    this.applyShape({});
+    if (wasRunning) void this.start();
+  }
+
+  /** Rebuild the effective exercise, reset the per-exercise state and re-point the metronome. */
+  private applyShape(patch: Partial<Snapshot>): void {
+    const exercise = this.build();
+    const bpm = this.snap.profile.lastBpm[exercise.id] ?? exercise.startBpm;
+    this.set({
+      ...patch, exercise, subOptions: allowedSubdivisions(this.base), bpm, live: emptyLive(), lastRep: null,
+    });
     this.metro.configure(this.metroConfig());
     this.metro.setBpm(bpm);
-    if (wasRunning) void this.start();
   }
 
   setBurst(burst: boolean): void { this.set({ burst }); }
@@ -106,9 +149,12 @@ export class Practice {
 
   /** Mirror the sticking so it starts on the weaker hand; takes effect from the next bar. */
   private syncMirror(lead: boolean, weaker: Hand | null): void {
-    const want = lead && weaker !== null && this.base.instrument === 'pads' && firstLane(this.base) !== weaker;
-    const mirrored = this.snap.exercise !== this.base;
-    if (want !== mirrored) this.set({ exercise: want ? mirrorExercise(this.base) : this.base });
+    const first = firstLane(withSubdivision(this.base, this.sub));
+    const mirror = lead && weaker !== null && this.base.instrument === 'pads' && first !== weaker;
+    if (mirror !== this.mirrored) {
+      this.mirrored = mirror;
+      this.set({ exercise: this.build() });
+    }
   }
 
   async start(): Promise<void> {

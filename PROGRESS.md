@@ -4,6 +4,8 @@
 Scaffold + Pages deploy, metronome (count-in bar, gap click), 13 exercises, scoring + keyboard simulator, practice screen, routine editing, XP/level/streak/combo/PBs, IndexedDB persistence, Settings (accent, volume, window, Export/Import JSON).
 ## Session 2 — done (34 tests; build passes; hardware untested)
 `input/midi.ts` (device picker, remembered device, learn mode for L/R pads + two footswitch CCs, press-only ≥64), MIDI ms→audio-clock conversion re-synced each bar, lanes enforced for pad exercises (wrong hand = out of window, shown as ✕ ring), per-source latency calibration (16 clicks @90 BPM, median, 150 ms outlier cut), drum timeline (sticking row, R top/L bottom, velocity bars), L/R balance + drum tips, "lead with weaker hand" toggle.
+## Follow-up (session 2 feedback)
+Timeline playhead: a faint accent line sweeps one bar per cycle in step with the click (`Metronome.position()`, updated per frame off-React). Count switch (8ths / triplets / 16ths / sextuplets) for uniform exercises; the cycle must fit the bar. Non-native counts get id `name@n`, so PB / last BPM / log stay separate; choice is remembered per exercise. Gallop and strum patterns stay at their own count.
 ## Decisions
 - All inputs publish to `input/bus.ts`; keyboard keeps working (F = L, J = R, velocity 0.8). Default pad notes L=36, R=37 until learned. Guitar lanes stay informational.
 - Pad notes only from the chosen device; footswitch CCs from any device. Learning a pad also selects its device.

@@ -142,3 +142,16 @@ button.card { cursor: pointer; }
 .learn-row .k { min-width: 150px; font-size: 14px; }
 .learn-row .v { font-family: var(--font-mono); font-size: 14px; color: var(--accent); min-width: 80px; }
 .cal-result { font-family: var(--font-mono); font-size: 14px; }
+
+/* playhead */
+.tl-stage { position: relative; }
+.playhead {
+  position: absolute; top: -4px; bottom: -4px; width: 2px; margin-left: -1px; border-radius: 1px; pointer-events: none;
+  background: color-mix(in srgb, var(--accent) 45%, transparent);
+  box-shadow: 0 0 10px color-mix(in srgb, var(--accent) 35%, transparent);
+  visibility: hidden;
+}
+.playhead::before { /* short fading trail behind the line */
+  content: ''; position: absolute; right: 2px; top: 0; bottom: 0; width: 56px;
+  background: linear-gradient(to right, transparent, color-mix(in srgb, var(--accent) 10%, transparent));
+}

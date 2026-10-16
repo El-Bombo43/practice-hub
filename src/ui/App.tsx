@@ -131,7 +131,7 @@ function Loaded({ initial }: { initial: AppData }) {
         <div className="main">
           <LeftPanel ctrl={ctrl} snap={snap} nextBtn={nextBtn} midi={midi} onRemap={() => setDialog('midi')} />
           <div className="right">
-            <Timeline exercise={snap.exercise} last={snap.lastRep} />
+            <Timeline ctrl={ctrl} exercise={snap.exercise} last={snap.lastRep} />
             <Stats snap={snap} ctrl={ctrl} />
           </div>
         </div>

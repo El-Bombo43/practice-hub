@@ -1,6 +1,7 @@
+import { useEffect, useRef } from 'react';
 import { hasLanes } from '../data/exercises';
 import type { Exercise, Lane } from '../data/types';
-import type { LastRep } from '../game/practice';
+import type { LastRep, Practice } from '../game/practice';
 
 const ARROW: Record<Lane, string> = { down: '↓', up: '↑', L: 'L', R: 'R' };
 const TOP_LANES: Lane[] = ['down', 'R']; // down / right hand on the top row
@@ -10,7 +11,7 @@ export const fmtOffset = (ms: number): string => {
   return r === 0 ? '0' : r > 0 ? `+${r}` : `−${Math.abs(r)}`;
 };
 
-export function Timeline({ exercise: fallback, last }: { exercise: Exercise; last: LastRep | null }) {
+export function Timeline({ ctrl, exercise: fallback, last }: { ctrl: Practice; exercise: Exercise; last: LastRep | null }) {
   const exercise = last?.exercise ?? fallback;
   const cols = exercise.pattern.length;
   const dense = cols > 8;
@@ -22,6 +23,23 @@ export function Timeline({ exercise: fallback, last }: { exercise: Exercise; las
   const bandW = Math.max(8, 2 * windowMs * scale);
   const rep = last?.rep;
   const wrong = rep ? rep.slots.filter((s) => s.wrongLane).length : 0;
+  const head = useRef<HTMLDivElement>(null);
+  // The playhead sweeps once per bar, in step with the click. Updated off-React, once per frame.
+  useEffect(() => {
+    let raf = 0;
+    const loop = () => {
+      const el = head.current;
+      if (el) {
+        const p = ctrl.position();
+        const x = (p * cols + 0.5) / cols; // slot i sits at its column centre
+        el.style.visibility = p < 0 || x > 1 ? 'hidden' : 'visible';
+        el.style.left = `${x * 100}%`;
+      }
+      raf = requestAnimationFrame(loop);
+    };
+    raf = requestAnimationFrame(loop);
+    return () => cancelAnimationFrame(raf);
+  }, [ctrl, cols]);
   const grid = { gridTemplateColumns: `repeat(${cols}, minmax(0, 1fr))` };
 
   return (
@@ -46,6 +64,7 @@ export function Timeline({ exercise: fallback, last }: { exercise: Exercise; las
             ))}
           </div>
         )}
+        <div className="tl-stage">
         <div className="timeline" style={{ ...grid, padding: 0, background: 'none' }}>
           {exercise.pattern.map((slot, i) => {
             const res = rep?.slots[i];
@@ -98,6 +117,8 @@ export function Timeline({ exercise: fallback, last }: { exercise: Exercise; las
               </div>
             );
           })}
+        </div>
+        <div className="playhead" ref={head} aria-hidden="true" />
         </div>
         {pads && (
           <div className="tl-foot">

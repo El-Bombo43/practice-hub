@@ -4,6 +4,7 @@ import type { MidiManager } from '../input/midi';
 import { useMidi } from './useMidi';
 
 const SUB_NAMES: Record<number, string> = { 2: '8ths', 3: 'triplets', 4: '16ths', 6: 'sextuplets' };
+const SUB_LABELS: Record<number, string> = { 2: '8ths', 3: 'Triplets', 4: '16ths', 6: 'Sextuplets' };
 const KIND_NAMES = { picking: 'Alternate picking', strum: 'Strumming', rudiment: 'Rudiments' } as const;
 
 export function LeftPanel(props: {
@@ -42,6 +43,15 @@ export function LeftPanel(props: {
           {diff === null && <> · no clean max yet</>}
         </div>
       </div>
+      {snap.subOptions.length > 1 && (
+        <div className="toggles" role="group" aria-label="Count">
+          <span className="hint">Count</span>
+          {snap.subOptions.map((n) => (
+            <button type="button" key={n} className="toggle" aria-pressed={ex.subdivision === n}
+              onClick={() => ctrl.setSubdivision(n)}>{SUB_LABELS[n]}</button>
+          ))}
+        </div>
+      )}
       <div className="beats" role="img" aria-label={beat >= 0 ? `Beat ${beat + 1} of ${ex.beatsPerBar}` : 'Stopped'}>
         {Array.from({ length: ex.beatsPerBar }, (_, i) => <div key={i} className={i === beat ? 'on' : ''} />)}
       </div>

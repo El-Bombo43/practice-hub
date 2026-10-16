@@ -84,3 +84,39 @@ export const mirrorExercise = (ex: Exercise): Exercise => ({
 });
 
 export const firstLane = (ex: Exercise): Lane | undefined => ex.pattern.find((s) => s.play && s.lane)?.lane;
+
+/** Repeating lane cycle for exercises whose pattern is uniform, so they can be re-counted (8ths, triplets, 16ths, sextuplets). */
+const CYCLES: Record<string, Lane[]> = {
+  tremolo: ['down', 'up'],
+  chromatic: ['down', 'up'],
+  skipping: ['down', 'up'],
+  'palm-muted': ['down', 'up'],
+  sextuplets: ['down', 'up'],
+  'pads-singles': ['R', 'L'],
+  'pads-doubles': ['R', 'R', 'L', 'L'],
+  'pads-paradiddle': ['R', 'L', 'R', 'R', 'L', 'R', 'L', 'L'],
+  'pads-paradiddle-diddle': ['R', 'L', 'R', 'R', 'L', 'L'],
+};
+
+/** Counts this exercise can be played in. The cycle must fit the bar so the sticking never restarts mid-bar. */
+export function allowedSubdivisions(ex: Exercise): Exercise['subdivision'][] {
+  const c = CYCLES[ex.id];
+  if (!c) return [ex.subdivision];
+  return ([2, 3, 4, 6] as const).filter((s) => (ex.beatsPerBar * s) % c.length === 0);
+}
+
+/**
+ * The exercise re-counted in another subdivision. Its id gets an `@n` suffix so personal bests,
+ * last BPM and the log stay separate per count; the start tempo keeps roughly the same note speed.
+ */
+export function withSubdivision(ex: Exercise, sub: Exercise['subdivision']): Exercise {
+  const c = CYCLES[ex.id];
+  if (!c || sub === ex.subdivision || !allowedSubdivisions(ex).includes(sub)) return ex;
+  return {
+    ...ex,
+    id: `${ex.id}@${sub}`,
+    subdivision: sub,
+    pattern: Array.from({ length: ex.beatsPerBar * sub }, (_, i) => ({ play: true, lane: c[i % c.length] })),
+    startBpm: Math.max(30, Math.min(300, Math.round((ex.startBpm * ex.subdivision) / sub))),
+  };
+}

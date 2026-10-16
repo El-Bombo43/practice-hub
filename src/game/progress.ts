@@ -18,12 +18,13 @@ export type Profile = {
   bestCombo: number;
   personalBests: Record<string, number>; // exercise id → highest BPM with a clean rep
   lastBpm: Record<string, number>;
+  subdivision: Record<string, number>; // chosen count per exercise (base id)
   dayMinutes: Record<string, number>; // local date → minutes practised
   log: LogEntry[];
 };
 
 export const emptyProfile = (): Profile => ({
-  xp: 0, bestCombo: 0, personalBests: {}, lastBpm: {}, dayMinutes: {}, log: [],
+  xp: 0, bestCombo: 0, personalBests: {}, lastBpm: {}, subdivision: {}, dayMinutes: {}, log: [],
 });
 
 export type Hand = 'L' | 'R';

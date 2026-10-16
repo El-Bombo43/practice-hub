@@ -70,6 +70,16 @@ export class Metronome {
     return cur;
   }
 
+  /** Where the audible click is within the bar, 0–1, or -1 before the first click. */
+  position(): number {
+    const now = heardNow();
+    let cur: BeatEvent | null = null;
+    for (const e of this.log) if (e.time <= now) cur = e;
+    if (!cur) return -1;
+    const frac = Math.min(1, (now - cur.time) / (60 / cur.bpm));
+    return (cur.beat + frac) / this.cfg.beatsPerBar;
+  }
+
   private schedule(): void {
     const ctx = getCtx();
     while (this.nextTime < ctx.currentTime + LOOKAHEAD_S) {
