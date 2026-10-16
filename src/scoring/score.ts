@@ -127,3 +127,19 @@ export function slotTimesFromBeats(
   }
   return out;
 }
+
+/**
+ * Endurance drift: least-squares slope of offset over time, in ms per 10 s (+ = getting later).
+ * `t` is seconds since the start. Null when there are too few points or no time spread.
+ */
+export function driftPer10s(points: { t: number; offsetMs: number }[]): number | null {
+  const n = points.length;
+  if (n < 4) return null;
+  const mt = points.reduce((a, p) => a + p.t, 0) / n;
+  const mo = points.reduce((a, p) => a + p.offsetMs, 0) / n;
+  let num = 0;
+  let den = 0;
+  for (const p of points) { num += (p.t - mt) * (p.offsetMs - mo); den += (p.t - mt) ** 2; }
+  if (den === 0) return null;
+  return Math.round((num / den) * 10 * 10) / 10;
+}

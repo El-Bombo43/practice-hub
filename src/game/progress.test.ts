@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { applyRep, balance, drumTip, emptyLive, emptyProfile, level, streak, tip, type Live } from './progress';
+import { applyRep, balance, burstBpm, burstPhase, drumTip, evenness, pickTip, emptyLive, emptyProfile, level, streak, tip, type Live } from './progress';
 import { scoreRep } from '../scoring/score';
 import { exerciseById } from '../data/exercises';
 
@@ -103,5 +103,63 @@ describe('drumTip', () => {
     const late = { ...handsLive([0.8, 12, 10], [0.8, 10, 10]), offsetSum: 220, offsetN: 20 };
     expect(drumTip(late, false).title).toBe('Mostly late');
     expect(balance(handsLive([0.2, 0, 3], [0.9, 0, 3]))).toBeNull();
+  });
+});
+
+const strokesLive = (d: [number, number], u: [number, number], n = 10): Live => {
+  // [meanPeak, meanOffsetMs]
+  const live = emptyLive();
+  live.strokes.down = { velSum: d[0] * n, velN: n, offSum: d[1] * n, offN: n };
+  live.strokes.up = { velSum: u[0] * n, velN: n, offSum: u[1] * n, offN: n };
+  return live;
+};
+
+describe('stroke evenness and picking tips', () => {
+  it('assigns strokes by the slot lane (down, up, down, up…) with peak and offset', () => {
+    const t = exerciseById('tremolo');
+    const times = Array.from({ length: 16 }, (_, i) => i * 0.125);
+    const hits = times.map((time, i) => ({ time: time + (i % 2 ? 0.012 : 0.002), velocity: i % 2 ? 0.4 : 0.8 }));
+    const o = applyRep(emptyLive(), emptyProfile(), t, 80, scoreRep(t.pattern, times, hits, 15));
+    expect(o.live.strokes.down.velN).toBe(8);
+    expect(o.live.strokes.up.offSum / o.live.strokes.up.offN).toBe(12);
+    expect(o.live.strokes.down.velSum / o.live.strokes.down.velN).toBeCloseTo(0.8, 9);
+    expect(evenness(o.live)?.loudU).toBeCloseTo(0.4, 9);
+  });
+  it('offset gap over 8 ms wins: upstrokes dragging', () => {
+    const t = pickTip(strokesLive([0.5, 2], [0.5, 14]));
+    expect(t.title).toBe('Upstrokes are dragging');
+    expect(t.text).toBe('Upstrokes are dragging — +14 ms late on average.');
+  });
+  it('then loudness more than 10% apart', () => {
+    const t = pickTip(strokesLive([0.5, 3], [0.4, 5]));
+    expect(t.title).toBe('Upstrokes are softer');
+    expect(t.text).toContain('20% quieter');
+    expect(pickTip(strokesLive([0.5, 3], [0.47, 5])).tone).toBe('idle'); // 6% apart, no offsets overall
+  });
+  it('needs enough strokes of each direction', () => {
+    expect(evenness(strokesLive([0.5, 0], [0.5, 30], 3))).toBeNull();
+  });
+});
+
+describe('burst and frozen tempo', () => {
+  it('3 bars play, 1 bar rest, repeating', () => {
+    expect([1, 2, 3, 4, 5, 6, 7, 8, 9].map(burstPhase)).toEqual(['play', 'play', 'play', 'rest', 'play', 'play', 'play', 'rest', 'play']);
+  });
+  it('plays at clean max + 8', () => {
+    expect(burstBpm(120, 100)).toBe(128);
+    expect(burstBpm(undefined, 100)).toBe(108);
+    expect(burstBpm(295, 100)).toBe(300);
+  });
+  it('a frozen rep gives XP for hits and clean but never changes ramp, PB or last BPM', () => {
+    const ex = exerciseById('tremolo');
+    const times = Array.from({ length: 16 }, (_, i) => i * 0.125);
+    const rep = scoreRep(ex.pattern, times, times, 15);
+    let live = emptyLive();
+    const profile = { ...emptyProfile(), personalBests: { [ex.id]: 80 }, lastBpm: { [ex.id]: 80 } };
+    let p = profile;
+    for (let i = 0; i < 4; i++) { const o = applyRep(live, p, ex, 88, rep, true); live = o.live; p = o.profile; expect(o.stepped).toBe(false); expect(o.bpm).toBe(88); expect(o.xpGain).toBe(26); }
+    expect(p.personalBests[ex.id]).toBe(80);
+    expect(p.lastBpm[ex.id]).toBe(80);
+    expect(live.cleanStreak).toBe(0);
   });
 });

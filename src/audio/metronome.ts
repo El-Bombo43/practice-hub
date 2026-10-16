@@ -70,6 +70,14 @@ export class Metronome {
     return cur;
   }
 
+  /** Bar number of the audible click (0 = count-in), or -1 before the first click. */
+  currentBar(): number {
+    const now = heardNow();
+    let cur = -1;
+    for (const e of this.log) if (e.time <= now) cur = e.bar;
+    return cur;
+  }
+
   /** Where the audible click is within the bar, 0–1, or -1 before the first click. */
   position(): number {
     const now = heardNow();

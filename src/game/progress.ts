@@ -28,6 +28,7 @@ export const emptyProfile = (): Profile => ({
 });
 
 export type Hand = 'L' | 'R';
+export type Stroke = 'down' | 'up';
 export type HandStats = { velSum: number; velN: number; offSum: number; offN: number };
 const emptyHand = (): HandStats => ({ velSum: 0, velN: 0, offSum: 0, offN: 0 });
 
@@ -43,11 +44,12 @@ export type Live = {
   offsetN: number;
   bestCleanBpm: number | null;
   hands: Record<Hand, HandStats>; // pad exercises only: velocity and offset per hand
+  strokes: Record<Stroke, HandStats>; // guitar: velocity (peak) and offset per stroke direction
 };
 
 export const emptyLive = (): Live => ({
   combo: 0, bestCombo: 0, cleanStreak: 0, reps: 0, expected: 0, onTime: 0, offsetSum: 0, offsetN: 0,
-  bestCleanBpm: null, hands: { L: emptyHand(), R: emptyHand() },
+  bestCleanBpm: null, hands: { L: emptyHand(), R: emptyHand() }, strokes: { down: emptyHand(), up: emptyHand() },
 });
 
 export const MIN_BPM = 30;
@@ -64,11 +66,14 @@ export type RepOutcome = {
 };
 
 /** Fold one scored rep into the live state and the profile. Pure. */
-export function applyRep(live: Live, profile: Profile, ex: Exercise, bpm: number, rep: RepResult): RepOutcome {
+export function applyRep(
+  live: Live, profile: Profile, ex: Exercise, bpm: number, rep: RepResult,
+  frozen = false, // burst / endurance: the tempo is fixed, so no ramp step, personal best or last-BPM change
+): RepOutcome {
   const c = updateCombo(live.combo, live.bestCombo, rep.sequence);
-  const ramp = rampStep(live.cleanStreak, rep.clean, ex.ramp);
+  const ramp = frozen ? { cleanStreak: live.cleanStreak, advance: false } : rampStep(live.cleanStreak, rep.clean, ex.ramp);
   const prevBest = profile.personalBests[ex.id];
-  const newBest = rep.clean && prevBest !== undefined && bpm > prevBest;
+  const newBest = !frozen && rep.clean && prevBest !== undefined && bpm > prevBest;
 
   let xpGain = rep.onTimeCount;
   if (rep.clean) xpGain += 10;
@@ -76,15 +81,21 @@ export function applyRep(live: Live, profile: Profile, ex: Exercise, bpm: number
   if (newBest) xpGain += 50;
 
   const nextBpm = ramp.advance ? clampBpm(bpm + ex.ramp.stepBpm) : bpm;
-  const personalBests = rep.clean && (prevBest === undefined || bpm > prevBest)
+  const personalBests = !frozen && rep.clean && (prevBest === undefined || bpm > prevBest)
     ? { ...profile.personalBests, [ex.id]: bpm }
     : profile.personalBests;
 
   const hands: Record<Hand, HandStats> = { L: { ...live.hands.L }, R: { ...live.hands.R } };
+  const strokes: Record<Stroke, HandStats> = { down: { ...live.strokes.down }, up: { ...live.strokes.up } };
   for (const r of rep.slots) {
+    // The slot's lane is the stroke direction (strict alternation, first note down), so a skipped
+    // note doesn't flip every later stroke; for guitar the hit itself carries no lane from audio.
     const lane = r.hitLane ?? r.lane;
-    if (!r.hit || (lane !== 'L' && lane !== 'R')) continue;
-    const h = hands[lane];
+    const slotLane = r.lane;
+    if (!r.hit) continue;
+    const h = lane === 'L' || lane === 'R' ? hands[lane]
+      : slotLane === 'down' || slotLane === 'up' ? strokes[slotLane] : null;
+    if (!h) continue;
     if (r.velocity !== undefined) { h.velSum += r.velocity; h.velN++; }
     if (r.offsetMs !== null) { h.offSum += r.offsetMs; h.offN++; }
   }
@@ -100,13 +111,14 @@ export function applyRep(live: Live, profile: Profile, ex: Exercise, bpm: number
     offsetN: live.offsetN + rep.hitCount,
     bestCleanBpm: rep.clean ? Math.max(live.bestCleanBpm ?? 0, bpm) : live.bestCleanBpm,
     hands,
+    strokes,
   };
   const nextProfile: Profile = {
     ...profile,
     xp: profile.xp + xpGain,
     bestCombo: Math.max(profile.bestCombo, c.best),
     personalBests,
-    lastBpm: { ...profile.lastBpm, [ex.id]: nextBpm },
+    lastBpm: frozen ? profile.lastBpm : { ...profile.lastBpm, [ex.id]: nextBpm },
   };
   return { live: nextLive, profile: nextProfile, bpm: nextBpm, xpGain, stepped: ramp.advance, newBest };
 }
@@ -207,3 +219,49 @@ export function drumTip(live: Live, leadWeaker: boolean): Tip {
   }
   return tip(meanOffset(live));
 }
+
+const strokeName = (s: Stroke): string => (s === 'down' ? 'Downstrokes' : 'Upstrokes');
+
+/** Up/down evenness for guitar: offset gap > 8 ms, then loudness gap > 10%. Null until both directions have enough hits. */
+export function evenness(live: Live): { offD: number; offU: number; loudU: number; loudD: number } | null {
+  const { down, up } = live.strokes;
+  if (down.velN < MIN_HAND_HITS || up.velN < MIN_HAND_HITS || down.offN < MIN_HAND_HITS || up.offN < MIN_HAND_HITS) return null;
+  return {
+    offD: down.offSum / down.offN, offU: up.offSum / up.offN,
+    loudD: down.velSum / down.velN, loudU: up.velSum / up.velN,
+  };
+}
+
+/** Guitar tips: stroke offsets > 8 ms apart, then loudness > 10% apart, then the plain rule. */
+export function pickTip(live: Live): Tip {
+  const e = evenness(live);
+  if (e) {
+    if (Math.abs(e.offD - e.offU) > 8) {
+      const slow: Stroke = e.offU > e.offD ? 'up' : 'down';
+      const m = slow === 'up' ? e.offU : e.offD;
+      const gap = Math.round(Math.abs(e.offD - e.offU));
+      return {
+        tone: 'late',
+        title: `${strokeName(slow)} are dragging`,
+        text: m > 0
+          ? `${strokeName(slow)} are dragging — +${Math.round(m)} ms late on average.`
+          : `${strokeName(slow)} are dragging — ${gap} ms behind the ${slow === 'up' ? 'downstrokes' : 'upstrokes'}.`,
+      };
+    }
+    const hi = Math.max(e.loudD, e.loudU);
+    const lo = Math.min(e.loudD, e.loudU);
+    if (hi > 0 && (hi - lo) / hi > 0.1) {
+      const soft: Stroke = e.loudU < e.loudD ? 'up' : 'down';
+      return {
+        tone: 'late',
+        title: `${strokeName(soft)} are softer`,
+        text: `${strokeName(soft)} are about ${Math.round((100 * (hi - lo)) / hi)}% quieter than the ${soft === 'up' ? 'downstrokes' : 'upstrokes'}.`,
+      };
+    }
+  }
+  return tip(meanOffset(live));
+}
+
+/** Burst: 3 bars at clean max + 8 BPM, then 1 bar rest, repeating. Bars are numbered from 1 (0 is the count-in). */
+export const burstPhase = (bar: number): 'play' | 'rest' => ((bar - 1) % 4 === 3 ? 'rest' : 'play');
+export const burstBpm = (cleanMax: number | undefined, current: number): number => clampBpm((cleanMax ?? current) + 8);

@@ -4,17 +4,26 @@ import { allowedSubdivisions, firstLane, mirrorExercise, withSubdivision } from 
 import type { Exercise } from '../data/types';
 import type { Settings } from '../data/store';
 import type { InputEvent } from '../input/types';
-import { scoreRep, slotTimesFromBeats, type Hit, type RepResult } from '../scoring/score';
+import { driftPer10s, scoreRep, slotTimesFromBeats, type Hit, type RepResult } from '../scoring/score';
 import {
-  applyRep, balance, clampBpm, dateKey, emptyLive, upsertLog, accuracyPct, type Hand, type Live, type Profile,
+  applyRep, balance, burstBpm, burstPhase, clampBpm, dateKey, emptyLive, upsertLog, accuracyPct, type Hand, type Live, type Profile,
 } from './progress';
+
+export type Mode = 'normal' | 'burst' | 'endurance';
+export type EnduranceReport = {
+  seconds: number; bpm: number; accuracy: number | null; reps: number; cleanReps: number;
+  meanOffset: number | null; drift: number | null; // drift: ms per 10 s, + = getting later
+};
 
 export type LastRep = { rep: RepResult; bpm: number; windowMs: number; exercise: Exercise };
 
 export type Snapshot = {
   running: boolean;
   exercise: Exercise;
-  burst: boolean; // stub toggle only in session 1
+  mode: Mode; // burst = 3 bars at clean max + 8, 1 rest; endurance = hold the tempo for a set time
+  enduranceSec: 30 | 60;
+  report: EnduranceReport | null; // set when an endurance run finishes
+  playBpm: number; // the tempo the click is playing (bpm, or the burst tempo)
   subOptions: Exercise['subdivision'][]; // counts this exercise can be played in
   leadWeaker: boolean; // pads: start the sticking on the weaker hand (mirrors it when needed)
   bpm: number;
@@ -46,6 +55,10 @@ export class Practice {
   private barEx = new Map<number, Exercise>(); // pattern each bar started with (mirroring can change between bars)
   /** Called on the first beat of every bar (MIDI clock re-sync). */
   onBarline: (() => void) | null = null;
+  // endurance run (reset on every start)
+  private endStart: number | null = null;
+  private endPoints: { t: number; offsetMs: number }[] = [];
+  private endTotals = { reps: 0, clean: 0, expected: 0, onTime: 0, offSum: 0, offN: 0 };
   private scorer: ReturnType<typeof setInterval> | null = null;
   private clock: ReturnType<typeof setInterval> | null = null;
   private lastClock = 0;
@@ -57,10 +70,12 @@ export class Practice {
     this.sub = this.chosenSub(exercise, profile);
     const eff = withSubdivision(exercise, this.sub);
     this.snap = {
-      running: false, leadWeaker: false, exercise: eff, subOptions: allowedSubdivisions(exercise), burst,
+      running: false, leadWeaker: false, exercise: eff, subOptions: allowedSubdivisions(exercise),
+      mode: burst && exercise.instrument === 'guitar' ? 'burst' : 'normal', enduranceSec: 30, report: null, playBpm: 0,
       bpm: profile.lastBpm[eff.id] ?? eff.startBpm, settings,
       live: emptyLive(), lastRep: null, profile, sessionXp: 0, elapsedSec: 0, toast: null,
     };
+    this.snap.playBpm = this.computePlayBpm(this.snap);
     this.stintId = String(Date.now());
     this.metro = new Metronome(this.metroConfig(), (e) => this.onBeat(e));
   }
@@ -85,15 +100,21 @@ export class Practice {
     return this.mirrored ? mirrorExercise(ex) : ex;
   }
 
+  private computePlayBpm(s: Snapshot): number {
+    return s.mode === 'burst' ? burstBpm(s.profile.personalBests[s.exercise.id], s.bpm) : s.bpm;
+  }
+
   private set(patch: Partial<Snapshot>): void {
-    this.snap = { ...this.snap, ...patch };
+    const next = { ...this.snap, ...patch };
+    next.playBpm = this.computePlayBpm(next);
+    this.snap = next;
     this.listeners.forEach((l) => l());
   }
 
   private metroConfig() {
-    const { exercise, bpm, settings } = this.snap;
+    const { exercise, playBpm, settings } = this.snap;
     return {
-      bpm, beatsPerBar: exercise.beatsPerBar, subdivision: exercise.subdivision,
+      bpm: playBpm, beatsPerBar: exercise.beatsPerBar, subdivision: exercise.subdivision,
       volume: settings.clickVolume, gapClick: settings.gapClick,
     };
   }
@@ -111,7 +132,7 @@ export class Practice {
     this.sub = this.chosenSub(exercise, this.snap.profile);
     this.mirrored = false;
     this.stintId = String(Date.now());
-    this.applyShape({ burst, leadWeaker: false, elapsedSec: 0 });
+    this.applyShape({ mode: burst && exercise.instrument === 'guitar' ? 'burst' : 'normal', leadWeaker: false, elapsedSec: 0 });
     if (wasRunning) void this.start();
   }
 
@@ -134,13 +155,38 @@ export class Practice {
     const exercise = this.build();
     const bpm = this.snap.profile.lastBpm[exercise.id] ?? exercise.startBpm;
     this.set({
-      ...patch, exercise, subOptions: allowedSubdivisions(this.base), bpm, live: emptyLive(), lastRep: null,
+      ...patch, exercise, subOptions: allowedSubdivisions(this.base), bpm, live: emptyLive(), lastRep: null, report: null,
     });
     this.metro.configure(this.metroConfig());
-    this.metro.setBpm(bpm);
+    this.metro.setBpm(this.snap.playBpm);
   }
 
-  setBurst(burst: boolean): void { this.set({ burst }); }
+  /** Normal practice, burst (guitar), or an endurance hold. Restarts from a count-in if it was playing. */
+  setMode(mode: Mode, enduranceSec: 30 | 60 = this.snap.enduranceSec): void {
+    if (mode === 'burst' && this.base.instrument !== 'guitar') return;
+    if (mode === this.snap.mode && enduranceSec === this.snap.enduranceSec) return;
+    const wasRunning = this.snap.running;
+    this.halt();
+    this.set({ mode, enduranceSec, live: emptyLive(), lastRep: null, report: null });
+    this.metro.configure(this.metroConfig());
+    this.metro.setBpm(this.snap.playBpm);
+    if (wasRunning) void this.start();
+  }
+
+  /** Which bar the click is on and whether burst is playing or resting; for the on-screen label. */
+  barInfo(): { bar: number; phase: 'count-in' | 'play' | 'rest' } | null {
+    if (!this.snap.running) return null;
+    const bar = this.metro.currentBar();
+    if (bar < 0) return null;
+    return { bar, phase: bar < 1 ? 'count-in' : this.snap.mode === 'burst' ? burstPhase(bar) : 'play' };
+  }
+
+  /** Seconds left in an endurance run (full length until the first scored bar starts). */
+  enduranceLeft(): number | null {
+    if (this.snap.mode !== 'endurance' || !this.snap.running) return null;
+    if (this.endStart === null) return this.snap.enduranceSec;
+    return Math.max(0, this.snap.enduranceSec - (heardNow() - this.endStart));
+  }
 
   setLeadWeaker(leadWeaker: boolean): void {
     this.set({ leadWeaker });
@@ -163,6 +209,10 @@ export class Practice {
     this.bars.clear();
     this.barEx.clear();
     this.hits = [];
+    this.endStart = null;
+    this.endPoints = [];
+    this.endTotals = { reps: 0, clean: 0, expected: 0, onTime: 0, offSum: 0, offN: 0 };
+    if (this.snap.report) this.set({ report: null });
     this.metro.configure(this.metroConfig());
     this.metro.start();
     this.lastClock = performance.now();
@@ -194,12 +244,12 @@ export class Practice {
     const bpm = clampBpm(this.snap.bpm + delta);
     if (bpm === this.snap.bpm) return;
     const id = this.snap.exercise.id;
-    this.metro.setBpm(bpm);
     this.set({
       bpm,
       live: { ...this.snap.live, cleanStreak: 0 },
       profile: { ...this.snap.profile, lastBpm: { ...this.snap.profile.lastBpm, [id]: bpm } },
     });
+    this.metro.setBpm(this.snap.playBpm);
   }
 
   hit(ev: InputEvent): void {
@@ -221,6 +271,7 @@ export class Practice {
     const { settings } = this.snap;
     const now = heardNow();
     for (const [bar, beats] of [...this.bars]) {
+      if (!this.snap.running) break; // an endurance run may have just finished
       const ex = this.barEx.get(bar) ?? this.snap.exercise;
       if (beats.length < ex.beatsPerBar) continue;
       const last = beats[beats.length - 1];
@@ -239,15 +290,47 @@ export class Practice {
       const to = end - margin;
       const repHits = this.hits.filter((h) => h.time >= from && h.time < to);
       this.hits = this.hits.filter((h) => h.time >= to);
+      if (this.snap.mode === 'burst' && burstPhase(bar) === 'rest') continue; // rest bar: nothing expected
       // Lanes are enforced for pad exercises; for guitar they stay informational.
       const rep = scoreRep(ex.pattern, slotTimes, repHits, settings.windowMs, { enforceLanes: ex.instrument === 'pads' });
       this.score(rep, beats[0].bpm, ex);
+      if (this.snap.mode === 'endurance') this.trackEndurance(rep, slotTimes, end);
     }
+  }
+
+  private trackEndurance(rep: RepResult, slotTimes: number[], barEnd: number): void {
+    if (this.endStart === null) this.endStart = slotTimes[0];
+    const t = this.endTotals;
+    t.reps++;
+    if (rep.clean) t.clean++;
+    t.expected += rep.expectedCount;
+    t.onTime += rep.onTimeCount;
+    for (const r of rep.slots) {
+      if (!r.hit || r.offsetMs === null) continue;
+      this.endPoints.push({ t: slotTimes[r.index] - this.endStart, offsetMs: r.offsetMs });
+      t.offSum += r.offsetMs;
+      t.offN++;
+    }
+    if (barEnd - this.endStart >= this.snap.enduranceSec) this.finishEndurance();
+  }
+
+  private finishEndurance(): void {
+    const t = this.endTotals;
+    const report: EnduranceReport = {
+      seconds: this.snap.enduranceSec, bpm: this.snap.playBpm,
+      accuracy: t.expected ? Math.round((100 * t.onTime) / t.expected) : null,
+      reps: t.reps, cleanReps: t.clean,
+      meanOffset: t.offN ? Math.round((t.offSum / t.offN) * 10) / 10 : null,
+      drift: driftPer10s(this.endPoints),
+    };
+    this.tickClock();
+    this.halt();
+    this.set({ report });
   }
 
   private score(rep: RepResult, repBpm: number, exercise: Exercise): void {
     const { live, profile, settings } = this.snap;
-    const out = applyRep(live, profile, exercise, repBpm, rep);
+    const out = applyRep(live, profile, exercise, repBpm, rep, this.snap.mode !== 'normal');
     let toast: string | null = null;
     if (out.newBest) toast = `New personal best · ${repBpm} BPM`;
     else if (out.stepped) toast = `Tempo up → ${out.bpm} BPM`;

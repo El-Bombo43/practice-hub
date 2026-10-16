@@ -4,9 +4,11 @@ import { defaultRoutine, type Routine, type RoutineItem } from '../data/routine'
 import { loadData, saveData, type AppData } from '../data/store';
 import { Practice } from '../game/practice';
 import { dateKey, streak } from '../game/progress';
+import { AudioInput } from '../input/audioOnset';
 import { inputBus } from '../input/bus';
 import { attachKeyboard } from '../input/keyboard';
 import { MidiManager } from '../input/midi';
+import { AudioDialog } from './AudioDialog';
 import { LeftPanel } from './LeftPanel';
 import { MidiDialog } from './MidiDialog';
 import { RoutineBar } from './RoutineBar';
@@ -37,8 +39,9 @@ function Loaded({ initial }: { initial: AppData }) {
     return new Practice(initial.profile, initial.settings, exerciseById(it.exerciseId), !!it.burst);
   });
   const snap = useSyncExternalStore(ctrl.subscribe, ctrl.getSnapshot);
-  const [dialog, setDialog] = useState<null | 'settings' | 'midi'>(null);
+  const [dialog, setDialog] = useState<null | 'settings' | 'midi' | 'audio'>(null);
   const [midi] = useState(() => new MidiManager());
+  const [audio] = useState(() => new AudioInput());
   const nextRef = useRef<() => void>(() => {});
   const frozen = useRef(false);
   const latest = useRef<AppData>(initial);
@@ -63,6 +66,11 @@ function Loaded({ initial }: { initial: AppData }) {
     if (initial.settings.midi.deviceId) void midi.init(); // reconnect the remembered device
   }, [ctrl, midi, initial.settings.midi.deviceId]);
   useEffect(() => { midi.setMapping(snap.settings.midi); }, [midi, snap.settings.midi]);
+  useEffect(() => { // reconnect the remembered guitar input (works silently once permission was granted)
+    const a = initial.settings.audio;
+    if (a.deviceId) void audio.start(a.deviceId, a.sensitivity);
+    return () => audio.stop();
+  }, [audio, initial.settings.audio]);
 
   useEffect(() => {
     const r = document.documentElement.style;
@@ -129,7 +137,8 @@ function Loaded({ initial }: { initial: AppData }) {
           onSettings={() => setDialog('settings')}
         />
         <div className="main">
-          <LeftPanel ctrl={ctrl} snap={snap} nextBtn={nextBtn} midi={midi} onRemap={() => setDialog('midi')} />
+          <LeftPanel ctrl={ctrl} snap={snap} nextBtn={nextBtn} midi={midi} onRemap={() => setDialog('midi')}
+            audio={audio} onAudioSetup={() => setDialog('audio')} />
           <div className="right">
             <Timeline ctrl={ctrl} exercise={snap.exercise} last={snap.lastRep} />
             <Stats snap={snap} ctrl={ctrl} />
@@ -145,8 +154,10 @@ function Loaded({ initial }: { initial: AppData }) {
           onClose={() => setDialog(null)}
           freeze={() => { frozen.current = true; }}
           onMidi={() => setDialog('midi')}
+          onAudio={() => setDialog('audio')}
         />
       )}
+      {dialog === 'audio' && <AudioDialog ctrl={ctrl} audio={audio} settings={snap.settings} onClose={() => setDialog(null)} />}
       {dialog === 'midi' && <MidiDialog ctrl={ctrl} midi={midi} settings={snap.settings} onClose={() => setDialog(null)} />}
     </div>
   );

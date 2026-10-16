@@ -1,9 +1,8 @@
-import { useEffect, useRef, useState } from 'react';
-import { Calibrator } from '../audio/calibrator';
+import { useEffect } from 'react';
 import type { Settings } from '../data/store';
 import type { Practice } from '../game/practice';
 import { midiSupported, type LearnKind, type MidiManager, type MidiMapping } from '../input/midi';
-import { CALIBRATION_CLICKS } from '../scoring/calibration';
+import { CalibrationSection } from './CalibrationSection';
 import { useMidi } from './useMidi';
 
 const LEARN_ROWS: { kind: LearnKind; label: string; field: keyof MidiMapping; hit: string; optional?: boolean }[] = [
@@ -13,17 +12,11 @@ const LEARN_ROWS: { kind: LearnKind; label: string; field: keyof MidiMapping; hi
   { kind: 'ccNext', label: 'Footswitch: Next exercise', field: 'ccNext', hit: 'Press the other switch', optional: true },
 ];
 
-type Source = 'keyboard' | 'midi';
-
 export function MidiDialog(props: { ctrl: Practice; midi: MidiManager; settings: Settings; onClose: () => void }) {
   const { ctrl, settings: s } = props;
   const midi = useMidi(props.midi);
   const learning = midi.learningKind;
-  const [cal, setCal] = useState<{ source: Source; clicks: number } | null>(null);
-  const [calMsg, setCalMsg] = useState<Partial<Record<Source, string>>>({});
-  const calibrator = useRef(new Calibrator());
-
-  useEffect(() => () => { calibrator.current.cancel(); midi.cancelLearn(); }, [midi]);
+  useEffect(() => () => { midi.cancelLearn(); }, [midi]);
 
   const setMidi = (patch: Partial<MidiMapping>) => {
     const cur = ctrl.getSnapshot().settings;
@@ -33,29 +26,6 @@ export function MidiDialog(props: { ctrl: Practice; midi: MidiManager; settings:
     const n = await midi.learn(row.kind);
     setMidi({ [row.field]: n });
   };
-  const calibrate = async (source: Source) => {
-    ctrl.pause();
-    if (source === 'midi' && !(await midi.init())) { setCalMsg({ ...calMsg, midi: 'MIDI is not connected.' }); return; }
-    setCal({ source, clicks: 0 });
-    setCalMsg((m) => ({ ...m, [source]: '' }));
-    const r = await calibrator.current.run(
-      source, ctrl.getSnapshot().settings.clickVolume,
-      (n) => setCal({ source, clicks: n }),
-      source === 'midi' ? () => midi.refreshClock() : undefined,
-    );
-    setCal(null);
-    const med = r.medianMs;
-    if (med === null) {
-      setCalMsg((m) => ({ ...m, [source]: `No usable hits (${r.ignored} ignored). Hit along with the click and try again.` }));
-      return;
-    }
-    const now = ctrl.getSnapshot().settings;
-    ctrl.applySettings({ ...now, calibrationMs: { ...now.calibrationMs, [source]: med } });
-    setCalMsg((m) => ({
-      ...m, [source]: `Median ${med > 0 ? '+' : ''}${med} ms from ${r.used} hits (${r.ignored} ignored). Saved.`,
-    }));
-  };
-
   const devices = midi.devices();
   return (
     <div className="overlay" onClick={props.onClose}>
@@ -102,26 +72,7 @@ export function MidiDialog(props: { ctrl: Practice; midi: MidiManager; settings:
         </div>
 
         <hr />
-        <div className="field">
-          <span className="k">Latency calibration: {CALIBRATION_CLICKS} clicks at 90 BPM, hit along with each one</span>
-          {(['keyboard', 'midi'] as const).map((src) => (
-            <div className="field" key={src} style={{ gap: 6 }}>
-              <div className="learn-row">
-                <span className="k">{src === 'keyboard' ? 'Keyboard (F / J)' : 'MIDI pads'}</span>
-                <span className="v">{s.calibrationMs[src]} ms</span>
-                {cal?.source === src ? (
-                  <><span className="msg">Hit along… {cal.clicks}/{CALIBRATION_CLICKS}</span>
-                    <button type="button" className="btn" onClick={() => { calibrator.current.cancel(); setCal(null); }}>Cancel</button></>
-                ) : (
-                  <button type="button" className="btn" disabled={cal !== null} onClick={() => void calibrate(src)}>
-                    {calMsg[src] ? 'Redo' : 'Calibrate'}
-                  </button>
-                )}
-              </div>
-              {calMsg[src] && <span className="cal-result msg" role="status">{calMsg[src]}</span>}
-            </div>
-          ))}
-        </div>
+        <CalibrationSection ctrl={ctrl} settings={s} midi={props.midi} sources={['keyboard', 'midi']} />
         <div className="row"><button type="button" className="btn" onClick={props.onClose}>Close</button></div>
       </div>
     </div>

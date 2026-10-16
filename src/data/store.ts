@@ -10,6 +10,7 @@ export type Settings = {
   gapClick: boolean;
   calibrationMs: { keyboard: number; midi: number; audio: number };
   midi: MidiMapping;
+  audio: { deviceId: string | null; sensitivity: number }; // guitar DI input; sensitivity 0–1
 };
 
 export const ACCENTS = ['#d4ff3a', '#3ee6d4', '#ff4fd8'];
@@ -18,6 +19,7 @@ export const defaultSettings = (): Settings => ({
   accent: ACCENTS[0], clickVolume: 0.6, windowMs: 15, gapClick: false,
   calibrationMs: { keyboard: 0, midi: 0, audio: 0 },
   midi: defaultMidiMapping(),
+  audio: { deviceId: null, sensitivity: 0.6 },
 });
 
 export type AppData = { settings: Settings; profile: Profile; routine: Routine };
@@ -30,6 +32,7 @@ export function normalize(raw: unknown): AppData {
   const settings = { ...defaultSettings(), ...r.settings };
   settings.calibrationMs = { ...defaultSettings().calibrationMs, ...r.settings?.calibrationMs };
   settings.midi = { ...defaultMidiMapping(), ...r.settings?.midi };
+  settings.audio = { ...defaultSettings().audio, ...r.settings?.audio };
   const profile = { ...emptyProfile(), ...r.profile };
   const routine = r.routine && Array.isArray(r.routine.items) && r.routine.items.length
     ? { ...defaultRoutine(), ...r.routine }

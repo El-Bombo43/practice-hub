@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { rampStep, scoreRep, slotTimesFromBeats, updateCombo } from './score';
+import { driftPer10s, rampStep, scoreRep, slotTimesFromBeats, updateCombo } from './score';
 import type { Slot } from '../data/types';
 
 const P: Slot = { play: true };
@@ -119,5 +119,18 @@ describe('slotTimesFromBeats', () => {
   it('derives slot times from per-beat tempo', () => {
     const t = slotTimesFromBeats([{ time: 1, bpm: 120 }, { time: 1.5, bpm: 60 }], 2);
     expect(t).toEqual([1, 1.25, 1.5, 2]);
+  });
+});
+
+describe('driftPer10s', () => {
+  it('slope of offset over time in ms per 10 s', () => {
+    const pts = Array.from({ length: 20 }, (_, i) => ({ t: i * 3, offsetMs: 2 + i * 1.5 })); // +0.5 ms/s
+    expect(driftPer10s(pts)).toBe(5);
+    expect(driftPer10s(pts.map((p) => ({ ...p, offsetMs: 7 })))).toBe(0);
+    expect(driftPer10s(pts.map((p) => ({ ...p, offsetMs: -p.t * 0.2 })))).toBe(-2);
+  });
+  it('null with too few points or no time spread', () => {
+    expect(driftPer10s([{ t: 0, offsetMs: 1 }])).toBeNull();
+    expect(driftPer10s([1, 2, 3, 4].map((o) => ({ t: 5, offsetMs: o })))).toBeNull();
   });
 });
