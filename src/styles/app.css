@@ -221,3 +221,10 @@ input[type='text'] { min-height: 44px; border-radius: 12px; border: 1px solid va
 .table td.n { font-family: var(--font-mono); text-align: right; }
 .empty { color: var(--faded); font-size: 14px; padding: 12px 0; }
 .chart text { font-family: var(--font-mono); font-size: 11px; fill: var(--muted); }
+
+/* stray hits + calibration extras */
+.dot.stray { background: transparent !important; border: 2px dashed var(--muted); }
+.tl-diag { margin: 10px 0 0; font-size: 12px; color: var(--muted); line-height: 1.5; }
+.nudge { display: flex; gap: 6px; }
+.nudge button { min-height: 44px; min-width: 44px; border-radius: 12px; border: 1px solid var(--off); background: var(--bg); font-family: var(--font-mono); font-size: 13px; }
+.warn-text { color: var(--late); }

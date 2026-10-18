@@ -85,6 +85,14 @@ describe('lane enforcement', () => {
   });
 });
 
+describe('strays', () => {
+  it('records each extra with its offset from the nearest expected slot', () => {
+    const r = scoreRep([P, P], times(2), [0, 0.125, 0.125 + 0.09, 0.4], 15);
+    expect(r.extras).toBe(2);
+    expect(r.strays).toEqual([{ slot: 1, offsetMs: 90 }, { slot: 1, offsetMs: 275 }]);
+  });
+});
+
 describe('combo', () => {
   it('counts on-time hits and resets on miss, out-of-window hit or extra', () => {
     const r = updateCombo(0, 0, [true, true, true, false, true, true]);

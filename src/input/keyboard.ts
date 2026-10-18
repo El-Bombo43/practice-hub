@@ -1,4 +1,4 @@
-import { heardNow } from '../audio/clock';
+import { heardTimeOfPerf } from '../audio/clock';
 import type { Lane } from '../data/types';
 import type { InputEvent } from './types';
 
@@ -27,7 +27,8 @@ export function attachKeyboard(opts: {
     const pads = opts.instrument() === 'pads';
     const lane: Lane = key === 'f' ? (pads ? 'L' : 'down') : pads ? 'R' : 'up';
     // Shift = a harder hit (accents in strum patterns); 0.8 otherwise
-    opts.onHit({ time: heardNow(), source: 'keyboard', lane, velocity: e.shiftKey ? 1 : 0.8 });
+    // event.timeStamp is when the key went down, not when this handler got to run
+    opts.onHit({ time: heardTimeOfPerf(e.timeStamp), source: 'keyboard', lane, velocity: e.shiftKey ? 1 : 0.8 });
   };
   // Stop a focused button from also "clicking" on Space keyup.
   const up = (e: KeyboardEvent) => { if (e.code === 'Space' && !typing(e.target)) e.preventDefault(); };

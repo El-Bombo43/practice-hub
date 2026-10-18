@@ -1,4 +1,4 @@
-import { getCtx } from '../audio/clock';
+import { heardTimeOfPerf } from '../audio/clock';
 import type { Lane } from '../data/types';
 import type { InputEvent } from './types';
 import { inputBus } from './bus';
@@ -25,12 +25,6 @@ export function parseMidi(data: ArrayLike<number>): MidiMessage | null {
   return null;
 }
 
-export type ClockMap = { contextTime: number; performanceTime: number };
-
-/** Event timestamp (performance.now ms) → audio-clock seconds. */
-export const perfToAudioTime = (perfMs: number, m: ClockMap): number =>
-  m.contextTime + (perfMs - m.performanceTime) / 1000;
-
 /** Pad hit → lane, or null for a note that isn't mapped. */
 export function laneForNote(note: number, map: Pick<MidiMapping, 'left' | 'right'>): Lane | null {
   return note === map.left ? 'L' : note === map.right ? 'R' : null;
@@ -46,7 +40,6 @@ export const midiSupported = (): boolean => typeof navigator !== 'undefined' && 
 export class MidiManager {
   private access: MIDIAccess | null = null;
   private mapping: MidiMapping = defaultMidiMapping();
-  private clock: ClockMap | null = null;
   private learning: { kind: LearnKind; resolve: (n: number) => void } | null = null;
   private listeners = new Set<() => void>();
   error: string | null = null;
@@ -87,14 +80,6 @@ export class MidiManager {
     const changed = m.deviceId !== this.mapping.deviceId;
     this.mapping = m;
     if (changed) this.emit();
-  }
-
-  /** Re-sync the audio↔performance clock mapping; call once per bar. */
-  refreshClock(): void {
-    const t = getCtx().getOutputTimestamp();
-    if (t.contextTime !== undefined && t.performanceTime !== undefined) {
-      this.clock = { contextTime: t.contextTime, performanceTime: t.performanceTime };
-    }
   }
 
   /** Resolve with the next note number (pads) or CC number (footswitch). */
@@ -140,9 +125,8 @@ export class MidiManager {
     if (this.mapping.deviceId && deviceId !== this.mapping.deviceId) return;
     const lane = laneForNote(msg.note, this.mapping);
     if (!lane) return;
-    if (!this.clock) this.refreshClock();
     const ev: InputEvent = {
-      time: this.clock ? perfToAudioTime(e.timeStamp, this.clock) : getCtx().currentTime,
+      time: heardTimeOfPerf(e.timeStamp), // smoothed performance↔audio mapping (audio/clock.ts)
       source: 'midi', lane, velocity: msg.velocity / 127,
     };
     inputBus.emit(ev);

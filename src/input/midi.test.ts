@@ -1,18 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { laneForNote, parseMidi, perfToAudioTime } from './midi';
-
-describe('perfToAudioTime', () => {
-  const m = { contextTime: 10, performanceTime: 5000 };
-  it('maps performance.now ms onto the audio clock', () => {
-    expect(perfToAudioTime(5000, m)).toBe(10);
-    expect(perfToAudioTime(5250, m)).toBeCloseTo(10.25, 9);
-    expect(perfToAudioTime(4900, m)).toBeCloseTo(9.9, 9); // events earlier than the sample point
-  });
-  it('a re-synced mapping follows clock drift', () => {
-    const drifted = { contextTime: 20.002, performanceTime: 15000 }; // audio clock gained 2 ms
-    expect(perfToAudioTime(15100, drifted)).toBeCloseTo(20.102, 9);
-  });
-});
+import { laneForNote, parseMidi } from './midi';
 
 describe('parseMidi', () => {
   it('note-on with velocity, any channel', () => {

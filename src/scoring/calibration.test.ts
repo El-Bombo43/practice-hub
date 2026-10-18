@@ -31,6 +31,12 @@ describe('calibrationFromHits', () => {
     const hits = [...clicks.map((c) => c + 0.01), clicks[0] + 0.14, clicks[1] + 0.14];
     expect(calibrationFromHits(clicks, hits).medianMs).toBe(10);
   });
+  it('reports how steady the hits were', () => {
+    const steady = calibrationFromHits(clicks, clicks.map((c, i) => c + (30 + (i % 2 ? 1 : -1)) / 1000));
+    const loose = calibrationFromHits(clicks, clicks.map((c, i) => c + (30 + (i % 2 ? 40 : -40)) / 1000));
+    expect(steady.spreadMs).toBe(1);
+    expect(loose.spreadMs).toBe(40);
+  });
   it('returns null with no usable hits', () => {
     expect(calibrationFromHits(clicks, []).medianMs).toBeNull();
     expect(calibrationFromHits(clicks, [clicks[0] + 0.4]).medianMs).toBeNull();

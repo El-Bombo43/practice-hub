@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import { clockStats } from '../audio/clock';
 import { Calibrator } from '../audio/calibrator';
 import type { Settings } from '../data/store';
 import type { Practice } from '../game/practice';
@@ -26,7 +27,6 @@ export function CalibrationSection(props: {
     const r = await calibrator.current.run(
       source, ctrl.getSnapshot().settings.clickVolume,
       (n) => setCal({ source, clicks: n }),
-      source === 'midi' ? () => midi?.refreshClock() : undefined,
     );
     setCal(null);
     const med = r.medianMs;
@@ -36,8 +36,16 @@ export function CalibrationSection(props: {
     }
     const now = ctrl.getSnapshot().settings;
     ctrl.applySettings({ ...now, calibrationMs: { ...now.calibrationMs, [source]: med } });
-    setMsg((m) => ({ ...m, [source]: `Median ${med > 0 ? '+' : ''}${med} ms from ${r.used} hits (${r.ignored} ignored). Saved.` }));
+    const warn = r.used < 8 ? ` Only ${r.used} usable hits: redo it and hit every click.`
+      : (r.spreadMs ?? 0) > 20 ? ` Your hits spread ±${r.spreadMs} ms, so the input timing itself is unsteady; calibration can only fix a constant lean.` : '';
+    setMsg((m) => ({ ...m, [source]: `Median ${med > 0 ? '+' : ''}${med} ms from ${r.used} hits (${r.ignored} ignored, spread ±${r.spreadMs} ms). Saved.${warn}` }));
   };
+  const nudge = (source: CalSource, d: number) => {
+    const now = ctrl.getSnapshot().settings;
+    ctrl.applySettings({ ...now, calibrationMs: { ...now.calibrationMs, [source]: Math.round((now.calibrationMs[source] + d) * 10) / 10 } });
+  };
+  const [stats, setStats] = useState(clockStats());
+  useEffect(() => { const t = setInterval(() => setStats(clockStats()), 1000); return () => clearInterval(t); }, []);
 
   return (
     <div className="field">
@@ -51,14 +59,27 @@ export function CalibrationSection(props: {
               <><span className="msg">Hit along… {cal.clicks}/{CALIBRATION_CLICKS}</span>
                 <button type="button" className="btn" onClick={() => { calibrator.current.cancel(); setCal(null); }}>Cancel</button></>
             ) : (
-              <button type="button" className="btn" disabled={cal !== null} onClick={() => void run(src)}>
-                {msg[src] ? 'Redo' : 'Calibrate'}
-              </button>
+              <>
+                <button type="button" className="btn" disabled={cal !== null} onClick={() => void run(src)}>
+                  {msg[src] ? 'Redo' : 'Calibrate'}
+                </button>
+                <span className="nudge" role="group" aria-label={`Nudge ${LABELS[src]} calibration`}>
+                  {[-5, -1, 1, 5].map((d) => (
+                    <button key={d} type="button" onClick={() => nudge(src, d)}>{d > 0 ? `+${d}` : `−${-d}`}</button>
+                  ))}
+                </span>
+              </>
             )}
           </div>
           {msg[src] && <span className="cal-result msg" role="status">{msg[src]}</span>}
         </div>
       ))}
+      <span className="msg">
+        Positive = your hits came late, so they are moved earlier. Nudge ±1 / ±5 ms to fine-tune.{' '}
+        {stats.samples >= 3
+          ? `Audio output lag ${Math.round(stats.lagMs)} ms, clock jitter ±${stats.jitterMs.toFixed(1)} ms.`
+          : 'Start the click once to measure the audio clock.'}
+      </span>
     </div>
   );
 }

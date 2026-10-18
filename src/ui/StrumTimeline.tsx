@@ -2,6 +2,7 @@ import type { Exercise, Slot } from '../data/types';
 import type { LastRep, Practice } from '../game/practice';
 import { accentStats } from '../scoring/score';
 import { fmtOffset } from './format';
+import { StrayNote } from './StrayNote';
 import { usePlayhead } from './usePlayhead';
 
 const COUNTS: Record<number, string[]> = { 2: ['', '&'], 3: ['', '&', 'a'], 4: ['', 'e', '&', 'a'], 6: ['', 'la', 'li', '&', 'la', 'li'] };
@@ -67,6 +68,10 @@ export function StrumTimeline({ ctrl, exercise, last }: { ctrl: Practice; exerci
                 <div className="cell" style={{ height: 56 }}>
                   {strike && <div className="band" style={{ width: bandW, marginLeft: -bandW / 2, top: 6, bottom: 6 }} />}
                   <div className="line" style={strike ? undefined : { background: 'var(--panel-border)' }} />
+                  {rep?.strays.filter((s) => s.slot === i).map((s, k) => (
+                    <div key={k} className="dot stray" title={`${fmtOffset(s.offsetMs)} ms from this slot`}
+                      style={{ top: 22, width: 12, height: 12, left: `clamp(0px, calc(50% + ${s.offsetMs}px - 6px), calc(100% - 12px))` }} />
+                  ))}
                   {res?.hit && (
                     <div className="dot" style={{
                       top: 22, width: 12, height: 12, background: dot,
@@ -82,6 +87,7 @@ export function StrumTimeline({ ctrl, exercise, last }: { ctrl: Practice; exerci
         </div>
         <div className="playhead" ref={head} aria-hidden="true" />
       </div>
+      <StrayNote rep={rep} windowMs={windowMs} />
       <p className="tl-note">
         Big arrows: strike the strings · faded arrows: keep moving, miss the strings · % under an accent: how much louder it was than the strums around it
         {!rep && ' · start the click and play a bar (hold Shift on the keyboard for an accent)'}

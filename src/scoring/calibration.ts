@@ -2,7 +2,10 @@ export const CALIBRATION_CLICKS = 16;
 export const CALIBRATION_BPM = 90;
 export const CALIBRATION_MAX_OFFSET_MS = 150;
 
-export type CalibrationResult = { medianMs: number | null; used: number; ignored: number };
+export type CalibrationResult = {
+  medianMs: number | null; used: number; ignored: number;
+  spreadMs: number | null; // median absolute deviation of the usable hits: how steady the timing was
+};
 
 export function median(xs: number[]): number | null {
   if (!xs.length) return null;
@@ -28,5 +31,9 @@ export function calibrationFromHits(clicks: number[], hits: number[]): Calibrati
     else offsets.push(best);
   }
   const m = median(offsets);
-  return { medianMs: m === null ? null : Math.round(m * 10) / 10, used: offsets.length, ignored };
+  const spread = m === null ? null : median(offsets.map((o) => Math.abs(o - m)));
+  return {
+    medianMs: m === null ? null : Math.round(m * 10) / 10, used: offsets.length, ignored,
+    spreadMs: spread === null ? null : Math.round((spread as number) * 10) / 10,
+  };
 }

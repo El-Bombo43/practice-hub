@@ -1,4 +1,4 @@
-import { getCtx } from '../audio/clock';
+import { getCtx, outputLag } from '../audio/clock';
 import { inputBus } from './bus';
 import { kFromSensitivity } from './onsetCore';
 import workletUrl from './onsetWorklet.ts?worker&url';
@@ -106,10 +106,9 @@ export class AudioInput {
     if (m.type === 'level') { this.rms = m.rms ?? 0; this.peak = m.peak ?? 0; return; }
     if (m.type === 'channel') { this.channel = m.channel ?? 0; this.emit(); return; }
     if (m.type === 'onset' && m.time !== undefined) {
-      const ctx = getCtx();
-      const lat = ctx.outputLatency || ctx.baseLatency || 0; // same "heard" domain as keyboard hits
       this.lastOnsetAt = performance.now();
-      inputBus.emit({ time: m.time - lat, source: 'audio', velocity: peakToVelocity(m.peak ?? 0) });
+      // the onset sample's render time → "heard" domain (the same one keyboard and MIDI hits are in)
+      inputBus.emit({ time: m.time - outputLag(), source: 'audio', velocity: peakToVelocity(m.peak ?? 0) });
     }
   }
 }

@@ -74,7 +74,6 @@ function Loaded({ initial }: { initial: AppData }) {
       const cur = ctrl.getSnapshot().settings;
       if (cur.midi.deviceId !== id) ctrl.applySettings({ ...cur, midi: { ...cur.midi, deviceId: id } });
     };
-    ctrl.onBarline = () => { if (midi.connected) midi.refreshClock(); };
     if (initial.settings.midi.deviceId) void midi.init(); // reconnect the remembered device
   }, [ctrl, midi, initial.settings.midi.deviceId]);
   useEffect(() => { midi.setMapping(snap.settings.midi); }, [midi, snap.settings.midi]);

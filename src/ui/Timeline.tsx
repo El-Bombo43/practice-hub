@@ -2,6 +2,7 @@ import { hasLanes } from '../data/exercises';
 import type { Exercise, Lane } from '../data/types';
 import type { LastRep, Practice } from '../game/practice';
 import { fmtOffset } from './format';
+import { StrayNote } from './StrayNote';
 import { StrumTimeline } from './StrumTimeline';
 import { usePlayhead } from './usePlayhead';
 
@@ -81,6 +82,10 @@ function HitTimeline({ ctrl, exercise: fallback, last }: { ctrl: Practice; exerc
                 <div className="cell" style={{ height: cellH }}>
                   <div className="band" style={{ width: bandW, marginLeft: -bandW / 2 }} />
                   <div className="line" />
+                  {rep?.strays.filter((s) => s.slot === i).map((s, k) => (
+                    <div key={k} className="dot stray" title={`${fmtOffset(s.offsetMs)} ms from this slot`}
+                      style={{ top: dotTop, left: `clamp(0px, calc(50% + ${s.offsetMs * scale}px - 7px), calc(100% - 14px))` }} />
+                  ))}
                   {res?.hit && (
                     <div
                       className={`dot${res.wrongLane ? ' wrong' : ''}`}
@@ -116,6 +121,7 @@ function HitTimeline({ ctrl, exercise: fallback, last }: { ctrl: Practice; exerc
           </div>
         )}
       </div>
+      <StrayNote rep={rep} windowMs={windowMs} />
       {!rep && <p className="tl-empty">Start the click and play a bar. The first bar is a count-in.</p>}
     </section>
   );

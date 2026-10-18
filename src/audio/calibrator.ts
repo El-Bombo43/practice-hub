@@ -13,7 +13,7 @@ export class Calibrator {
   private unsub: (() => void) | null = null;
 
   async run(
-    source: InputEvent['source'], volume: number, onClick: (n: number) => void, beforeClick?: () => void,
+    source: InputEvent['source'], volume: number, onClick: (n: number) => void,
   ): Promise<CalibrationResult> {
     this.cancel();
     await resumeCtx();
@@ -25,7 +25,6 @@ export class Calibrator {
         { bpm: CALIBRATION_BPM, beatsPerBar: 4, subdivision: 1, volume, gapClick: false },
         (e) => {
           if (clicks.length >= CALIBRATION_CLICKS) return;
-          beforeClick?.();
           clicks.push(e.time);
           onClick(clicks.length);
           if (clicks.length === CALIBRATION_CLICKS) {

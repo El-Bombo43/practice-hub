@@ -19,6 +19,7 @@ export type SlotResult = {
 export type RepResult = {
   slots: SlotResult[];
   extras: number; // hits matching no expected slot (or doubling one)
+  strays: { slot: number; offsetMs: number }[]; // the extras, as offset from their nearest expected slot
   expectedCount: number;
   hitCount: number; // matched hits (in or out of window)
   onTimeCount: number;
@@ -48,6 +49,7 @@ export function scoreRep(
   }));
   const timed: { t: number; ok: boolean }[] = [];
   let extras = 0;
+  const strays: { slot: number; offsetMs: number }[] = [];
 
   const norm: Hit[] = hits.map((h) => (typeof h === 'number' ? { time: h } : h));
   for (const hit of norm.sort((a, b) => a.time - b.time)) {
@@ -60,6 +62,7 @@ export function scoreRep(
     }
     if (best < 0 || round2(bestDt) > range || slots[best].hit) {
       extras++;
+      if (best >= 0) strays.push({ slot: best, offsetMs: round2((h - slotTimes[best]) * 1000) });
       timed.push({ t: h, ok: false });
       continue;
     }
@@ -87,6 +90,7 @@ export function scoreRep(
   return {
     slots,
     extras,
+    strays,
     expectedCount: expectedIdx.length,
     hitCount,
     onTimeCount,
