@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState, useSyncExternalStore } from 'react';
-import { exerciseById } from '../data/exercises';
+import { toExercise, type CustomPattern } from '../data/custom';
+import { exerciseById, findExercise, registerCustom } from '../data/exercises';
 import { defaultRoutine, type Routine, type RoutineItem } from '../data/routine';
 import { loadData, saveData, type AppData } from '../data/store';
 import { Practice } from '../game/practice';
@@ -9,11 +10,14 @@ import { inputBus } from '../input/bus';
 import { attachKeyboard } from '../input/keyboard';
 import { MidiManager } from '../input/midi';
 import { AudioDialog } from './AudioDialog';
+import { History } from './History';
 import { LeftPanel } from './LeftPanel';
 import { MidiDialog } from './MidiDialog';
+import { PatternBuilder } from './PatternBuilder';
 import { RoutineBar } from './RoutineBar';
 import { SettingsDialog } from './SettingsDialog';
 import { Stats } from './Stats';
+import { SummaryDialog } from './SummaryDialog';
 import { Timeline } from './Timeline';
 import { TopBar } from './TopBar';
 
@@ -29,8 +33,15 @@ const hexToRgba = (hex: string, a: number): string => {
 };
 
 function Loaded({ initial }: { initial: AppData }) {
+  // Saved pattern-builder exercises must be registered before anything looks an exercise up.
+  const [custom, setCustom] = useState<CustomPattern[]>(() => {
+    registerCustom(initial.custom.map(toExercise));
+    return initial.custom;
+  });
   const [routine, setRoutine] = useState<Routine>(() => {
-    const r = initial.routine ?? defaultRoutine();
+    const saved = initial.routine ?? defaultRoutine();
+    const items = saved.items.filter((i) => findExercise(i.exerciseId));
+    const r = items.length ? { ...saved, items } : defaultRoutine();
     const step = r.stepDate === dateKey() ? Math.min(r.step, r.items.length - 1) : 0;
     return { ...r, step };
   });
@@ -39,13 +50,14 @@ function Loaded({ initial }: { initial: AppData }) {
     return new Practice(initial.profile, initial.settings, exerciseById(it.exerciseId), !!it.burst);
   });
   const snap = useSyncExternalStore(ctrl.subscribe, ctrl.getSnapshot);
-  const [dialog, setDialog] = useState<null | 'settings' | 'midi' | 'audio'>(null);
+  const [dialog, setDialog] = useState<null | 'settings' | 'midi' | 'audio' | 'builder' | 'summary'>(null);
+  const [view, setView] = useState<'practice' | 'history'>('practice');
   const [midi] = useState(() => new MidiManager());
   const [audio] = useState(() => new AudioInput());
   const nextRef = useRef<() => void>(() => {});
   const frozen = useRef(false);
   const latest = useRef<AppData>(initial);
-  latest.current = { settings: snap.settings, profile: snap.profile, routine };
+  latest.current = { settings: snap.settings, profile: snap.profile, routine, custom };
 
   useEffect(() => attachKeyboard({
     instrument: () => ctrl.getSnapshot().exercise.instrument,
@@ -82,7 +94,7 @@ function Loaded({ initial }: { initial: AppData }) {
   useEffect(() => {
     const t = setTimeout(() => { if (!frozen.current) void saveData(latest.current); }, 800);
     return () => clearTimeout(t);
-  }, [snap.profile, snap.settings, routine]);
+  }, [snap.profile, snap.settings, routine, custom]);
   useEffect(() => {
     const flush = () => { if (!frozen.current) void saveData(latest.current); };
     window.addEventListener('pagehide', flush);
@@ -108,6 +120,25 @@ function Loaded({ initial }: { initial: AppData }) {
     startItem(routine.items[i]);
   };
 
+  const saveCustom = (cp: CustomPattern) => {
+    const next = custom.some((c) => c.id === cp.id) ? custom.map((c) => (c.id === cp.id ? cp : c)) : [...custom, cp];
+    registerCustom(next.map(toExercise));
+    setCustom(next);
+    // an edited pattern that is the current exercise should play its new shape
+    if (routine.items[routine.step].exerciseId === cp.id) startItem(routine.items[routine.step]);
+  };
+  const deleteCustom = (id: string) => {
+    const next = custom.filter((c) => c.id !== id);
+    registerCustom(next.map(toExercise));
+    setCustom(next);
+    const items = routine.items.filter((i) => i.exerciseId !== id);
+    if (items.length === routine.items.length) return;
+    const curUid = routine.items[routine.step].uid;
+    const keep = items.findIndex((i) => i.uid === curUid);
+    commit(items.length ? items : defaultRoutine().items, keep >= 0 ? keep : routine.step);
+  };
+  const goView = (v: 'practice' | 'history') => { if (v === 'history') ctrl.pause(); setView(v); };
+
   nextRef.current = () => { if (routine.step < routine.items.length - 1) select(routine.step + 1); };
 
   const cur = routine.items[routine.step];
@@ -119,7 +150,10 @@ function Loaded({ initial }: { initial: AppData }) {
 
   const nextBtn = timeUp ? (
     isLast ? (
-      <div className="toast" role="status">Routine complete. Keep playing or pick a step.</div>
+      <div className="reps" role="status">
+        <span className="label">Routine complete</span>
+        <button type="button" className="next-btn" style={{ margin: 0 }} onClick={() => setDialog('summary')}>See summary</button>
+      </div>
     ) : (
       <button type="button" className="next-btn" onClick={() => select(routine.step + 1)}>Time's up · Next →</button>
     )
@@ -135,16 +169,22 @@ function Loaded({ initial }: { initial: AppData }) {
           steps={routine.items.length}
           minLeft={minLeft}
           onSettings={() => setDialog('settings')}
+          view={view}
+          onView={goView}
         />
-        <div className="main">
-          <LeftPanel ctrl={ctrl} snap={snap} nextBtn={nextBtn} midi={midi} onRemap={() => setDialog('midi')}
-            audio={audio} onAudioSetup={() => setDialog('audio')} />
-          <div className="right">
-            <Timeline ctrl={ctrl} exercise={snap.exercise} last={snap.lastRep} />
-            <Stats snap={snap} ctrl={ctrl} />
-          </div>
-        </div>
-        <RoutineBar routine={routine} onSelect={select} onChange={commit} />
+        {view === 'history' ? <History profile={snap.profile} /> : (
+          <>
+            <div className="main">
+              <LeftPanel ctrl={ctrl} snap={snap} nextBtn={nextBtn} midi={midi} onRemap={() => setDialog('midi')}
+                audio={audio} onAudioSetup={() => setDialog('audio')} onBuilder={() => setDialog('builder')} />
+              <div className="right">
+                <Timeline ctrl={ctrl} exercise={snap.exercise} last={snap.lastRep} />
+                <Stats snap={snap} ctrl={ctrl} />
+              </div>
+            </div>
+            <RoutineBar routine={routine} onSelect={select} onChange={commit} onBuilder={() => setDialog('builder')} />
+          </>
+        )}
       </div>
       {dialog === 'settings' && (
         <SettingsDialog
@@ -156,6 +196,12 @@ function Loaded({ initial }: { initial: AppData }) {
           onMidi={() => setDialog('midi')}
           onAudio={() => setDialog('audio')}
         />
+      )}
+      {dialog === 'builder' && (
+        <PatternBuilder saved={custom} onSave={saveCustom} onDelete={deleteCustom} onClose={() => setDialog(null)} />
+      )}
+      {dialog === 'summary' && (
+        <SummaryDialog profile={snap.profile} sessionXp={snap.sessionXp} sessionPbs={snap.sessionPbs} onClose={() => setDialog(null)} />
       )}
       {dialog === 'audio' && <AudioDialog ctrl={ctrl} audio={audio} settings={snap.settings} onClose={() => setDialog(null)} />}
       {dialog === 'midi' && <MidiDialog ctrl={ctrl} midi={midi} settings={snap.settings} onClose={() => setDialog(null)} />}

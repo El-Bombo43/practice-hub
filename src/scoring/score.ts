@@ -143,3 +143,27 @@ export function driftPer10s(points: { t: number; offsetMs: number }[]): number |
   if (den === 0) return null;
   return Math.round((num / den) * 10 * 10) / 10;
 }
+
+export const ACCENT_MIN_RISE = 0.15;
+export type AccentResult = { index: number; pct: number | null; landed: boolean }; // pct: fraction louder than the other strums
+
+/**
+ * Accent loudness = accent peak / mean peak of the non-accent strums in the same bar − 1.
+ * An accent lands when it is at least 15% louder. Missed or velocity-less accents have pct null.
+ */
+export function accentStats(pattern: Slot[], slots: SlotResult[]): AccentResult[] {
+  const others: number[] = [];
+  pattern.forEach((p, i) => {
+    const r = slots[i];
+    if (p.play && !p.ghost && !p.accent && r.hit && r.velocity !== undefined) others.push(r.velocity);
+  });
+  const mean = others.length ? others.reduce((a, b) => a + b, 0) / others.length : 0;
+  const out: AccentResult[] = [];
+  pattern.forEach((p, i) => {
+    if (!p.accent || !p.play) return;
+    const r = slots[i];
+    const pct = r.hit && r.velocity !== undefined && mean > 0 ? r.velocity / mean - 1 : null;
+    out.push({ index: i, pct, landed: pct !== null && pct >= ACCENT_MIN_RISE - 1e-9 });
+  });
+  return out;
+}

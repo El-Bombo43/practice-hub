@@ -3,7 +3,7 @@ import type { Lane } from '../data/types';
 import type { InputEvent } from './types';
 
 /**
- * Keyboard simulator, always on: F = left / downstroke, J = right / upstroke, Space = start/pause.
+ * Keyboard simulator, always on: F = left / downstroke, J = right / upstroke (hold Shift for an accent), Space = start/pause.
  * Lanes are informational in session 1.
  */
 export function attachKeyboard(opts: {
@@ -26,7 +26,8 @@ export function attachKeyboard(opts: {
     if (key !== 'f' && key !== 'j') return;
     const pads = opts.instrument() === 'pads';
     const lane: Lane = key === 'f' ? (pads ? 'L' : 'down') : pads ? 'R' : 'up';
-    opts.onHit({ time: heardNow(), source: 'keyboard', lane, velocity: 0.8 });
+    // Shift = a harder hit (accents in strum patterns); 0.8 otherwise
+    opts.onHit({ time: heardNow(), source: 'keyboard', lane, velocity: e.shiftKey ? 1 : 0.8 });
   };
   // Stop a focused button from also "clicking" on Space keyup.
   const up = (e: KeyboardEvent) => { if (e.code === 'Space' && !typing(e.target)) e.preventDefault(); };

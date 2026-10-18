@@ -6,7 +6,7 @@ import workletUrl from './onsetWorklet.ts?worker&url';
 export type AudioDevice = { id: string; name: string };
 
 /** Peak frame RMS (0–1) → InputEvent velocity (0–1). Linear in amplitude, so ratios between strokes stay meaningful. */
-export const peakToVelocity = (peak: number): number => Math.min(1, peak * 3);
+export const peakToVelocity = (peak: number): number => Math.min(1, peak * 2);
 
 /** Guitar DI input: getUserMedia → AudioWorklet onset detector → InputEvents on the bus. */
 export class AudioInput {

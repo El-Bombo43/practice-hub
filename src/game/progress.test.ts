@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { applyRep, balance, burstBpm, burstPhase, drumTip, evenness, pickTip, emptyLive, emptyProfile, level, streak, tip, type Live } from './progress';
+import { applyRep, strumTip, balance, burstBpm, burstPhase, drumTip, evenness, pickTip, emptyLive, emptyProfile, level, streak, tip, type Live } from './progress';
 import { scoreRep } from '../scoring/score';
 import { exerciseById } from '../data/exercises';
 
@@ -161,5 +161,29 @@ describe('burst and frozen tempo', () => {
     expect(p.personalBests[ex.id]).toBe(80);
     expect(p.lastBpm[ex.id]).toBe(80);
     expect(live.cleanStreak).toBe(0);
+  });
+});
+
+describe('strum accents', () => {
+  const ex = exerciseById('strum-16th-accents');
+  const times = Array.from({ length: 16 }, (_, i) => i * 0.125);
+  const bar = (accentVel: number) => {
+    const hits = ex.pattern.flatMap((s, i) => (s.play && !s.ghost ? [{ time: times[i], velocity: s.accent ? accentVel : 0.5 }] : []));
+    return scoreRep(ex.pattern, times, hits, 15);
+  };
+  it('counts accents landed across bars', () => {
+    let live = emptyLive();
+    let p = emptyProfile();
+    for (const v of [0.7, 0.52]) { const o = applyRep(live, p, ex, 80, bar(v)); live = o.live; p = o.profile; }
+    expect(live.accents).toMatchObject({ landed: 2, total: 4 }); // bar 1: both land (+40%); bar 2: +4%, neither
+  });
+  it('tip names the beat of the weakest accent once it is below +15% for 2 bars', () => {
+    let live = emptyLive();
+    let p = emptyProfile();
+    for (let i = 0; i < 2; i++) { const o = applyRep(live, p, ex, 80, bar(0.52)); live = o.live; p = o.profile; }
+    const t = strumTip(live, ex);
+    expect(t.title).toBe('Beat-2 accent is getting lost'); // slot 5 (index 4) is beat 2; ties go to the first
+    expect(t.text).toContain('Only 4% louder');
+    expect(strumTip(emptyLive(), ex).tone).toBe('idle');
   });
 });

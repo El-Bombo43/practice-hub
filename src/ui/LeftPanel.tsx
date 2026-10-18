@@ -11,7 +11,7 @@ const KIND_NAMES = { picking: 'Alternate picking', strum: 'Strumming', rudiment:
 
 export function LeftPanel(props: {
   ctrl: Practice; snap: Snapshot; nextBtn: React.ReactNode; midi: MidiManager; onRemap: () => void;
-  audio: AudioInput; onAudioSetup: () => void;
+  audio: AudioInput; onAudioSetup: () => void; onBuilder: () => void;
 }) {
   const { ctrl, snap, nextBtn, onRemap } = props;
   const midi = useMidi(props.midi);
@@ -52,7 +52,8 @@ export function LeftPanel(props: {
         <span className="eyebrow">{ex.instrument === 'guitar' ? 'Guitar' : 'Pads'} · {KIND_NAMES[ex.kind]}</span>
         <h1 className="ex-name">{ex.name}</h1>
       </div>
-      <div>
+      <div className="tempo-wrap">
+        {snap.xpFlash && <span key={snap.xpFlash.key} className="xp-flash" aria-hidden="true">+{snap.xpFlash.xp} XP</span>}
         <div className="tempo">{bpm}</div>
         <div className="tempo-sub">
           BPM · {SUB_NAMES[ex.subdivision]}
@@ -118,6 +119,7 @@ export function LeftPanel(props: {
       <div className="toggles">
         <button type="button" className="toggle" aria-pressed={settings.gapClick}
           onClick={() => ctrl.applySettings({ ...settings, gapClick: !settings.gapClick })}>Gap click</button>
+        {ex.kind === 'strum' && <button type="button" className="toggle" onClick={props.onBuilder}>Pattern builder</button>}
         {ex.instrument === 'pads' && (
           <button type="button" className="toggle" aria-pressed={snap.leadWeaker}
             onClick={() => ctrl.setLeadWeaker(!snap.leadWeaker)}>Lead with weaker hand</button>

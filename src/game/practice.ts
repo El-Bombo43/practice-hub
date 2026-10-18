@@ -6,7 +6,7 @@ import type { Settings } from '../data/store';
 import type { InputEvent } from '../input/types';
 import { driftPer10s, scoreRep, slotTimesFromBeats, type Hit, type RepResult } from '../scoring/score';
 import {
-  applyRep, balance, burstBpm, burstPhase, clampBpm, dateKey, emptyLive, upsertLog, accuracyPct, type Hand, type Live, type Profile,
+  applyRep, balance, burstBpm, burstPhase, clampBpm, dateKey, emptyLive, level, upsertLog, accuracyPct, type Hand, type Live, type Profile,
 } from './progress';
 
 export type Mode = 'normal' | 'burst' | 'endurance';
@@ -34,6 +34,8 @@ export type Snapshot = {
   sessionXp: number;
   elapsedSec: number; // practice time on the current routine step
   toast: string | null;
+  xpFlash: { key: number; xp: number } | null; // brief "+XP" after a clean rep
+  sessionPbs: number;
 };
 // `exercise` in the snapshot is the effective one: the routine's exercise, mirrored when leading with the weaker hand.
 
@@ -64,6 +66,7 @@ export class Practice {
   private lastClock = 0;
   private stintId = '';
   private toastTimer: ReturnType<typeof setTimeout> | null = null;
+  private flashTimer: ReturnType<typeof setTimeout> | null = null;
 
   constructor(profile: Profile, settings: Settings, exercise: Exercise, burst = false) {
     this.base = exercise;
@@ -73,7 +76,7 @@ export class Practice {
       running: false, leadWeaker: false, exercise: eff, subOptions: allowedSubdivisions(exercise),
       mode: burst && exercise.instrument === 'guitar' ? 'burst' : 'normal', enduranceSec: 30, report: null, playBpm: 0,
       bpm: profile.lastBpm[eff.id] ?? eff.startBpm, settings,
-      live: emptyLive(), lastRep: null, profile, sessionXp: 0, elapsedSec: 0, toast: null,
+      live: emptyLive(), lastRep: null, profile, sessionXp: 0, elapsedSec: 0, toast: null, xpFlash: null, sessionPbs: 0,
     };
     this.snap.playBpm = this.computePlayBpm(this.snap);
     this.stintId = String(Date.now());
@@ -332,7 +335,8 @@ export class Practice {
     const { live, profile, settings } = this.snap;
     const out = applyRep(live, profile, exercise, repBpm, rep, this.snap.mode !== 'normal');
     let toast: string | null = null;
-    if (out.newBest) toast = `New personal best · ${repBpm} BPM`;
+    if (level(out.profile.xp) > level(profile.xp)) toast = `Level up · Lv ${level(out.profile.xp)}`;
+    else if (out.newBest) toast = `New personal best · ${repBpm} BPM`;
     else if (out.stepped) toast = `Tempo up → ${out.bpm} BPM`;
     if (out.bpm !== this.snap.bpm) this.metro.setBpm(out.bpm, true);
     this.set({
@@ -341,12 +345,18 @@ export class Practice {
       bpm: out.bpm,
       lastRep: { rep, bpm: repBpm, windowMs: settings.windowMs, exercise },
       sessionXp: this.snap.sessionXp + out.xpGain,
+      sessionPbs: this.snap.sessionPbs + (out.newBest ? 1 : 0),
+      xpFlash: rep.clean ? { key: Date.now(), xp: out.xpGain } : this.snap.xpFlash,
       toast,
     });
+    if (rep.clean) {
+      if (this.flashTimer) clearTimeout(this.flashTimer);
+      this.flashTimer = setTimeout(() => this.set({ xpFlash: null }), 1400);
+    }
     this.syncMirror(this.snap.leadWeaker, balance(out.live)?.weaker ?? null);
     if (toast) {
       if (this.toastTimer) clearTimeout(this.toastTimer);
-      this.toastTimer = setTimeout(() => this.set({ toast: null }), 2500);
+      this.toastTimer = setTimeout(() => this.set({ toast: null }), 3000);
     }
   }
 

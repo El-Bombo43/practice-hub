@@ -1,11 +1,12 @@
 import { useState } from 'react';
-import { EXERCISES, exerciseById } from '../data/exercises';
+import { allExercises, exerciseById, isCustom } from '../data/exercises';
 import { newUid, type Routine, type RoutineItem } from '../data/routine';
 
 export function RoutineBar(props: {
   routine: Routine;
   onSelect: (i: number) => void;
   onChange: (items: RoutineItem[], step: number) => void;
+  onBuilder: () => void;
 }) {
   const { routine, onSelect, onChange } = props;
   const [editing, setEditing] = useState(false);
@@ -36,14 +37,15 @@ export function RoutineBar(props: {
         <h2 className="section-title">Today's routine</h2>
         <div>
           <button type="button" className="link-btn muted" onClick={() => setEditing(!editing)}>{editing ? 'Done editing' : 'Edit'}</button>
+          <button type="button" className="link-btn muted" onClick={props.onBuilder}>Pattern builder</button>
           <button type="button" className="link-btn" onClick={() => setAdding(!adding)}>+ Add exercise</button>
         </div>
       </div>
       {adding && (
         <div className="add-list">
-          {EXERCISES.map((e) => (
+          {allExercises().map((e) => (
             <button type="button" key={e.id} onClick={() => add(e.id)}>
-              {e.name} <span className="mono" style={{ color: 'var(--muted)' }}>· {e.instrument === 'guitar' ? 'Guitar' : 'Pads'} · {e.minutes}m</span>
+              {e.name} <span className="mono" style={{ color: 'var(--muted)' }}>· {e.instrument === 'guitar' ? 'Guitar' : 'Pads'} · {e.minutes}m{isCustom(e.id) ? ' · custom' : ''}</span>
             </button>
           ))}
         </div>
@@ -71,7 +73,7 @@ export function RoutineBar(props: {
                     <button type="button" onClick={() => move(i, 1)} disabled={i === items.length - 1} aria-label="Move down">↓</button>
                     <button type="button" onClick={() => remove(i)} disabled={items.length <= 1} aria-label="Remove">✕</button>
                     <select value={it.exerciseId} aria-label="Swap exercise" onChange={(e) => swap(i, e.target.value)}>
-                      {EXERCISES.filter((e) => e.instrument === ex.instrument).map((e) => (
+                      {allExercises().filter((e) => e.instrument === ex.instrument).map((e) => (
                         <option key={e.id} value={e.id}>{e.name}</option>
                       ))}
                     </select>

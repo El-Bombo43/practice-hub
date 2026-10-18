@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { driftPer10s, rampStep, scoreRep, slotTimesFromBeats, updateCombo } from './score';
+import { accentStats, driftPer10s, rampStep, scoreRep, slotTimesFromBeats, updateCombo } from './score';
 import type { Slot } from '../data/types';
 
 const P: Slot = { play: true };
@@ -132,5 +132,30 @@ describe('driftPer10s', () => {
   it('null with too few points or no time spread', () => {
     expect(driftPer10s([{ t: 0, offsetMs: 1 }])).toBeNull();
     expect(driftPer10s([1, 2, 3, 4].map((o) => ({ t: 5, offsetMs: o })))).toBeNull();
+  });
+});
+
+describe('accentStats', () => {
+  const A: Slot = { play: true, accent: true };
+  const hitsAt = (vels: number[]) => vels.map((v, i) => ({ time: i * 0.125, velocity: v }));
+  it('accent % = accent peak / mean peak of the other strums − 1; lands at +15%', () => {
+    const pattern = [P, A, P, A];
+    const rep = scoreRep(pattern, times(4), hitsAt([0.5, 0.6, 0.5, 0.57]), 15);
+    const [a1, a2] = accentStats(pattern, rep.slots);
+    expect(a1.index).toBe(1);
+    expect(a1.pct).toBeCloseTo(0.2, 9);
+    expect(a1.landed).toBe(true);
+    expect(a2.pct).toBeCloseTo(0.14, 9);
+    expect(a2.landed).toBe(false);
+  });
+  it('exactly +15% lands; ghosts and rests are not part of the mean', () => {
+    const pattern = [P, G, A];
+    const rep = scoreRep(pattern, times(3), [{ time: 0, velocity: 0.4 }, { time: 0.25, velocity: 0.46 }], 15);
+    expect(accentStats(pattern, rep.slots)[0].landed).toBe(true);
+  });
+  it('a missed accent, or no velocity data, is not landed', () => {
+    const pattern = [P, A];
+    expect(accentStats(pattern, scoreRep(pattern, times(2), [{ time: 0, velocity: 0.5 }], 15).slots)[0]).toEqual({ index: 1, pct: null, landed: false });
+    expect(accentStats(pattern, scoreRep(pattern, times(2), [0, 0.125], 15).slots)[0].pct).toBeNull();
   });
 });

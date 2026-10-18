@@ -1,6 +1,6 @@
 import type { Practice, Snapshot } from '../game/practice';
-import { accuracyPct, balance, drumTip, evenness, meanOffset, pickTip } from '../game/progress';
-import { fmtOffset } from './Timeline';
+import { accuracyPct, balance, drumTip, evenness, meanOffset, pickTip, strumTip } from '../game/progress';
+import { fmtOffset } from './format';
 
 export function Stats({ snap, ctrl }: { snap: Snapshot; ctrl: Practice }) {
   const { live, sessionXp } = snap;
@@ -8,7 +8,8 @@ export function Stats({ snap, ctrl }: { snap: Snapshot; ctrl: Practice }) {
   const acc = accuracyPct(live);
   const mean = meanOffset(live);
   const bal = balance(live);
-  const t = pads ? drumTip(live, snap.leadWeaker) : pickTip(live);
+  const strum = snap.exercise.kind === 'strum';
+  const t = pads ? drumTip(live, snap.leadWeaker) : strum ? strumTip(live, snap.exercise) : pickTip(live);
   const ev = pads ? null : evenness(live);
   const r = snap.report;
   return (
@@ -35,9 +36,10 @@ export function Stats({ snap, ctrl }: { snap: Snapshot; ctrl: Practice }) {
       </section>
     )}
     <section className="panel stats">
-      <div className="stat"><span className="k">Accuracy</span><span className="v">{acc === null ? '–' : `${acc}%`}</span></div>
+      <div className="stat"><span className="k">{strum ? 'Timing' : 'Accuracy'}</span><span className="v">{acc === null ? '–' : `${acc}%`}</span></div>
+      {strum && <div className="stat"><span className="k">Accents landed</span><span className="v">{live.accents.landed}/{live.accents.total}</span></div>}
       <div className="stat"><span className="k">Combo · best {live.bestCombo}</span><span className="v">×{live.combo}</span></div>
-      {pads ? (
+      {strum ? null : pads ? (
         <div className="stat"><span className="k">L / R balance</span><span className="v">{bal ? `${bal.pct}%` : '–'}</span></div>
       ) : (
         <div className="stat"><span className="k">Avg offset</span><span className="v">{mean === null ? '–' : `${fmtOffset(mean)} ms`}</span></div>

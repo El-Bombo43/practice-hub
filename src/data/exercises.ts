@@ -8,7 +8,7 @@ const downUp = alt('down', 'up');
 const picking = (n: number): Slot[] => Array.from({ length: n }, (_, i) => ({ play: true, lane: downUp(i) }));
 
 /** Build a pattern from a string of chars: 'x' play, 'X' accent, 'g' ghost, '-' rest. */
-function fromString(s: string, lane: (i: number) => Lane | undefined): Slot[] {
+export function fromString(s: string, lane: (i: number) => Lane | undefined): Slot[] {
   return [...s].map((c, i) => {
     const l = lane(i);
     if (c === 'x') return { play: true, lane: l };
@@ -67,8 +67,15 @@ export const EXERCISES: Exercise[] = [
   pads('pads-gallop', 'Gallop on pads (R RL)', 4, gallopPads, 80, 3),
 ];
 
+let custom: Exercise[] = [];
+/** Replace the user's saved pattern-builder exercises (call before rendering anything that looks them up). */
+export const registerCustom = (list: Exercise[]): void => { custom = list; };
+export const allExercises = (): Exercise[] => [...EXERCISES, ...custom];
+export const isCustom = (id: string): boolean => custom.some((e) => e.id === id);
+export const findExercise = (id: string): Exercise | undefined => allExercises().find((e) => e.id === id);
+
 export const exerciseById = (id: string): Exercise => {
-  const ex = EXERCISES.find((e) => e.id === id);
+  const ex = findExercise(id);
   if (!ex) throw new Error(`Unknown exercise ${id}`);
   return ex;
 };

@@ -1,17 +1,21 @@
-import { useEffect, useRef } from 'react';
 import { hasLanes } from '../data/exercises';
 import type { Exercise, Lane } from '../data/types';
 import type { LastRep, Practice } from '../game/practice';
+import { fmtOffset } from './format';
+import { StrumTimeline } from './StrumTimeline';
+import { usePlayhead } from './usePlayhead';
 
 const ARROW: Record<Lane, string> = { down: '↓', up: '↑', L: 'L', R: 'R' };
 const TOP_LANES: Lane[] = ['down', 'R']; // down / right hand on the top row
 
-export const fmtOffset = (ms: number): string => {
-  const r = Math.round(ms);
-  return r === 0 ? '0' : r > 0 ? `+${r}` : `−${Math.abs(r)}`;
-};
+export { fmtOffset };
 
-export function Timeline({ ctrl, exercise: fallback, last }: { ctrl: Practice; exercise: Exercise; last: LastRep | null }) {
+export function Timeline(props: { ctrl: Practice; exercise: Exercise; last: LastRep | null }) {
+  const exercise = props.last?.exercise ?? props.exercise;
+  return exercise.kind === 'strum' ? <StrumTimeline {...props} exercise={exercise} /> : <HitTimeline {...props} />;
+}
+
+function HitTimeline({ ctrl, exercise: fallback, last }: { ctrl: Practice; exercise: Exercise; last: LastRep | null }) {
   const exercise = last?.exercise ?? fallback;
   const cols = exercise.pattern.length;
   const dense = cols > 8;
@@ -23,23 +27,7 @@ export function Timeline({ ctrl, exercise: fallback, last }: { ctrl: Practice; e
   const bandW = Math.max(8, 2 * windowMs * scale);
   const rep = last?.rep;
   const wrong = rep ? rep.slots.filter((s) => s.wrongLane).length : 0;
-  const head = useRef<HTMLDivElement>(null);
-  // The playhead sweeps once per bar, in step with the click. Updated off-React, once per frame.
-  useEffect(() => {
-    let raf = 0;
-    const loop = () => {
-      const el = head.current;
-      if (el) {
-        const p = ctrl.position();
-        const x = (p * cols + 0.5) / cols; // slot i sits at its column centre
-        el.style.visibility = p < 0 || x > 1 ? 'hidden' : 'visible';
-        el.style.left = `${x * 100}%`;
-      }
-      raf = requestAnimationFrame(loop);
-    };
-    raf = requestAnimationFrame(loop);
-    return () => cancelAnimationFrame(raf);
-  }, [ctrl, cols]);
+  const head = usePlayhead(ctrl, cols);
   const grid = { gridTemplateColumns: `repeat(${cols}, minmax(0, 1fr))` };
 
   return (

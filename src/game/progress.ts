@@ -1,5 +1,5 @@
 import type { Exercise } from '../data/types';
-import { rampStep, updateCombo, type RepResult } from '../scoring/score';
+import { accentStats, rampStep, updateCombo, type RepResult } from '../scoring/score';
 
 export const XP_PER_LEVEL = 1000;
 export const STREAK_MINUTES = 10;
@@ -45,11 +45,13 @@ export type Live = {
   bestCleanBpm: number | null;
   hands: Record<Hand, HandStats>; // pad exercises only: velocity and offset per hand
   strokes: Record<Stroke, HandStats>; // guitar: velocity (peak) and offset per stroke direction
+  accents: { landed: number; total: number; bySlot: Record<number, { sum: number; n: number }> }; // strum accents
 };
 
 export const emptyLive = (): Live => ({
   combo: 0, bestCombo: 0, cleanStreak: 0, reps: 0, expected: 0, onTime: 0, offsetSum: 0, offsetN: 0,
   bestCleanBpm: null, hands: { L: emptyHand(), R: emptyHand() }, strokes: { down: emptyHand(), up: emptyHand() },
+  accents: { landed: 0, total: 0, bySlot: {} },
 });
 
 export const MIN_BPM = 30;
@@ -100,6 +102,16 @@ export function applyRep(
     if (r.offsetMs !== null) { h.offSum += r.offsetMs; h.offN++; }
   }
 
+  const accents = { landed: live.accents.landed, total: live.accents.total, bySlot: { ...live.accents.bySlot } };
+  for (const a of accentStats(ex.pattern, rep.slots)) {
+    accents.total++;
+    if (a.landed) accents.landed++;
+    if (a.pct !== null) {
+      const cur = accents.bySlot[a.index] ?? { sum: 0, n: 0 };
+      accents.bySlot[a.index] = { sum: cur.sum + a.pct, n: cur.n + 1 };
+    }
+  }
+
   const nextLive: Live = {
     combo: c.combo,
     bestCombo: c.best,
@@ -112,6 +124,7 @@ export function applyRep(
     bestCleanBpm: rep.clean ? Math.max(live.bestCleanBpm ?? 0, bpm) : live.bestCleanBpm,
     hands,
     strokes,
+    accents,
   };
   const nextProfile: Profile = {
     ...profile,
@@ -265,3 +278,22 @@ export function pickTip(live: Live): Tip {
 /** Burst: 3 bars at clean max + 8 BPM, then 1 bar rest, repeating. Bars are numbered from 1 (0 is the count-in). */
 export const burstPhase = (bar: number): 'play' | 'rest' => ((bar - 1) % 4 === 3 ? 'rest' : 'play');
 export const burstBpm = (cleanMax: number | undefined, current: number): number => clampBpm((cleanMax ?? current) + 8);
+
+/** Strum tip: the weakest accent below +15% (after at least 2 bars), otherwise the picking rules. */
+export function strumTip(live: Live, ex: Exercise): Tip {
+  let worst: { slot: number; mean: number } | null = null;
+  for (const [slot, v] of Object.entries(live.accents.bySlot)) {
+    if (v.n < 2) continue;
+    const mean = v.sum / v.n;
+    if (worst === null || mean < worst.mean) worst = { slot: Number(slot), mean };
+  }
+  if (worst && worst.mean < 0.15) {
+    const beat = Math.floor(worst.slot / ex.subdivision) + 1;
+    return {
+      tone: 'late',
+      title: `Beat-${beat} accent is getting lost`,
+      text: `Only ${Math.max(0, Math.round(worst.mean * 100))}% louder than the strums around it. Dig in on the ${beat} without rushing the last upstroke.`,
+    };
+  }
+  return pickTip(live);
+}

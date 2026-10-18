@@ -1,10 +1,17 @@
 import { level, xpInLevel, XP_PER_LEVEL } from '../game/progress';
 
-export function TopBar(props: { xp: number; streak: number; step: number; steps: number; minLeft: number; onSettings: () => void }) {
+export function TopBar(props: {
+  xp: number; streak: number; step: number; steps: number; minLeft: number; onSettings: () => void;
+  view: 'practice' | 'history'; onView: (v: 'practice' | 'history') => void;
+}) {
   const xp = xpInLevel(props.xp);
   return (
     <header className="topbar">
       <span className="brand">Practice Hub</span>
+      <nav className="tabs" aria-label="Screens">
+        <button type="button" className="tab" aria-pressed={props.view === 'practice'} onClick={() => props.onView('practice')}>Practice</button>
+        <button type="button" className="tab" aria-pressed={props.view === 'history'} onClick={() => props.onView('history')}>History</button>
+      </nav>
       <div className="level">
         <span className="pill">Lv {level(props.xp)}</span>
         <div className="xpbar" role="img" aria-label={`${xp} of ${XP_PER_LEVEL} XP`}>
@@ -18,7 +25,7 @@ export function TopBar(props: { xp: number; streak: number; step: number; steps:
         </svg>
         <b>{props.streak}</b><span>day streak</span>
       </div>
-      <span className="step-info">Step {props.step}/{props.steps} · {props.minLeft} min left</span>
+      {props.view === 'practice' && <span className="step-info">Step {props.step}/{props.steps} · {props.minLeft} min left</span>}
       <button type="button" className="icon-btn" onClick={props.onSettings} aria-label="Settings">⚙</button>
     </header>
   );

@@ -28,3 +28,5 @@
   --vel-r: #6b6b72; /* pad velocity bars */
   --vel-l: #c8c8cc;
 }
+
+:root { --arrow-ghost: #5c5c62; }
