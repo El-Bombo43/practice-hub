@@ -13,6 +13,7 @@ export function AudioDialog(props: { ctrl: Practice; audio: AudioInput; settings
   const [devices, setDevices] = useState<AudioDevice[]>([]);
   const bar = useRef<HTMLDivElement>(null);
   const peak = useRef<HTMLDivElement>(null);
+  const readout = useRef<HTMLSpanElement>(null);
 
   const setAudio = (patch: Partial<Settings['audio']>) => {
     const cur = ctrl.getSnapshot().settings;
@@ -29,6 +30,10 @@ export function AudioDialog(props: { ctrl: Practice; audio: AudioInput; settings
       if (bar.current) {
         bar.current.style.width = `${dbToPct(db(audio.rms))}%`;
         bar.current.style.background = performance.now() - audio.lastOnsetAt < 150 ? 'var(--accent)' : 'var(--grid)';
+      }
+      if (readout.current) {
+        const d = audio.lastPeak > 0 ? Math.round(20 * Math.log10(audio.lastPeak)) : null;
+        readout.current.textContent = `Picks detected: ${audio.picks}${d === null ? '' : ` · last pick ${d} dB`}`;
       }
       if (peak.current) peak.current.style.left = `${dbToPct(db(audio.peak))}%`;
       raf = requestAnimationFrame(loop);
@@ -70,6 +75,8 @@ export function AudioDialog(props: { ctrl: Practice; audio: AudioInput; settings
         <div className="field">
           <span className="k">Level — the bar lights up on each detected pick</span>
           <div className="meter" aria-hidden="true"><div ref={bar} className="meter-bar" /><div ref={peak} className="meter-peak" /></div>
+          <span className="msg" ref={readout} role="status" />
+          <span className="msg">Pick each string in turn: every pick should add one to the count. If a string is missed, raise Sensitivity; if one pick counts twice, lower it.</span>
           <div className="learn-row">
             <span className="k">Channel</span>
             <span className="v">{audio.channel === null ? (audio.active ? 'measuring…' : '–') : `${audio.channel + 1}`}</span>

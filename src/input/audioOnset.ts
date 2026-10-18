@@ -21,6 +21,8 @@ export class AudioInput {
   rms = 0;
   peak = 0;
   lastOnsetAt = 0; // performance.now of the last detection, for the meter flash
+  picks = 0; // detections since the input started
+  lastPeak = 0; // loudness of the last pick (0–1 RMS)
   active = false;
 
   subscribe = (l: () => void): (() => void) => {
@@ -109,6 +111,8 @@ export class AudioInput {
     if (m.type === 'channel') { this.channel = m.channel ?? 0; this.emit(); return; }
     if (m.type === 'onset' && m.time !== undefined) {
       this.lastOnsetAt = performance.now();
+      this.picks++;
+      this.lastPeak = m.peak ?? 0;
       // the onset sample's render time → "heard" domain (the same one keyboard and MIDI hits are in)
       inputBus.emit({ time: m.time - outputLag(), source: 'audio', velocity: peakToVelocity(m.peak ?? 0) });
     }

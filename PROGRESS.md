@@ -1,15 +1,12 @@
 # Progress
 
-## Sessions 1–3 — done
-Scaffold + Pages deploy, metronome (count-in, gap click, playhead sweep, count switch), 13 exercises, scoring, routine, XP/level/streak/combo/PBs, IndexedDB + JSON backup; MIDI pads (learn mode, footswitch, enforced lanes, drum screen, balance tips); guitar audio onset input (worklet + pure detector), stroke evenness, burst and endurance modes; per-source latency calibration.
-## Session 4 — done (78 tests; build passes; nothing hardware- or browser-tested)
-- Strum screen per `design/strum.html` (arrows, timing dot, 1 e & a count, accent %). Accent % = accent peak / mean non-accent peak − 1; lands at ≥ +15%; stat "Accents landed x/y" (cumulative per exercise); tip names the weakest beat after 2 bars. Keyboard: hold Shift for an accent (velocity 1.0 vs 0.8).
-- Pattern builder (8ths/16ths; rest → strike → accent → ghost; parity directions), saved in IndexedDB + backup, appears in the library and routine; invalid saved patterns are dropped on load.
-- History tab: clean-max line (SVG, running max per day), 8-week streak calendar, this week's minutes per instrument, recent sessions. Polish: level-up/PB/tempo toasts (3 s), +XP flash on clean reps, empty states, end-of-routine summary.
-## Timing fixes
-All input times now go through `audio/clock.ts`: keyboard/MIDI use `event.timeStamp`, mapped to the audio clock with the *median* of many `getOutputTimestamp()` readings (replaces the per-bar re-sync and the raw `currentTime − outputLatency`, which jitter by a buffer or more); audio onsets subtract the median output lag. Hits too far from any slot ("strays") are now drawn as dashed rings with an explanation (steady lean = latency, both sides = jitter). Calibration reports spread and warns, and has ±1/±5 ms nudge buttons plus a clock readout. Needs re-testing on the real devices; re-run calibration once after updating.
-Reproduced doubles/misses with a plucked-string test signal (decaying harmonics of 82–196 Hz + noise transient, hum, long sustain, palm mutes); the old full-band detector failed 9/9. Now: detection on a 1 kHz high-passed band (loudness still from the 80 Hz path), rise measured against the recent average instead of the previous frame, refractory = half a slot (35–80 ms, set from the tempo). 36 detector tests pass. "Re-center" bar: when an input's last ≥12 hits (strays within 150 ms included) sit ≥6 ms from the click, one click shifts its calibration to centre them. Click scheduling lookahead 150 ms; late-scheduled clicks are counted and shown ("Click glitch").
+## Sessions 1–4 — done (99 tests; build passes; nothing hardware- or browser-tested)
+Scaffold + Pages deploy, metronome (count-in, gap click, playhead sweep, count switch), 13 exercises, scoring, routine, XP/level/streak/combo/PBs, IndexedDB + JSON backup. MIDI pads (learn mode, footswitch, enforced lanes, drum screen, balance tips). Guitar audio input (worklet + pure detector), stroke evenness, burst/endurance. Strum screen with accent scoring (Shift = accent on keyboard), pattern builder, History tab, toasts/+XP flash/end-of-routine summary.
+## Timing fixes after real-device testing
+- Clock: `audio/clock.ts` maps `event.timeStamp` (keyboard/MIDI) to the audio clock with the median of many `getOutputTimestamp()` readings; audio onsets subtract the median output lag. Replaces the plan's per-bar MIDI re-sync. Lookahead 150 ms; late clicks are counted and shown as "Click glitch".
+- Stray hits (beyond ±max(2×window, 60 ms)) show as dashed rings with a note; calibration reports spread and has ±1/±5 ms nudges; a "Re-center" bar shifts an input's calibration from the last ≥12 real hits.
+- Detector (`onsetCore.ts`): three bands (low <300 Hz with a long frame, mid 300–1200, high >1200), each judged against its own 1 s history and its recent average (not the previous frame); refractory = half a slot (35–80 ms); cap 24 dB. Tests use plucked-string signals (82–330 Hz, hum, sustain, palm mutes, dull low E). A first low-E note right after loud high-E notes can still be missed.
 ## Decisions
-- Audio velocity = frame-RMS peak × 2 (clips at 0.5 RMS). Continuous clock smoothing replaces the plan's "recompute the mapping each bar".
+- Audio velocity = frame-RMS peak × 2 (clips at 0.5 RMS). Stroke direction = the matched slot's lane.
 ## Known issues / next
-- Untested with real hardware or in a browser; verify strum accents with the Scarlett and tune sensitivity. Plan complete: next ideas are real-device tuning, burst/endurance history, a pads accent/ghost mode.
+- Tune on the real Scarlett/pads: use the pick counter in Guitar input. Ideas: burst/endurance history, pads accent mode.
