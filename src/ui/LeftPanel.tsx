@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import type { Practice, Snapshot } from '../game/practice';
+import { recentUnderrun } from '../audio/clock';
 import type { AudioInput } from '../input/audioOnset';
 import type { MidiManager } from '../input/midi';
 import { useAudio } from './useAudio';
@@ -33,6 +34,7 @@ export function LeftPanel(props: {
           : info.phase === 'count-in' ? { text: 'Burst · count-in', rest: false }
           : { text: `Burst · bar ${((info.bar - 1) % 4) + 1} of 3`, rest: false };
       } else if (info?.phase === 'count-in') next = { text: 'Count-in', rest: false };
+      if (ctrl.getSnapshot().running && recentUnderrun()) next = { text: 'Click glitch: this tab was busy, timing may be off', rest: false };
       setStatus((cur) => (cur?.text === next?.text && cur?.rest === next?.rest ? cur : next));
       raf = requestAnimationFrame(loop);
     };

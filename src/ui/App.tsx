@@ -6,10 +6,12 @@ import { loadData, saveData, type AppData } from '../data/store';
 import { Practice } from '../game/practice';
 import { dateKey, streak } from '../game/progress';
 import { AudioInput } from '../input/audioOnset';
+import { useAudio } from './useAudio';
 import { inputBus } from '../input/bus';
 import { attachKeyboard } from '../input/keyboard';
 import { MidiManager } from '../input/midi';
 import { AudioDialog } from './AudioDialog';
+import { CenterBar } from './CenterBar';
 import { History } from './History';
 import { LeftPanel } from './LeftPanel';
 import { MidiDialog } from './MidiDialog';
@@ -54,6 +56,7 @@ function Loaded({ initial }: { initial: AppData }) {
   const [view, setView] = useState<'practice' | 'history'>('practice');
   const [midi] = useState(() => new MidiManager());
   const [audio] = useState(() => new AudioInput());
+  useAudio(audio);
   const nextRef = useRef<() => void>(() => {});
   const frozen = useRef(false);
   const latest = useRef<AppData>(initial);
@@ -77,6 +80,10 @@ function Loaded({ initial }: { initial: AppData }) {
     if (initial.settings.midi.deviceId) void midi.init(); // reconnect the remembered device
   }, [ctrl, midi, initial.settings.midi.deviceId]);
   useEffect(() => { midi.setMapping(snap.settings.midi); }, [midi, snap.settings.midi]);
+  useEffect(() => { // dead time after a pick = half a slot (35–80 ms)
+    const slotMs = 60000 / snap.playBpm / snap.exercise.subdivision;
+    audio.setRefractoryMs(Math.min(80, Math.max(35, slotMs / 2)));
+  }, [audio, audio.active, snap.playBpm, snap.exercise.subdivision]);
   useEffect(() => { // reconnect the remembered guitar input (works silently once permission was granted)
     const a = initial.settings.audio;
     if (a.deviceId) void audio.start(a.deviceId, a.sensitivity);
@@ -178,6 +185,7 @@ function Loaded({ initial }: { initial: AppData }) {
                 audio={audio} onAudioSetup={() => setDialog('audio')} onBuilder={() => setDialog('builder')} />
               <div className="right">
                 <Timeline ctrl={ctrl} exercise={snap.exercise} last={snap.lastRep} />
+                <CenterBar snap={snap} ctrl={ctrl} />
                 <Stats snap={snap} ctrl={ctrl} />
               </div>
             </div>

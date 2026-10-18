@@ -79,6 +79,7 @@ export function CalibrationSection(props: {
         {stats.samples >= 3
           ? `Audio output lag ${Math.round(stats.lagMs)} ms, clock jitter ±${stats.jitterMs.toFixed(1)} ms.`
           : 'Start the click once to measure the audio clock.'}
+        {stats.underruns > 0 ? ` The click was scheduled late ${stats.underruns} time(s): the tab was busy.` : ''}
       </span>
     </div>
   );

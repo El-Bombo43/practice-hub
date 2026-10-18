@@ -81,9 +81,15 @@ export function heardTimeOfPerf(perfMs: number): number {
 export const heardNow = (): number => heardTimeOfPerf(performance.now());
 
 /** For the diagnostics readout. */
-export function clockStats(): { samples: number; lagMs: number; jitterMs: number; calibrated: boolean } {
-  return { samples: offsets.length, lagMs: outputLag() * 1000, jitterMs: offsetJitter * 1000, calibrated: offsetMed !== null };
+export function clockStats(): { samples: number; lagMs: number; jitterMs: number; calibrated: boolean; underruns: number } {
+  return { samples: offsets.length, lagMs: outputLag() * 1000, jitterMs: offsetJitter * 1000, calibrated: offsetMed !== null, underruns };
 }
+
+let underruns = 0;
+let lastUnderrunAt = 0;
+/** The metronome scheduled a click after its time had already passed (the page was busy). */
+export function noteUnderrun(): void { underruns++; lastUnderrunAt = performance.now(); }
+export const recentUnderrun = (withinMs = 4000): boolean => underruns > 0 && performance.now() - lastUnderrunAt < withinMs;
 
 export function stopClock(): void {
   if (sampler) clearInterval(sampler);

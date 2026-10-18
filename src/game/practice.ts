@@ -1,4 +1,5 @@
 import { heardNow, resumeCtx } from '../audio/clock';
+import { median } from '../scoring/calibration';
 import { Metronome, type BeatEvent } from '../audio/metronome';
 import { allowedSubdivisions, firstLane, mirrorExercise, withSubdivision } from '../data/exercises';
 import type { Exercise } from '../data/types';
@@ -35,6 +36,7 @@ export type Snapshot = {
   elapsedSec: number; // practice time on the current routine step
   toast: string | null;
   xpFlash: { key: number; xp: number } | null; // brief "+XP" after a clean rep
+  centering: { source: InputEvent['source']; medianMs: number; n: number } | null; // where this input's recent hits sit vs the click
   sessionPbs: number;
 };
 // `exercise` in the snapshot is the effective one: the routine's exercise, mirrored when leading with the weaker hand.
@@ -67,6 +69,7 @@ export class Practice {
   private stintId = '';
   private toastTimer: ReturnType<typeof setTimeout> | null = null;
   private flashTimer: ReturnType<typeof setTimeout> | null = null;
+  private recentOffsets = new Map<InputEvent['source'], number[]>(); // post-calibration offsets of recent hits
 
   constructor(profile: Profile, settings: Settings, exercise: Exercise, burst = false) {
     this.base = exercise;
@@ -76,7 +79,7 @@ export class Practice {
       running: false, leadWeaker: false, exercise: eff, subOptions: allowedSubdivisions(exercise),
       mode: burst && exercise.instrument === 'guitar' ? 'burst' : 'normal', enduranceSec: 30, report: null, playBpm: 0,
       bpm: profile.lastBpm[eff.id] ?? eff.startBpm, settings,
-      live: emptyLive(), lastRep: null, profile, sessionXp: 0, elapsedSec: 0, toast: null, xpFlash: null, sessionPbs: 0,
+      live: emptyLive(), lastRep: null, profile, sessionXp: 0, elapsedSec: 0, toast: null, xpFlash: null, sessionPbs: 0, centering: null,
     };
     this.snap.playBpm = this.computePlayBpm(this.snap);
     this.stintId = String(Date.now());
@@ -212,6 +215,8 @@ export class Practice {
     this.bars.clear();
     this.barEx.clear();
     this.hits = [];
+    this.recentOffsets.clear();
+    if (this.snap.centering) this.set({ centering: null });
     this.endStart = null;
     this.endPoints = [];
     this.endTotals = { reps: 0, clean: 0, expected: 0, onTime: 0, offSum: 0, offN: 0 };
@@ -258,7 +263,7 @@ export class Practice {
   hit(ev: InputEvent): void {
     if (!this.snap.running) return;
     const cal = this.snap.settings.calibrationMs[ev.source] ?? 0;
-    this.hits.push({ time: ev.time - cal / 1000, lane: ev.lane, velocity: ev.velocity });
+    this.hits.push({ time: ev.time - cal / 1000, lane: ev.lane, velocity: ev.velocity, source: ev.source });
   }
 
   private onBeat(e: BeatEvent): void {
@@ -297,8 +302,41 @@ export class Practice {
       // Lanes are enforced for pad exercises; for guitar they stay informational.
       const rep = scoreRep(ex.pattern, slotTimes, repHits, settings.windowMs, { enforceLanes: ex.instrument === 'pads' });
       this.score(rep, beats[0].bpm, ex);
+      this.trackCentering(rep, repHits);
       if (this.snap.mode === 'endurance') this.trackEndurance(rep, slotTimes, end);
     }
+  }
+
+  /**
+   * Remember where this input's hits sit relative to the click, strays included (up to 150 ms), so the
+   * player can re-centre the calibration from real playing instead of re-running the tap test.
+   */
+  private trackCentering(rep: RepResult, repHits: Hit[]): void {
+    const counts = new Map<string, number>();
+    for (const h of repHits) if (h.source) counts.set(h.source, (counts.get(h.source) ?? 0) + 1);
+    const top = [...counts.entries()].sort((a, b) => b[1] - a[1])[0];
+    if (!top) return;
+    const source = top[0] as InputEvent['source'];
+    const offs = [
+      ...rep.slots.flatMap((s) => (s.hit && s.offsetMs !== null ? [s.offsetMs] : [])),
+      ...rep.strays.map((s) => s.offsetMs),
+    ].filter((o) => Math.abs(o) <= 150);
+    const list = [...(this.recentOffsets.get(source) ?? []), ...offs].slice(-64);
+    this.recentOffsets.set(source, list);
+    const med = list.length >= 12 ? median(list) : null;
+    this.set({ centering: med === null ? null : { source, medianMs: Math.round(med * 10) / 10, n: list.length } });
+  }
+
+  /** Shift an input's calibration so its recent hits centre on the click. */
+  recenter(): void {
+    const c = this.snap.centering;
+    if (!c) return;
+    const s = this.snap.settings;
+    this.recentOffsets.delete(c.source);
+    this.set({
+      centering: null,
+      settings: { ...s, calibrationMs: { ...s.calibrationMs, [c.source]: Math.round((s.calibrationMs[c.source] + c.medianMs) * 10) / 10 } },
+    });
   }
 
   private trackEndurance(rep: RepResult, slotTimes: number[], barEnd: number): void {

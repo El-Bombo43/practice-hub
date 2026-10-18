@@ -1,4 +1,4 @@
-import { getCtx, heardNow } from './clock';
+import { getCtx, heardNow, noteUnderrun } from './clock';
 
 export type BeatEvent = {
   time: number; // audio-clock seconds the beat is scheduled for
@@ -15,7 +15,7 @@ export type MetronomeConfig = {
   gapClick: boolean; // 2 bars on, 1 bar muted (after the count-in)
 };
 
-const LOOKAHEAD_S = 0.1;
+const LOOKAHEAD_S = 0.15; // a little over the 100 ms plan: survives longer main-thread stalls
 const INTERVAL_MS = 25;
 
 export class Metronome {
@@ -106,6 +106,7 @@ export class Metronome {
   }
 
   private scheduleTick(t: number): void {
+    if (t < getCtx().currentTime - 0.003) noteUnderrun(); // this click will sound late
     if (this.sub === 0 && this.pending && (!this.pending.atBar || this.beat === 0)) {
       this.bpm = this.pending.bpm;
       this.pending = null;

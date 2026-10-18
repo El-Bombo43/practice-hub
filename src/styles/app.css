@@ -228,3 +228,6 @@ input[type='text'] { min-height: 44px; border-radius: 12px; border: 1px solid va
 .nudge { display: flex; gap: 6px; }
 .nudge button { min-height: 44px; min-width: 44px; border-radius: 12px; border: 1px solid var(--off); background: var(--bg); font-family: var(--font-mono); font-size: 13px; }
 .warn-text { color: var(--late); }
+
+.center-bar { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; padding: 14px 20px; border-color: var(--accent); font-size: 14px; }
+.center-bar span { flex: 1 1 280px; line-height: 1.45; }

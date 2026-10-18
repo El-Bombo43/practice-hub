@@ -8,7 +8,7 @@ declare class AudioWorkletProcessor {
 }
 declare function registerProcessor(name: string, ctor: new () => AudioWorkletProcessor): void;
 
-type ConfigMsg = { type: 'config'; k?: number; channel?: number | 'auto' } | { type: 'relock' };
+type ConfigMsg = { type: 'config'; k?: number; refractoryMs?: number; channel?: number | 'auto' } | { type: 'relock' };
 
 const LEVEL_EVERY = 2048; // samples between level reports (~43 ms)
 
@@ -30,6 +30,7 @@ class OnsetProcessor extends AudioWorkletProcessor {
       if (m.type === 'relock') { this.locked = -1; this.energy = []; this.lockSamples = 0; }
       else {
         if (m.k !== undefined) this.det.setSensitivityDb(m.k);
+        if (m.refractoryMs !== undefined) this.det.setRefractoryMs(m.refractoryMs);
         if (m.channel !== undefined) { this.channel = m.channel; this.locked = -1; this.energy = []; this.lockSamples = 0; }
       }
     };

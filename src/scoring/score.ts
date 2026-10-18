@@ -1,7 +1,7 @@
 import type { Lane, Slot } from '../data/types';
 
 /** A scored input. Plain numbers (seconds) are accepted too, for lane-less callers. */
-export type Hit = { time: number; lane?: Lane; velocity?: number };
+export type Hit = { time: number; lane?: Lane; velocity?: number; source?: string };
 export type ScoreOptions = { enforceLanes?: boolean };
 
 export type SlotResult = {

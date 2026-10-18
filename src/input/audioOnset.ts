@@ -98,6 +98,8 @@ export class AudioInput {
     this.rms = this.peak = 0;
   }
 
+  /** Dead time after a pick: about half a slot of the current exercise, so fast playing still gets through. */
+  setRefractoryMs(ms: number): void { this.node?.port.postMessage({ type: 'config', refractoryMs: ms }); }
   setSensitivity(s: number): void { this.node?.port.postMessage({ type: 'config', k: kFromSensitivity(s) }); }
   /** Re-measure which channel carries the guitar: play for one second afterwards. */
   relock(): void { this.channel = null; this.node?.port.postMessage({ type: 'relock' }); this.emit(); }
