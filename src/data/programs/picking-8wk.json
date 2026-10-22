@@ -1,0 +1,6750 @@
+{
+ "schema": "practice-program/v1",
+ "program": {
+  "id": "picking-8wk-2026",
+  "title": "8-Week Picking Program",
+  "techniques": {
+   "alternate": "Alternate",
+   "economy": "Economy",
+   "sweep": "Sweep",
+   "skipping": "String skipping"
+  },
+  "week1Monday": "2026-10-19",
+  "kickoff": "2026-10-22",
+  "end": "2026-12-13",
+  "phases": [
+   {
+    "n": 1,
+    "name": "Measure & Find",
+    "weeks": [
+     1,
+     2
+    ],
+    "goal": "Get your baseline, find your natural escape motion, start sweeping from zero."
+   },
+   {
+    "n": 2,
+    "name": "Connect",
+    "weeks": [
+     3,
+     4
+    ],
+    "goal": "String changes in chunks, 3-string sweeps with a roll, first combo licks."
+   },
+   {
+    "n": 3,
+    "name": "Extend",
+    "weeks": [
+     5,
+     6
+    ],
+    "goal": "Full-neck economy, 5-string sweeps, Gilbert-style skips."
+   },
+   {
+    "n": 4,
+    "name": "Integrate",
+    "weeks": [
+     7,
+     8
+    ],
+    "goal": "Combo licks at your target tempo, write your own lick, record a performance take."
+   }
+  ],
+  "rules": [
+   "Go up a tempo step (+4-6 bpm, smaller near your ceiling) after 4 clean reps in a row with tension at 3/10 or lower.",
+   "Advance to the next exercise after 3 of 3 clean tries at the target tempo, on two different days.",
+   "Advance to the next phase when at least 3 of 4 techniques meet their targets. If they don't, repeat the second week of the phase. That's normal.",
+   "Drop back a level if tension goes above 5/10, if anything hurts, or if video shows stringhopping.",
+   "Stuck at 130-150 bpm 16ths? Film it. If it's stringhopping, go back to the motion lab instead of grinding the metronome.",
+   "Judge progress the next day, never at the end of a session."
+  ],
+  "safety": [
+   "Stop if tension reaches 5/10. Shake out, adjust your arm, try again.",
+   "Breaks mean guitar down, not noodling.",
+   "If pain lasts past the session, or you get numbness or tingling, rest several days and see a clinician if it continues."
+  ]
+ },
+ "exercises": {
+  "A1": {
+   "id": "A1",
+   "name": "Tremolo Motion Test",
+   "technique": "alternate",
+   "purpose": "Find a smooth, fast single-string motion.",
+   "how": "Fret B8. Pick constant 16ths with a light grip. Try a wrist-led motion, a forearm-rotation motion and an elbow-led motion for a few seconds each. Keep whichever feels easiest and sounds most even.",
+   "tempo": "No click. You're looking for a smooth motion at roughly 130-150 bpm 16ths or faster.",
+   "cue": "Listen for an even buzz, like a sewing machine.",
+   "next": "Once one motion feels easy, use it on A2.",
+   "tabs": [
+    {
+     "label": "Constant 16ths, D U D U",
+     "tab": "B|-8-8-8-8-8-8-8-8-|\n   D U D U D U D U"
+    }
+   ],
+   "source": "Troy Grady, Cracking the Code",
+   "hub": {
+    "subdivision": 4,
+    "scorable": true,
+    "strokes": [
+     [
+      "D",
+      "U",
+      "D",
+      "U",
+      "D",
+      "U",
+      "D",
+      "U"
+     ]
+    ]
+   }
+  },
+  "A2": {
+   "id": "A2",
+   "name": "One-String Sixes",
+   "technique": "alternate",
+   "purpose": "Sync the two hands and feel the downstroke 'chunk' land on each beat.",
+   "how": "Loop the six notes as sextuplets, starting on a downstroke. Accent the first note of each group.",
+   "tempo": "Start where it's clean. +4-6 bpm after 4 clean reps.",
+   "cue": "Accent lands squarely on the beat.",
+   "next": "Play it on the B and G strings too.",
+   "tabs": [
+    {
+     "label": "Loop as sextuplets",
+     "tab": "e|-12-10-8-10-12-10-|\n   D  U  D U  D  U"
+    }
+   ],
+   "source": "Grady 'chunking'",
+   "hub": {
+    "subdivision": 6,
+    "scorable": true,
+    "strokes": [
+     [
+      "D",
+      "U",
+      "D",
+      "U",
+      "D",
+      "U"
+     ]
+    ]
+   }
+  },
+  "A3": {
+   "id": "A3",
+   "name": "Two-String Escape Finder",
+   "technique": "alternate",
+   "purpose": "Find out whether you naturally escape on downstrokes or upstrokes.",
+   "how": "Play version a starting on a downstroke and version b starting on an upstroke, both strict alternate. Whichever is smoother at speed shows your main escape direction. Write it in your notes.",
+   "tempo": "Click on after the motion lab. +4-6 bpm after 4 clean reps.",
+   "cue": "The pick lands on the next string without catching.",
+   "next": "Do the descending version and note which start feels clean.",
+   "tabs": [
+    {
+     "label": "a: start on a downstroke",
+     "tab": "e|-------5-7-8-|\nB|-5-6-8-------|\n   D U D U D U"
+    },
+    {
+     "label": "b: same notes, start on an upstroke",
+     "tab": "e|-------5-7-8-|\nB|-5-6-8-------|\n   U D U D U D"
+    },
+    {
+     "label": "Descending",
+     "tab": "e|-8-7-5-------|\nB|-------8-6-5-|\n   D U D U D U"
+    }
+   ],
+   "source": "Grady, escape motion / pickslanting",
+   "hub": {
+    "subdivision": 6,
+    "scorable": true,
+    "strokes": [
+     [
+      "D",
+      "U",
+      "D",
+      "U",
+      "D",
+      "U"
+     ],
+     [
+      "U",
+      "D",
+      "U",
+      "D",
+      "U",
+      "D"
+     ],
+     [
+      "D",
+      "U",
+      "D",
+      "U",
+      "D",
+      "U"
+     ]
+    ]
+   }
+  },
+  "A4": {
+   "id": "A4",
+   "name": "Pentatonic Sixes (Chunked)",
+   "technique": "alternate",
+   "purpose": "Two-note-per-string crossings across three strings.",
+   "how": "A minor pentatonic, 5th position. Practice the first six notes as one chunk, then the way back, then join them like frames in a flipbook.",
+   "tempo": "Clean tempo first, then +4-6 bpm.",
+   "cue": "Each chunk feels like one motion.",
+   "next": "Extend to all six strings.",
+   "tabs": [
+    {
+     "label": "Up and back as sextuplets",
+     "tab": "e|---------5-8-8-5---------|\nB|-----5-8---------8-5-----|\nG|-5-7-----------------7-5-|\n   D U D U D U D U D U D U"
+    }
+   ],
+   "source": "Grady, chunking analysis",
+   "hub": {
+    "subdivision": 6,
+    "scorable": true,
+    "strokes": [
+     [
+      "D",
+      "U",
+      "D",
+      "U",
+      "D",
+      "U",
+      "D",
+      "U",
+      "D",
+      "U",
+      "D",
+      "U"
+     ]
+    ]
+   }
+  },
+  "A5": {
+   "id": "A5",
+   "name": "3-Note-per-String Fragment",
+   "technique": "alternate",
+   "purpose": "Petrucci-style scale fragment that builds toward long runs.",
+   "how": "A minor, 3 notes per string on the top three strings. Strict alternate, up then down.",
+   "tempo": "+4-6 bpm after 4 clean reps.",
+   "cue": "Even 16ths across every string change.",
+   "next": "Full 6-string 3nps scale, then sequences in groups of 4.",
+   "tabs": [
+    {
+     "label": "Ascending",
+     "tab": "e|-------------------13-15-17-|\nB|----------13-15-17----------|\nG|-12-14-16-------------------|\n   D  U  D  U  D  U  D  U  D"
+    },
+    {
+     "label": "Descending",
+     "tab": "e|-17-15-13-------------------|\nB|----------17-15-13----------|\nG|-------------------16-14-12-|\n   D  U  D  U  D  U  D  U  D"
+    }
+   ],
+   "source": "John Petrucci, Rock Discipline",
+   "hub": {
+    "subdivision": 6,
+    "scorable": true,
+    "strokes": [
+     [
+      "D",
+      "U",
+      "D",
+      "U",
+      "D",
+      "U",
+      "D",
+      "U",
+      "D"
+     ],
+     [
+      "D",
+      "U",
+      "D",
+      "U",
+      "D",
+      "U",
+      "D",
+      "U",
+      "D"
+     ]
+    ]
+   }
+  },
+  "A6": {
+   "id": "A6",
+   "name": "Cross-String Spider",
+   "technique": "alternate",
+   "purpose": "Cross-string accuracy: a string change after every single note.",
+   "how": "One finger per fret on each pair of strings, walking across the neck. Start every group of four on a downstroke. Watch the picking hand.",
+   "tempo": "Slow and consistent. Don't hurry.",
+   "cue": "Every note equally loud.",
+   "next": "Add string skips (play the pairs as E-D, A-G, D-B, G-e).",
+   "tabs": [
+    {
+     "label": "Walk across, then back",
+     "tab": "e|-----------------------------------6---8-|\nB|---------------------------6---8-5---7---|\nG|-------------------6---8-5---7-----------|\nD|-----------6---8-5---7-------------------|\nA|---6---8-5---7---------------------------|\nE|-5---7-----------------------------------|\n   D U D U D U D U D U D U D U D U D U D U"
+    }
+   ],
+   "source": "Adapted from JustinGuitar's 'Spider'",
+   "hub": {
+    "subdivision": 4,
+    "scorable": true,
+    "strokes": [
+     [
+      "D",
+      "U",
+      "D",
+      "U",
+      "D",
+      "U",
+      "D",
+      "U",
+      "D",
+      "U",
+      "D",
+      "U",
+      "D",
+      "U",
+      "D",
+      "U",
+      "D",
+      "U",
+      "D",
+      "U"
+     ]
+    ]
+   }
+  },
+  "E1": {
+   "id": "E1",
+   "name": "Two-String Economy",
+   "technique": "economy",
+   "purpose": "Learn the rest-stroke sweep at a string change.",
+   "how": "Going up, the second downstroke keeps moving from B into e and rests on e before it sounds. Coming down, the same thing happens with upstrokes.",
+   "tempo": "Medium tempo. The rhythm has to stay even through the sweep.",
+   "cue": "No flam (two notes bunching up) at the string change.",
+   "next": "Move on to E2 (three strings).",
+   "tabs": [
+    {
+     "label": "Ascending: D U D | D U D",
+     "tab": "e|-------5-7-8-|\nB|-5-6-8-------|\n   D U D D U D"
+    },
+    {
+     "label": "Descending: U D U | U D U",
+     "tab": "e|-8-7-5-------|\nB|-------8-6-5-|\n   U D U U D U"
+    }
+   ],
+   "source": "Frank Gambale; Guitar World (Chris Brooks)",
+   "hub": {
+    "subdivision": 6,
+    "scorable": true,
+    "strokes": [
+     [
+      "D",
+      "U",
+      "D",
+      "D",
+      "U",
+      "D"
+     ],
+     [
+      "U",
+      "D",
+      "U",
+      "U",
+      "D",
+      "U"
+     ]
+    ]
+   }
+  },
+  "E2": {
+   "id": "E2",
+   "name": "Three-String Economy",
+   "technique": "economy",
+   "purpose": "One-way economy across three strings (Gambale-style).",
+   "how": "D U D on every string going up, sweeping at each string change. U D U on every string coming down.",
+   "tempo": "Same tempo rules as E1. Listen for flams at the sweeps.",
+   "cue": "Each sweep sounds like two even notes, not a strum.",
+   "next": "Move on to E3 (all six strings).",
+   "tabs": [
+    {
+     "label": "Ascending",
+     "tab": "e|-------------5-7-8-|\nB|-------5-6-8-------|\nG|-4-5-7-------------|\n   D U D D U D D U D"
+    },
+    {
+     "label": "Descending",
+     "tab": "e|-8-7-5-------------|\nB|-------8-6-5-------|\nG|-------------7-5-4-|\n   U D U U D U U D U"
+    }
+   ],
+   "source": "Frank Gambale",
+   "hub": {
+    "subdivision": 6,
+    "scorable": true,
+    "strokes": [
+     [
+      "D",
+      "U",
+      "D",
+      "D",
+      "U",
+      "D",
+      "D",
+      "U",
+      "D"
+     ],
+     [
+      "U",
+      "D",
+      "U",
+      "U",
+      "D",
+      "U",
+      "U",
+      "D",
+      "U"
+     ]
+    ]
+   }
+  },
+  "E3": {
+   "id": "E3",
+   "name": "Full-Neck Economy Scale",
+   "technique": "economy",
+   "purpose": "Switch pickslant every time the direction changes (two-way economy).",
+   "how": "A minor, 3 notes per string across all six strings. D U D on every string going up, U D U coming down. Accent each beat.",
+   "tempo": "Aim for a clean tempo within about 10% of your A5 clean tempo.",
+   "cue": "Accent the beat, keep the rest smooth.",
+   "next": "Play Combo 2 at tempo.",
+   "tabs": [
+    {
+     "label": "Ascending (descend U D U per string)",
+     "tab": "e|--------------------------------7-8-10-|\nB|-------------------------6-8-10--------|\nG|-------------------5-7-9---------------|\nD|-------------5-7-9---------------------|\nA|-------5-7-8---------------------------|\nE|-5-7-8---------------------------------|\n   D U D D U D D U D D U D D U D  D U D"
+    }
+   ],
+   "source": "Gambale / Grady 'two-way economy'",
+   "hub": {
+    "subdivision": 6,
+    "scorable": true,
+    "strokes": [
+     [
+      "D",
+      "U",
+      "D",
+      "D",
+      "U",
+      "D",
+      "D",
+      "U",
+      "D",
+      "D",
+      "U",
+      "D",
+      "D",
+      "U",
+      "D",
+      "D",
+      "U",
+      "D"
+     ]
+    ]
+   }
+  },
+  "S0": {
+   "id": "S0",
+   "name": "Muted Rest-Stroke Fall",
+   "technique": "sweep",
+   "purpose": "Build the sweep motion with no fretting to think about.",
+   "how": "Mute G, B and e with your fretting hand. Let one slow downstroke 'fall' through G, B and e, resting on each string, then do one upstroke back. Count three even clicks per sweep.",
+   "tempo": "60-80 bpm, 8th-note triplets.",
+   "cue": "An even, quiet tick-tick-tick, not a strum.",
+   "next": "Move on once you get 3 even ticks on 3 of 3 tries.",
+   "tabs": [
+    {
+     "label": "One stroke each way (x = muted)",
+     "tab": "e|-----x-x-----|\nB|---x-----x---|\nG|-x---------x-|\n   D D D U U U"
+    }
+   ],
+   "source": "Frank Gambale; Chris Brooks",
+   "hub": {
+    "subdivision": 3,
+    "scorable": false,
+    "strokes": [
+     [
+      "D",
+      "D",
+      "D",
+      "U",
+      "U",
+      "U"
+     ]
+    ]
+   }
+  },
+  "S1": {
+   "id": "S1",
+   "name": "Two-String Sweep",
+   "technique": "sweep",
+   "purpose": "First real sweep notes and timing.",
+   "how": "One downstroke plays B5 and then e5, with the pick resting on e. One upstroke comes back. Then add e8 as an upstroke at the top.",
+   "tempo": "60-90 bpm, 8th notes.",
+   "cue": "Two separate notes, almost staccato.",
+   "next": "Add e8 at the top (picked D D U).",
+   "tabs": [
+    {
+     "label": "Down and up",
+     "tab": "e|---5-5---|\nB|-5-----5-|\n   D D U U"
+    },
+    {
+     "label": "Add the top note",
+     "tab": "e|---5-8-5---|\nB|-5-------5-|\n   D D U U U"
+    }
+   ],
+   "source": "Frank Gambale",
+   "hub": {
+    "subdivision": 2,
+    "scorable": false,
+    "strokes": [
+     [
+      "D",
+      "D",
+      "U",
+      "U"
+     ],
+     [
+      "D",
+      "D",
+      "U",
+      "U",
+      "U"
+     ]
+    ]
+   }
+  },
+  "S2": {
+   "id": "S2",
+   "name": "3-String Am (no roll)",
+   "technique": "sweep",
+   "purpose": "The classic beginner shape.",
+   "how": "Each finger lifts as the next note sounds. Your picking-hand palm trails behind on the strings you've already played to mute them.",
+   "tempo": "8th-note triplets at 60-80 bpm first, then 16th-note triplets. The 16th-note goal is 60-100 bpm.",
+   "cue": "One note at a time, never two ringing together.",
+   "next": "Do the T5 sweep test on Saturday of Week 3.",
+   "tabs": [
+    {
+     "label": "Am triad",
+     "tab": "e|------8h12p8------|\nB|---10--------10---|\nG|-9--------------9-|\n   D D  D      U  U"
+    }
+   ],
+   "source": "Frank Gambale",
+   "hub": {
+    "subdivision": 6,
+    "scorable": false,
+    "strokes": [
+     [
+      "D",
+      "D",
+      "D",
+      "L",
+      "L",
+      "U",
+      "U"
+     ]
+    ]
+   }
+  },
+  "S3": {
+   "id": "S3",
+   "name": "3-String Am with a Roll",
+   "technique": "sweep",
+   "purpose": "Learn to roll one finger across a fret without the notes ringing together.",
+   "how": "One finger rolls across fret 5. Lift the pad as you roll toward the tip so only one note sounds. Practice the roll by itself first, picking each note slowly.",
+   "tempo": "Same tempos as S2.",
+   "cue": "No double notes when you listen back.",
+   "next": "Move on when video shows no double notes at 16th-note triplets.",
+   "tabs": [
+    {
+     "label": "Rolled Am",
+     "tab": "e|-----5h8p5-----|\nB|---5-------5---|\nG|-5-----------5-|\n   D D D     U U"
+    }
+   ],
+   "source": "Chris Brooks; common sweep pedagogy",
+   "hub": {
+    "subdivision": 6,
+    "scorable": false,
+    "strokes": [
+     [
+      "D",
+      "D",
+      "D",
+      "L",
+      "L",
+      "U",
+      "U"
+     ]
+    ]
+   }
+  },
+  "S4": {
+   "id": "S4",
+   "name": "5-String Am",
+   "technique": "sweep",
+   "purpose": "The full shred shape.",
+   "how": "Five downstrokes up, hammer and pull at the top, four upstrokes down. Ring finger rolls D14 to G14.",
+   "tempo": "16th-note triplets or sextuplets. Start at medium tempo.",
+   "cue": "One continuous push of the pick, not separate strokes.",
+   "next": "Once it's clean 3 of 3, learn the major and diminished shapes.",
+   "tabs": [
+    {
+     "label": "Am, 12th position",
+     "tab": "e|-------------12h17p12-------------|\nB|----------13----------13----------|\nG|-------14----------------14-------|\nD|----14----------------------14----|\nA|-12----------------------------12-|\n   D  D  D  D  D        U  U  U  U"
+    }
+   ],
+   "source": "Gambale / Petrucci",
+   "hub": {
+    "subdivision": 6,
+    "scorable": false,
+    "strokes": [
+     [
+      "D",
+      "D",
+      "D",
+      "D",
+      "D",
+      "L",
+      "L",
+      "U",
+      "U",
+      "U",
+      "U"
+     ]
+    ]
+   }
+  },
+  "S5": {
+   "id": "S5",
+   "name": "6-String Extension",
+   "technique": "sweep",
+   "purpose": "Full-neck reach.",
+   "how": "Add a low E-string root and an A-string C in front of the S4 shape.",
+   "tempo": "Medium tempo.",
+   "cue": "Same even sweep as S4, just longer.",
+   "next": "Next phase: other chord qualities.",
+   "tabs": [
+    {
+     "label": "Am, 6 strings",
+     "tab": "e|----------------12h17p12----------------|\nB|-------------13----------13-------------|\nG|----------14----------------14----------|\nD|-------14----------------------14-------|\nA|----15----------------------------15----|\nE|-17----------------------------------17-|\n   D  D  D  D  D  D        U  U  U  U  U"
+    }
+   ],
+   "source": "Gambale / Petrucci",
+   "hub": {
+    "subdivision": 6,
+    "scorable": false,
+    "strokes": [
+     [
+      "D",
+      "D",
+      "D",
+      "D",
+      "D",
+      "D",
+      "L",
+      "L",
+      "U",
+      "U",
+      "U",
+      "U",
+      "U"
+     ]
+    ]
+   }
+  },
+  "K1": {
+   "id": "K1",
+   "name": "Skipped Pentatonic Pairs",
+   "technique": "skipping",
+   "purpose": "Accuracy over a skipped string.",
+   "how": "A minor pentatonic, 5th position, two notes per string, skipping one string each time. Strict alternate.",
+   "tempo": "Clean tempo first, +4-6 bpm.",
+   "cue": "Land on the far string without catching the one in between.",
+   "next": "Play it in reverse.",
+   "tabs": [
+    {
+     "label": "Ascending",
+     "tab": "e|-----------------------------5-8-|\nB|---------------------5-8---------|\nG|-------------5-7---------5-7-----|\nD|-----5-7---------5-7-------------|\nA|---------5-7---------------------|\nE|-5-8-----------------------------|\n   D U D U D U D U D U D U D U D U"
+    }
+   ],
+   "source": "Premier Guitar, string-skipping cram session",
+   "hub": {
+    "subdivision": 4,
+    "scorable": true,
+    "strokes": [
+     [
+      "D",
+      "U",
+      "D",
+      "U",
+      "D",
+      "U",
+      "D",
+      "U",
+      "D",
+      "U",
+      "D",
+      "U",
+      "D",
+      "U",
+      "D",
+      "U"
+     ]
+    ]
+   }
+  },
+  "K2": {
+   "id": "K2",
+   "name": "Skipping Chromatic",
+   "technique": "skipping",
+   "purpose": "Skipping plus alternate picking plus finger independence.",
+   "how": "1-2-3-4 on each string in the order E, G, A, B, D, e (skipping one string each time). Learn the fretting first, then add picking. Move your fingers, not your whole arm.",
+   "tempo": "Moderate.",
+   "cue": "Fingers stay close to the frets.",
+   "next": "Shift up one fret every repeat.",
+   "tabs": [
+    {
+     "label": "Skip order: E G A B D e",
+     "tab": "e|-----------------------------------------5-6-7-8-|\nB|-------------------------5-6-7-8-----------------|\nG|---------5-6-7-8---------------------------------|\nD|---------------------------------5-6-7-8---------|\nA|-----------------5-6-7-8-------------------------|\nE|-5-6-7-8-----------------------------------------|\n   D U D U D U D U D U D U D U D U D U D U D U D U"
+    }
+   ],
+   "source": "Derived from John Petrucci, Rock Discipline",
+   "hub": {
+    "subdivision": 4,
+    "scorable": true,
+    "strokes": [
+     [
+      "D",
+      "U",
+      "D",
+      "U",
+      "D",
+      "U",
+      "D",
+      "U",
+      "D",
+      "U",
+      "D",
+      "U",
+      "D",
+      "U",
+      "D",
+      "U",
+      "D",
+      "U",
+      "D",
+      "U",
+      "D",
+      "U",
+      "D",
+      "U"
+     ]
+    ]
+   }
+  },
+  "K3": {
+   "id": "K3",
+   "name": "Gilbert-Style Skipped Arpeggio",
+   "technique": "skipping",
+   "purpose": "Arpeggios that don't sound like they came from a guitar.",
+   "how": "A-C-E-A-E-C loop, strict alternate starting on a downstroke.",
+   "tempo": "16ths. Same advancement rule.",
+   "cue": "Both strings equally loud.",
+   "next": "Move it through C, Dm and E shapes, then Combo 3.",
+   "tabs": [
+    {
+     "label": "Am loop",
+     "tab": "e|-------12-17-12----|\nB|-------------------|\nG|-14-17----------17-|\n   D  U  D  U  D  U"
+    }
+   ],
+   "source": "Paul Gilbert",
+   "hub": {
+    "subdivision": 6,
+    "scorable": true,
+    "strokes": [
+     [
+      "D",
+      "U",
+      "D",
+      "U",
+      "D",
+      "U"
+     ]
+    ]
+   }
+  },
+  "C0": {
+   "id": "C0",
+   "name": "Same Notes, Two Pickings",
+   "technique": "combo",
+   "purpose": "Feel the difference between alternate and economy on identical notes.",
+   "how": "Play one bar strict alternate, then one bar economy, back to back without stopping.",
+   "tempo": "Choose a tempo where both are clean.",
+   "cue": "The rhythm doesn't change when the picking does.",
+   "next": "In Week 3 this becomes Combo 2.",
+   "tabs": [
+    {
+     "label": "Bar 1: alternate",
+     "tab": "e|-------5-7-8-|\nB|-5-6-8-------|\n   D U D U D U"
+    },
+    {
+     "label": "Bar 2: economy",
+     "tab": "e|-------5-7-8-|\nB|-5-6-8-------|\n   D U D D U D"
+    }
+   ],
+   "source": "",
+   "hub": {
+    "subdivision": 6,
+    "scorable": true,
+    "strokes": [
+     [
+      "D",
+      "U",
+      "D",
+      "U",
+      "D",
+      "U"
+     ],
+     [
+      "D",
+      "U",
+      "D",
+      "D",
+      "U",
+      "D"
+     ]
+    ]
+   }
+  },
+  "C1": {
+   "id": "C1",
+   "name": "Sweep Up, Pick Down",
+   "technique": "combo",
+   "purpose": "A smooth handoff from a sweep into alternate picking.",
+   "how": "Sweep the 5-string Am up, then alternate pick the scale back down.",
+   "tempo": "One bar of 16th-note sextuplets, then loop it.",
+   "cue": "No gap where the sweep meets the picking.",
+   "next": "Loop it twice and end on vibrato.",
+   "tabs": [
+    {
+     "label": "Sweep then alternate",
+     "tab": "e|-------------12h17p12-15-13-12----------------|\nB|----------13-------------------15-13-12-------|\nG|-------14-------------------------------14-12-|\nD|----14----------------------------------------|\nA|-12-------------------------------------------|\n   D  D  D  D  D        U  D  U  D  U  D  U  D"
+    }
+   ],
+   "source": "",
+   "hub": {
+    "subdivision": 6,
+    "scorable": false,
+    "strokes": [
+     [
+      "D",
+      "D",
+      "D",
+      "D",
+      "D",
+      "L",
+      "L",
+      "U",
+      "D",
+      "U",
+      "D",
+      "U",
+      "D",
+      "U",
+      "D"
+     ]
+    ]
+   }
+  },
+  "C2": {
+   "id": "C2",
+   "name": "Economy Climb, Rolled Descent",
+   "technique": "combo",
+   "purpose": "Economy picking up, an upstroke sweep down.",
+   "how": "Economy D U D on each string going up, then roll fret 5 back down with upstrokes.",
+   "tempo": "Clean tempo first.",
+   "cue": "The upstroke sweep stays as even as the picked notes.",
+   "next": "Repeat it twice and resolve on A (e5) with vibrato.",
+   "tabs": [
+    {
+     "label": "Climb and roll",
+     "tab": "e|-------------5-7-8-5-----|\nB|-------5-6-8---------5---|\nG|-4-5-7-----------------5-|\n   D U D D U D D U D U U U"
+    }
+   ],
+   "source": "",
+   "hub": {
+    "subdivision": 6,
+    "scorable": false,
+    "strokes": [
+     [
+      "D",
+      "U",
+      "D",
+      "D",
+      "U",
+      "D",
+      "D",
+      "U",
+      "D",
+      "U",
+      "U",
+      "U"
+     ]
+    ]
+   }
+  },
+  "C3": {
+   "id": "C3",
+   "name": "Skip to Sweep",
+   "technique": "combo",
+   "purpose": "From string skipping into a sweep.",
+   "how": "Play K3 twice, land on A12 and sweep S4 up to e17 with vibrato. The hard part is the handoff from G17 (upstroke) to A12 (downstroke), so practice just those two notes in the motion lab.",
+   "tempo": "Clean tempo first.",
+   "cue": "The handoff note lands on time.",
+   "next": "Join it to Combo 1.",
+   "tabs": [
+    {
+     "label": "K3 x2, then sweep",
+     "tab": "e|-------12-17-12----------12-17-12----------------12-17~-|\nB|----------------------------------------------13--------|\nG|-14-17----------17-14-17----------17-------14-----------|\nD|----------------------------------------14--------------|\nA|-------------------------------------12-----------------|\n   D  U  D  U  D  U  D  U  D  U  D  U  D  D  D  D  D  U"
+    }
+   ],
+   "source": "",
+   "hub": {
+    "subdivision": 6,
+    "scorable": false,
+    "strokes": [
+     [
+      "D",
+      "U",
+      "D",
+      "U",
+      "D",
+      "U",
+      "D",
+      "U",
+      "D",
+      "U",
+      "D",
+      "U",
+      "D",
+      "D",
+      "D",
+      "D",
+      "D",
+      "U"
+     ]
+    ]
+   }
+  },
+  "TL": {
+   "id": "TL",
+   "name": "Trent's Lick",
+   "technique": "combo",
+   "purpose": "Your own lick using all four techniques.",
+   "how": "Write a 2-bar lick over an Am-F-G-E loop in Ableton. It needs at least one alternate run, one sweep, one economy string change and one string skip. Record it at your clean tempo on Saturday of Week 8.",
+   "tempo": "Your clean tempo.",
+   "cue": "Does it sound like music, not an exercise?",
+   "next": "Rebaseline and start a new 8-week block.",
+   "tabs": [
+    {
+     "label": "Write yours here",
+     "tab": "e|--------------------------------|\nB|--------------------------------|\nG|--------------------------------|\nD|--------------------------------|\nA|--------------------------------|\nE|--------------------------------|"
+    }
+   ],
+   "source": "",
+   "hub": {
+    "subdivision": 4,
+    "scorable": false,
+    "strokes": [
+     []
+    ]
+   }
+  }
+ },
+ "tests": {
+  "T1": {
+   "id": "T1",
+   "name": "Single-string tremolo",
+   "technique": "alternate",
+   "ex": "A1",
+   "pattern": "B8, constant 16ths"
+  },
+  "T2": {
+   "id": "T2",
+   "name": "Alternate, 1 string",
+   "technique": "alternate",
+   "ex": "A2",
+   "pattern": "e 12-10-8-10-12-10 loop, start on a downstroke"
+  },
+  "T3": {
+   "id": "T3",
+   "name": "Alternate, 2 strings",
+   "technique": "alternate",
+   "ex": "A3",
+   "pattern": "B 5-6-8 / e 5-7-8 up and back, strict alternate"
+  },
+  "T4": {
+   "id": "T4",
+   "name": "Economy",
+   "technique": "economy",
+   "ex": "E1",
+   "pattern": "Same notes as T3: D U D per string going up, U D U coming down"
+  },
+  "T5": {
+   "id": "T5",
+   "name": "Sweep (from Week 3)",
+   "technique": "sweep",
+   "ex": "S2",
+   "pattern": "3-string Am, G9 B10 e8h12p8 B10 G9, as 16th-note triplets"
+  },
+  "T6": {
+   "id": "T6",
+   "name": "String skipping",
+   "technique": "skipping",
+   "ex": "K3",
+   "pattern": "G14-G17-e12-e17-e12-G17 loop, strict alternate"
+  }
+ },
+ "sessions": [
+  {
+   "date": "2026-10-22",
+   "week": 1,
+   "phase": 1,
+   "dow": 3,
+   "type": "kickoff",
+   "main": "baseline",
+   "secondary": null,
+   "minutes": 30,
+   "blocks": [
+    {
+     "key": "warmup",
+     "start": 0,
+     "end": 5,
+     "kind": "warmup",
+     "title": "Warm-up",
+     "text": "Light single-string tremolo on each string, then an easy 1-2-3-4 chromatic. Low volume, loose grip. This isn't a speed test.",
+     "log": "none"
+    },
+    {
+     "key": "test-T1",
+     "start": 5,
+     "end": 9,
+     "kind": "test",
+     "title": "Baseline T1: Single-string tremolo",
+     "text": "Clean tempo: the highest bpm where you get 4 bars clean, in time, with tension 3/10 or lower, on 2 of 3 tries. Motion ceiling: no click, the fastest smooth motion you can hold for 5-10 seconds, even if it's messy.",
+     "items": [
+      {
+       "ex": "A1"
+      }
+     ],
+     "log": "test",
+     "test": "T1"
+    },
+    {
+     "key": "test-T2",
+     "start": 9,
+     "end": 13,
+     "kind": "test",
+     "title": "Baseline T2: Alternate, 1 string",
+     "text": "Clean tempo: the highest bpm where you get 4 bars clean, in time, with tension 3/10 or lower, on 2 of 3 tries. Motion ceiling: no click, the fastest smooth motion you can hold for 5-10 seconds, even if it's messy.",
+     "items": [
+      {
+       "ex": "A2"
+      }
+     ],
+     "log": "test",
+     "test": "T2"
+    },
+    {
+     "key": "test-T3",
+     "start": 13,
+     "end": 17,
+     "kind": "test",
+     "title": "Baseline T3: Alternate, 2 strings",
+     "text": "Clean tempo: the highest bpm where you get 4 bars clean, in time, with tension 3/10 or lower, on 2 of 3 tries. Motion ceiling: no click, the fastest smooth motion you can hold for 5-10 seconds, even if it's messy.",
+     "items": [
+      {
+       "ex": "A3"
+      }
+     ],
+     "log": "test",
+     "test": "T3"
+    },
+    {
+     "key": "test-T4",
+     "start": 17,
+     "end": 21,
+     "kind": "test",
+     "title": "Baseline T4: Economy",
+     "text": "Clean tempo: the highest bpm where you get 4 bars clean, in time, with tension 3/10 or lower, on 2 of 3 tries. Motion ceiling: no click, the fastest smooth motion you can hold for 5-10 seconds, even if it's messy.",
+     "items": [
+      {
+       "ex": "E1"
+      }
+     ],
+     "log": "test",
+     "test": "T4"
+    },
+    {
+     "key": "test-T6",
+     "start": 21,
+     "end": 25,
+     "kind": "test",
+     "title": "Baseline T6: String skipping",
+     "text": "Clean tempo: the highest bpm where you get 4 bars clean, in time, with tension 3/10 or lower, on 2 of 3 tries. Motion ceiling: no click, the fastest smooth motion you can hold for 5-10 seconds, even if it's messy.",
+     "items": [
+      {
+       "ex": "K3"
+      }
+     ],
+     "log": "test",
+     "test": "T6"
+    },
+    {
+     "key": "preview",
+     "start": 25,
+     "end": 28,
+     "kind": "lab",
+     "title": "Sweep preview (no pressure)",
+     "text": "Just get a feel for S0. No tempo goal. Sweep gets its baseline in Week 3.",
+     "items": [
+      {
+       "ex": "S0"
+      }
+     ],
+     "log": "note"
+    },
+    {
+     "key": "wrap",
+     "start": 28,
+     "end": 30,
+     "kind": "wrap",
+     "title": "Log",
+     "text": "Check every number is filled in. Write one line about what felt hardest.",
+     "log": "session"
+    }
+   ]
+  },
+  {
+   "date": "2026-10-23",
+   "week": 1,
+   "phase": 1,
+   "dow": 4,
+   "type": "weekday",
+   "main": "sweep",
+   "secondary": "alternate",
+   "minutes": 30,
+   "blocks": [
+    {
+     "key": "warmup",
+     "start": 0,
+     "end": 3,
+     "kind": "warmup",
+     "title": "Warm-up",
+     "text": "Light single-string tremolo on each string, then an easy 1-2-3-4 chromatic. Low volume, loose grip. This isn't a speed test.",
+     "log": "none"
+    },
+    {
+     "key": "lab",
+     "start": 3,
+     "end": 8,
+     "kind": "lab",
+     "title": "Motion lab: Sweep",
+     "text": "No click. Try the pattern near real speed, lightly, a few seconds at a time, and stop between tries. If your forearm or triceps tighten, stop and adjust. Film one clip if something clicks.",
+     "items": [
+      {
+       "ex": "S0"
+      }
+     ],
+     "log": "note"
+    },
+    {
+     "key": "main",
+     "start": 8,
+     "end": 16,
+     "kind": "main",
+     "title": "Main: Sweep",
+     "text": "Click on. Alternate the two exercises in 2-minute chunks: A, B, A, B. Go up a step after 4 clean reps in a row.",
+     "items": [
+      {
+       "ex": "S0"
+      },
+      {
+       "ex": "S1"
+      }
+     ],
+     "chunks": [
+      {
+       "i": 0,
+       "min": 2
+      },
+      {
+       "i": 1,
+       "min": 2
+      },
+      {
+       "i": 0,
+       "min": 2
+      },
+      {
+       "i": 1,
+       "min": 2
+      }
+     ],
+     "log": "tempo"
+    },
+    {
+     "key": "secondary",
+     "start": 16,
+     "end": 22,
+     "kind": "secondary",
+     "title": "Secondary: Alternate",
+     "text": "Click on. 3 minutes on A, then 3 minutes on B.",
+     "items": [
+      {
+       "ex": "A2"
+      },
+      {
+       "ex": "A3"
+      }
+     ],
+     "chunks": [
+      {
+       "i": 0,
+       "min": 3
+      },
+      {
+       "i": 1,
+       "min": 3
+      }
+     ],
+     "log": "tempo"
+    },
+    {
+     "key": "combo",
+     "start": 22,
+     "end": 27,
+     "kind": "combo",
+     "title": "Combo lick",
+     "text": "Loop it as 1 bar, then 2 bars.",
+     "items": [
+      {
+       "ex": "C0"
+      }
+     ],
+     "log": "tempo"
+    },
+    {
+     "key": "wrap",
+     "start": 27,
+     "end": 30,
+     "kind": "wrap",
+     "title": "Log + play-out",
+     "text": "1 minute: log your tempos and tension. 2 minutes: play something musical over a backing loop.",
+     "log": "session"
+    }
+   ]
+  },
+  {
+   "date": "2026-10-24",
+   "week": 1,
+   "phase": 1,
+   "dow": 5,
+   "type": "weekend",
+   "main": "circuit",
+   "secondary": null,
+   "minutes": 90,
+   "retest": false,
+   "blocks": [
+    {
+     "key": "warmup",
+     "start": 0,
+     "end": 5,
+     "kind": "warmup",
+     "title": "Warm-up",
+     "text": "Light single-string tremolo on each string, then an easy 1-2-3-4 chromatic. Low volume, loose grip. This isn't a speed test.",
+     "log": "none"
+    },
+    {
+     "key": "lab",
+     "start": 5,
+     "end": 15,
+     "kind": "lab",
+     "title": "Long motion lab",
+     "text": "Pick your weakest technique (check your log). Use speed-first probes, then film and review a slow-motion clip.",
+     "items": [
+      {
+       "ex": "S0"
+      },
+      {
+       "ex": "A1"
+      }
+     ],
+     "log": "note"
+    },
+    {
+     "key": "circuit",
+     "start": 15,
+     "end": 35,
+     "kind": "main",
+     "title": "Technique circuit (4 x 5 min)",
+     "text": "Interleaved: Alternate, Sweep, Economy, Skip. Click on.",
+     "items": [
+      {
+       "ex": "A2"
+      },
+      {
+       "ex": "S0"
+      },
+      {
+       "ex": "E1",
+       "focus": "ascending"
+      },
+      {
+       "ex": "K1",
+       "focus": "ascending"
+      }
+     ],
+     "chunks": [
+      {
+       "i": 0,
+       "min": 5
+      },
+      {
+       "i": 1,
+       "min": 5
+      },
+      {
+       "i": 2,
+       "min": 5
+      },
+      {
+       "i": 3,
+       "min": 5
+      }
+     ],
+     "log": "tempo"
+    },
+    {
+     "key": "break",
+     "start": 35,
+     "end": 40,
+     "kind": "break",
+     "title": "Off-guitar break",
+     "text": "Walk, get water. No noodling.",
+     "log": "none"
+    },
+    {
+     "key": "combo",
+     "start": 40,
+     "end": 55,
+     "kind": "combo",
+     "title": "Combo licks + record a take",
+     "text": "Work through the combos, then record one take in Ableton.",
+     "items": [
+      {
+       "ex": "C0"
+      }
+     ],
+     "log": "tempo"
+    },
+    {
+     "key": "review",
+     "start": 55,
+     "end": 60,
+     "kind": "wrap",
+     "title": "Review + log",
+     "text": "Listen back to your take. Log tempos. Pick next week's weakest technique.",
+     "log": "session"
+    },
+    {
+     "key": "music",
+     "start": 60,
+     "end": 90,
+     "kind": "music",
+     "title": "Musical time (optional, up to 30 min)",
+     "text": "Play songs (A7 / Synyster solos fit this material), jam over backing tracks, or write licks with this week's techniques.",
+     "log": "none"
+    }
+   ]
+  },
+  {
+   "date": "2026-10-25",
+   "week": 1,
+   "phase": 1,
+   "dow": 6,
+   "type": "rest",
+   "main": null,
+   "secondary": null,
+   "minutes": 0,
+   "blocks": [
+    {
+     "key": "rest",
+     "start": 0,
+     "end": 0,
+     "kind": "rest",
+     "title": "Rest day",
+     "text": "Take the day off, or play 20-45 minutes of songs only. If anything is sore, take it fully off.",
+     "log": "none"
+    }
+   ]
+  },
+  {
+   "date": "2026-10-26",
+   "week": 2,
+   "phase": 1,
+   "dow": 0,
+   "type": "weekday",
+   "main": "alternate",
+   "secondary": "sweep",
+   "minutes": 30,
+   "blocks": [
+    {
+     "key": "warmup",
+     "start": 0,
+     "end": 3,
+     "kind": "warmup",
+     "title": "Warm-up",
+     "text": "Light single-string tremolo on each string, then an easy 1-2-3-4 chromatic. Low volume, loose grip. This isn't a speed test.",
+     "log": "none"
+    },
+    {
+     "key": "lab",
+     "start": 3,
+     "end": 8,
+     "kind": "lab",
+     "title": "Motion lab: Alternate",
+     "text": "No click. Try the pattern near real speed, lightly, a few seconds at a time, and stop between tries. If your forearm or triceps tighten, stop and adjust. Film one clip if something clicks.",
+     "items": [
+      {
+       "ex": "A1"
+      }
+     ],
+     "log": "note"
+    },
+    {
+     "key": "main",
+     "start": 8,
+     "end": 16,
+     "kind": "main",
+     "title": "Main: Alternate",
+     "text": "Click on. Alternate the two exercises in 2-minute chunks: A, B, A, B. Go up a step after 4 clean reps in a row.",
+     "items": [
+      {
+       "ex": "A2"
+      },
+      {
+       "ex": "A3"
+      }
+     ],
+     "chunks": [
+      {
+       "i": 0,
+       "min": 2
+      },
+      {
+       "i": 1,
+       "min": 2
+      },
+      {
+       "i": 0,
+       "min": 2
+      },
+      {
+       "i": 1,
+       "min": 2
+      }
+     ],
+     "log": "tempo"
+    },
+    {
+     "key": "secondary",
+     "start": 16,
+     "end": 22,
+     "kind": "secondary",
+     "title": "Secondary: Sweep",
+     "text": "Click on. 3 minutes on A, then 3 minutes on B.",
+     "items": [
+      {
+       "ex": "S1"
+      },
+      {
+       "ex": "S2"
+      }
+     ],
+     "chunks": [
+      {
+       "i": 0,
+       "min": 3
+      },
+      {
+       "i": 1,
+       "min": 3
+      }
+     ],
+     "log": "tempo"
+    },
+    {
+     "key": "combo",
+     "start": 22,
+     "end": 27,
+     "kind": "combo",
+     "title": "Combo lick",
+     "text": "Loop it as 1 bar, then 2 bars.",
+     "items": [
+      {
+       "ex": "C0"
+      }
+     ],
+     "log": "tempo"
+    },
+    {
+     "key": "wrap",
+     "start": 27,
+     "end": 30,
+     "kind": "wrap",
+     "title": "Log + play-out",
+     "text": "1 minute: log your tempos and tension. 2 minutes: play something musical over a backing loop.",
+     "log": "session"
+    }
+   ]
+  },
+  {
+   "date": "2026-10-27",
+   "week": 2,
+   "phase": 1,
+   "dow": 1,
+   "type": "weekday",
+   "main": "sweep",
+   "secondary": "economy",
+   "minutes": 30,
+   "blocks": [
+    {
+     "key": "warmup",
+     "start": 0,
+     "end": 3,
+     "kind": "warmup",
+     "title": "Warm-up",
+     "text": "Light single-string tremolo on each string, then an easy 1-2-3-4 chromatic. Low volume, loose grip. This isn't a speed test.",
+     "log": "none"
+    },
+    {
+     "key": "lab",
+     "start": 3,
+     "end": 8,
+     "kind": "lab",
+     "title": "Motion lab: Sweep",
+     "text": "No click. Try the pattern near real speed, lightly, a few seconds at a time, and stop between tries. If your forearm or triceps tighten, stop and adjust. Film one clip if something clicks.",
+     "items": [
+      {
+       "ex": "S1"
+      }
+     ],
+     "log": "note"
+    },
+    {
+     "key": "main",
+     "start": 8,
+     "end": 16,
+     "kind": "main",
+     "title": "Main: Sweep",
+     "text": "Click on. Alternate the two exercises in 2-minute chunks: A, B, A, B. Go up a step after 4 clean reps in a row.",
+     "items": [
+      {
+       "ex": "S1"
+      },
+      {
+       "ex": "S2"
+      }
+     ],
+     "chunks": [
+      {
+       "i": 0,
+       "min": 2
+      },
+      {
+       "i": 1,
+       "min": 2
+      },
+      {
+       "i": 0,
+       "min": 2
+      },
+      {
+       "i": 1,
+       "min": 2
+      }
+     ],
+     "log": "tempo"
+    },
+    {
+     "key": "secondary",
+     "start": 16,
+     "end": 22,
+     "kind": "secondary",
+     "title": "Secondary: Economy",
+     "text": "Click on. 3 minutes on A, then 3 minutes on B.",
+     "items": [
+      {
+       "ex": "E1",
+       "focus": "ascending"
+      },
+      {
+       "ex": "E1",
+       "focus": "descending"
+      }
+     ],
+     "chunks": [
+      {
+       "i": 0,
+       "min": 3
+      },
+      {
+       "i": 1,
+       "min": 3
+      }
+     ],
+     "log": "tempo"
+    },
+    {
+     "key": "combo",
+     "start": 22,
+     "end": 27,
+     "kind": "combo",
+     "title": "Combo lick",
+     "text": "Loop it as 1 bar, then 2 bars.",
+     "items": [
+      {
+       "ex": "C0"
+      }
+     ],
+     "log": "tempo"
+    },
+    {
+     "key": "wrap",
+     "start": 27,
+     "end": 30,
+     "kind": "wrap",
+     "title": "Log + play-out",
+     "text": "1 minute: log your tempos and tension. 2 minutes: play something musical over a backing loop.",
+     "log": "session"
+    }
+   ]
+  },
+  {
+   "date": "2026-10-28",
+   "week": 2,
+   "phase": 1,
+   "dow": 2,
+   "type": "weekday",
+   "main": "economy",
+   "secondary": "skipping",
+   "minutes": 30,
+   "blocks": [
+    {
+     "key": "warmup",
+     "start": 0,
+     "end": 3,
+     "kind": "warmup",
+     "title": "Warm-up",
+     "text": "Light single-string tremolo on each string, then an easy 1-2-3-4 chromatic. Low volume, loose grip. This isn't a speed test.",
+     "log": "none"
+    },
+    {
+     "key": "lab",
+     "start": 3,
+     "end": 8,
+     "kind": "lab",
+     "title": "Motion lab: Economy",
+     "text": "No click. Try the pattern near real speed, lightly, a few seconds at a time, and stop between tries. If your forearm or triceps tighten, stop and adjust. Film one clip if something clicks.",
+     "items": [
+      {
+       "ex": "E1"
+      }
+     ],
+     "log": "note"
+    },
+    {
+     "key": "main",
+     "start": 8,
+     "end": 16,
+     "kind": "main",
+     "title": "Main: Economy",
+     "text": "Click on. Alternate the two exercises in 2-minute chunks: A, B, A, B. Go up a step after 4 clean reps in a row.",
+     "items": [
+      {
+       "ex": "E1",
+       "focus": "ascending"
+      },
+      {
+       "ex": "E1",
+       "focus": "descending"
+      }
+     ],
+     "chunks": [
+      {
+       "i": 0,
+       "min": 2
+      },
+      {
+       "i": 1,
+       "min": 2
+      },
+      {
+       "i": 0,
+       "min": 2
+      },
+      {
+       "i": 1,
+       "min": 2
+      }
+     ],
+     "log": "tempo"
+    },
+    {
+     "key": "secondary",
+     "start": 16,
+     "end": 22,
+     "kind": "secondary",
+     "title": "Secondary: String skipping",
+     "text": "Click on. 3 minutes on A, then 3 minutes on B.",
+     "items": [
+      {
+       "ex": "K1",
+       "focus": "ascending"
+      },
+      {
+       "ex": "K1",
+       "focus": "reverse"
+      }
+     ],
+     "chunks": [
+      {
+       "i": 0,
+       "min": 3
+      },
+      {
+       "i": 1,
+       "min": 3
+      }
+     ],
+     "log": "tempo"
+    },
+    {
+     "key": "combo",
+     "start": 22,
+     "end": 27,
+     "kind": "combo",
+     "title": "Combo lick",
+     "text": "Loop it as 1 bar, then 2 bars.",
+     "items": [
+      {
+       "ex": "C0"
+      }
+     ],
+     "log": "tempo"
+    },
+    {
+     "key": "wrap",
+     "start": 27,
+     "end": 30,
+     "kind": "wrap",
+     "title": "Log + play-out",
+     "text": "1 minute: log your tempos and tension. 2 minutes: play something musical over a backing loop.",
+     "log": "session"
+    }
+   ]
+  },
+  {
+   "date": "2026-10-29",
+   "week": 2,
+   "phase": 1,
+   "dow": 3,
+   "type": "weekday",
+   "main": "skipping",
+   "secondary": "alternate",
+   "minutes": 30,
+   "blocks": [
+    {
+     "key": "warmup",
+     "start": 0,
+     "end": 3,
+     "kind": "warmup",
+     "title": "Warm-up",
+     "text": "Light single-string tremolo on each string, then an easy 1-2-3-4 chromatic. Low volume, loose grip. This isn't a speed test.",
+     "log": "none"
+    },
+    {
+     "key": "lab",
+     "start": 3,
+     "end": 8,
+     "kind": "lab",
+     "title": "Motion lab: String skipping",
+     "text": "No click. Try the pattern near real speed, lightly, a few seconds at a time, and stop between tries. If your forearm or triceps tighten, stop and adjust. Film one clip if something clicks.",
+     "items": [
+      {
+       "ex": "K1"
+      }
+     ],
+     "log": "note"
+    },
+    {
+     "key": "main",
+     "start": 8,
+     "end": 16,
+     "kind": "main",
+     "title": "Main: String skipping",
+     "text": "Click on. Alternate the two exercises in 2-minute chunks: A, B, A, B. Go up a step after 4 clean reps in a row.",
+     "items": [
+      {
+       "ex": "K1",
+       "focus": "ascending"
+      },
+      {
+       "ex": "K1",
+       "focus": "reverse"
+      }
+     ],
+     "chunks": [
+      {
+       "i": 0,
+       "min": 2
+      },
+      {
+       "i": 1,
+       "min": 2
+      },
+      {
+       "i": 0,
+       "min": 2
+      },
+      {
+       "i": 1,
+       "min": 2
+      }
+     ],
+     "log": "tempo"
+    },
+    {
+     "key": "secondary",
+     "start": 16,
+     "end": 22,
+     "kind": "secondary",
+     "title": "Secondary: Alternate",
+     "text": "Click on. 3 minutes on A, then 3 minutes on B.",
+     "items": [
+      {
+       "ex": "A2"
+      },
+      {
+       "ex": "A3"
+      }
+     ],
+     "chunks": [
+      {
+       "i": 0,
+       "min": 3
+      },
+      {
+       "i": 1,
+       "min": 3
+      }
+     ],
+     "log": "tempo"
+    },
+    {
+     "key": "combo",
+     "start": 22,
+     "end": 27,
+     "kind": "combo",
+     "title": "Combo lick",
+     "text": "Loop it as 1 bar, then 2 bars.",
+     "items": [
+      {
+       "ex": "C0"
+      }
+     ],
+     "log": "tempo"
+    },
+    {
+     "key": "wrap",
+     "start": 27,
+     "end": 30,
+     "kind": "wrap",
+     "title": "Log + play-out",
+     "text": "1 minute: log your tempos and tension. 2 minutes: play something musical over a backing loop.",
+     "log": "session"
+    }
+   ]
+  },
+  {
+   "date": "2026-10-30",
+   "week": 2,
+   "phase": 1,
+   "dow": 4,
+   "type": "weekday",
+   "main": "sweep",
+   "secondary": "alternate",
+   "minutes": 30,
+   "blocks": [
+    {
+     "key": "warmup",
+     "start": 0,
+     "end": 3,
+     "kind": "warmup",
+     "title": "Warm-up",
+     "text": "Light single-string tremolo on each string, then an easy 1-2-3-4 chromatic. Low volume, loose grip. This isn't a speed test.",
+     "log": "none"
+    },
+    {
+     "key": "lab",
+     "start": 3,
+     "end": 8,
+     "kind": "lab",
+     "title": "Motion lab: Sweep",
+     "text": "No click. Try the pattern near real speed, lightly, a few seconds at a time, and stop between tries. If your forearm or triceps tighten, stop and adjust. Film one clip if something clicks.",
+     "items": [
+      {
+       "ex": "S1"
+      }
+     ],
+     "log": "note"
+    },
+    {
+     "key": "main",
+     "start": 8,
+     "end": 16,
+     "kind": "main",
+     "title": "Main: Sweep",
+     "text": "Click on. Alternate the two exercises in 2-minute chunks: A, B, A, B. Go up a step after 4 clean reps in a row.",
+     "items": [
+      {
+       "ex": "S1"
+      },
+      {
+       "ex": "S2"
+      }
+     ],
+     "chunks": [
+      {
+       "i": 0,
+       "min": 2
+      },
+      {
+       "i": 1,
+       "min": 2
+      },
+      {
+       "i": 0,
+       "min": 2
+      },
+      {
+       "i": 1,
+       "min": 2
+      }
+     ],
+     "log": "tempo"
+    },
+    {
+     "key": "secondary",
+     "start": 16,
+     "end": 22,
+     "kind": "secondary",
+     "title": "Secondary: Alternate",
+     "text": "Click on. 3 minutes on A, then 3 minutes on B.",
+     "items": [
+      {
+       "ex": "A2"
+      },
+      {
+       "ex": "A3"
+      }
+     ],
+     "chunks": [
+      {
+       "i": 0,
+       "min": 3
+      },
+      {
+       "i": 1,
+       "min": 3
+      }
+     ],
+     "log": "tempo"
+    },
+    {
+     "key": "combo",
+     "start": 22,
+     "end": 27,
+     "kind": "combo",
+     "title": "Combo lick",
+     "text": "Loop it as 1 bar, then 2 bars.",
+     "items": [
+      {
+       "ex": "C0"
+      }
+     ],
+     "log": "tempo"
+    },
+    {
+     "key": "wrap",
+     "start": 27,
+     "end": 30,
+     "kind": "wrap",
+     "title": "Log + play-out",
+     "text": "1 minute: log your tempos and tension. 2 minutes: play something musical over a backing loop.",
+     "log": "session"
+    }
+   ]
+  },
+  {
+   "date": "2026-10-31",
+   "week": 2,
+   "phase": 1,
+   "dow": 5,
+   "type": "weekend",
+   "main": "circuit",
+   "secondary": null,
+   "minutes": 90,
+   "retest": true,
+   "blocks": [
+    {
+     "key": "warmup",
+     "start": 0,
+     "end": 5,
+     "kind": "warmup",
+     "title": "Warm-up",
+     "text": "Light single-string tremolo on each string, then an easy 1-2-3-4 chromatic. Low volume, loose grip. This isn't a speed test.",
+     "log": "none"
+    },
+    {
+     "key": "retest",
+     "start": 5,
+     "end": 20,
+     "kind": "test",
+     "title": "Retest (Week 2)",
+     "text": "Same protocol as the baseline, about 2.5 minutes per test. Record a phone video of at least one test.",
+     "items": [
+      {
+       "ex": "A1"
+      },
+      {
+       "ex": "A2"
+      },
+      {
+       "ex": "A3"
+      },
+      {
+       "ex": "E1"
+      },
+      {
+       "ex": "K3"
+      }
+     ],
+     "log": "test",
+     "tests": [
+      "T1",
+      "T2",
+      "T3",
+      "T4",
+      "T6"
+     ]
+    },
+    {
+     "key": "circuit",
+     "start": 20,
+     "end": 36,
+     "kind": "main",
+     "title": "Technique circuit (4 x 4 min)",
+     "text": "Interleaved: Alternate, Sweep, Economy, Skip. Click on.",
+     "items": [
+      {
+       "ex": "A2"
+      },
+      {
+       "ex": "S1"
+      },
+      {
+       "ex": "E1",
+       "focus": "ascending"
+      },
+      {
+       "ex": "K1",
+       "focus": "ascending"
+      }
+     ],
+     "chunks": [
+      {
+       "i": 0,
+       "min": 4
+      },
+      {
+       "i": 1,
+       "min": 4
+      },
+      {
+       "i": 2,
+       "min": 4
+      },
+      {
+       "i": 3,
+       "min": 4
+      }
+     ],
+     "log": "tempo"
+    },
+    {
+     "key": "break",
+     "start": 36,
+     "end": 40,
+     "kind": "break",
+     "title": "Off-guitar break",
+     "text": "Walk, get water. No noodling.",
+     "log": "none"
+    },
+    {
+     "key": "combo",
+     "start": 40,
+     "end": 55,
+     "kind": "combo",
+     "title": "Combo licks + record a take",
+     "text": "Work through the combos, then record one take in Ableton.",
+     "items": [
+      {
+       "ex": "C0"
+      }
+     ],
+     "log": "tempo"
+    },
+    {
+     "key": "review",
+     "start": 55,
+     "end": 60,
+     "kind": "wrap",
+     "title": "Review + log",
+     "text": "Listen back to your take. Log tempos. Pick next week's weakest technique. Advance check: did at least 3 of 4 techniques hit their targets this phase? If not, tap 'Repeat this week'.",
+     "log": "session"
+    },
+    {
+     "key": "music",
+     "start": 60,
+     "end": 90,
+     "kind": "music",
+     "title": "Musical time (optional, up to 30 min)",
+     "text": "Play songs (A7 / Synyster solos fit this material), jam over backing tracks, or write licks with this week's techniques.",
+     "log": "none"
+    }
+   ]
+  },
+  {
+   "date": "2026-11-01",
+   "week": 2,
+   "phase": 1,
+   "dow": 6,
+   "type": "rest",
+   "main": null,
+   "secondary": null,
+   "minutes": 0,
+   "blocks": [
+    {
+     "key": "rest",
+     "start": 0,
+     "end": 0,
+     "kind": "rest",
+     "title": "Rest day",
+     "text": "Take the day off, or play 20-45 minutes of songs only. If anything is sore, take it fully off.",
+     "log": "none"
+    }
+   ]
+  },
+  {
+   "date": "2026-11-02",
+   "week": 3,
+   "phase": 2,
+   "dow": 0,
+   "type": "weekday",
+   "main": "alternate",
+   "secondary": "sweep",
+   "minutes": 30,
+   "blocks": [
+    {
+     "key": "warmup",
+     "start": 0,
+     "end": 3,
+     "kind": "warmup",
+     "title": "Warm-up",
+     "text": "Light single-string tremolo on each string, then an easy 1-2-3-4 chromatic. Low volume, loose grip. This isn't a speed test.",
+     "log": "none"
+    },
+    {
+     "key": "lab",
+     "start": 3,
+     "end": 8,
+     "kind": "lab",
+     "title": "Motion lab: Alternate",
+     "text": "No click. Try the pattern near real speed, lightly, a few seconds at a time, and stop between tries. If your forearm or triceps tighten, stop and adjust. Film one clip if something clicks.",
+     "items": [
+      {
+       "ex": "A3"
+      }
+     ],
+     "log": "note"
+    },
+    {
+     "key": "main",
+     "start": 8,
+     "end": 16,
+     "kind": "main",
+     "title": "Main: Alternate",
+     "text": "Click on. Alternate the two exercises in 2-minute chunks: A, B, A, B. Go up a step after 4 clean reps in a row.",
+     "items": [
+      {
+       "ex": "A3"
+      },
+      {
+       "ex": "A4"
+      }
+     ],
+     "chunks": [
+      {
+       "i": 0,
+       "min": 2
+      },
+      {
+       "i": 1,
+       "min": 2
+      },
+      {
+       "i": 0,
+       "min": 2
+      },
+      {
+       "i": 1,
+       "min": 2
+      }
+     ],
+     "log": "tempo"
+    },
+    {
+     "key": "secondary",
+     "start": 16,
+     "end": 22,
+     "kind": "secondary",
+     "title": "Secondary: Sweep",
+     "text": "Click on. 3 minutes on A, then 3 minutes on B.",
+     "items": [
+      {
+       "ex": "S2"
+      },
+      {
+       "ex": "S3"
+      }
+     ],
+     "chunks": [
+      {
+       "i": 0,
+       "min": 3
+      },
+      {
+       "i": 1,
+       "min": 3
+      }
+     ],
+     "log": "tempo"
+    },
+    {
+     "key": "combo",
+     "start": 22,
+     "end": 27,
+     "kind": "combo",
+     "title": "Combo lick",
+     "text": "Loop it as 1 bar, then 2 bars.",
+     "items": [
+      {
+       "ex": "C2"
+      }
+     ],
+     "log": "tempo"
+    },
+    {
+     "key": "wrap",
+     "start": 27,
+     "end": 30,
+     "kind": "wrap",
+     "title": "Log + play-out",
+     "text": "1 minute: log your tempos and tension. 2 minutes: play something musical over a backing loop.",
+     "log": "session"
+    }
+   ]
+  },
+  {
+   "date": "2026-11-03",
+   "week": 3,
+   "phase": 2,
+   "dow": 1,
+   "type": "weekday",
+   "main": "sweep",
+   "secondary": "economy",
+   "minutes": 30,
+   "blocks": [
+    {
+     "key": "warmup",
+     "start": 0,
+     "end": 3,
+     "kind": "warmup",
+     "title": "Warm-up",
+     "text": "Light single-string tremolo on each string, then an easy 1-2-3-4 chromatic. Low volume, loose grip. This isn't a speed test.",
+     "log": "none"
+    },
+    {
+     "key": "lab",
+     "start": 3,
+     "end": 8,
+     "kind": "lab",
+     "title": "Motion lab: Sweep",
+     "text": "No click. Try the pattern near real speed, lightly, a few seconds at a time, and stop between tries. If your forearm or triceps tighten, stop and adjust. Film one clip if something clicks.",
+     "items": [
+      {
+       "ex": "S2"
+      }
+     ],
+     "log": "note"
+    },
+    {
+     "key": "main",
+     "start": 8,
+     "end": 16,
+     "kind": "main",
+     "title": "Main: Sweep",
+     "text": "Click on. Alternate the two exercises in 2-minute chunks: A, B, A, B. Go up a step after 4 clean reps in a row.",
+     "items": [
+      {
+       "ex": "S2"
+      },
+      {
+       "ex": "S3"
+      }
+     ],
+     "chunks": [
+      {
+       "i": 0,
+       "min": 2
+      },
+      {
+       "i": 1,
+       "min": 2
+      },
+      {
+       "i": 0,
+       "min": 2
+      },
+      {
+       "i": 1,
+       "min": 2
+      }
+     ],
+     "log": "tempo"
+    },
+    {
+     "key": "secondary",
+     "start": 16,
+     "end": 22,
+     "kind": "secondary",
+     "title": "Secondary: Economy",
+     "text": "Click on. 3 minutes on A, then 3 minutes on B.",
+     "items": [
+      {
+       "ex": "E1"
+      },
+      {
+       "ex": "E2"
+      }
+     ],
+     "chunks": [
+      {
+       "i": 0,
+       "min": 3
+      },
+      {
+       "i": 1,
+       "min": 3
+      }
+     ],
+     "log": "tempo"
+    },
+    {
+     "key": "combo",
+     "start": 22,
+     "end": 27,
+     "kind": "combo",
+     "title": "Combo lick",
+     "text": "Loop it as 1 bar, then 2 bars.",
+     "items": [
+      {
+       "ex": "C2"
+      }
+     ],
+     "log": "tempo"
+    },
+    {
+     "key": "wrap",
+     "start": 27,
+     "end": 30,
+     "kind": "wrap",
+     "title": "Log + play-out",
+     "text": "1 minute: log your tempos and tension. 2 minutes: play something musical over a backing loop.",
+     "log": "session"
+    }
+   ]
+  },
+  {
+   "date": "2026-11-04",
+   "week": 3,
+   "phase": 2,
+   "dow": 2,
+   "type": "weekday",
+   "main": "economy",
+   "secondary": "skipping",
+   "minutes": 30,
+   "blocks": [
+    {
+     "key": "warmup",
+     "start": 0,
+     "end": 3,
+     "kind": "warmup",
+     "title": "Warm-up",
+     "text": "Light single-string tremolo on each string, then an easy 1-2-3-4 chromatic. Low volume, loose grip. This isn't a speed test.",
+     "log": "none"
+    },
+    {
+     "key": "lab",
+     "start": 3,
+     "end": 8,
+     "kind": "lab",
+     "title": "Motion lab: Economy",
+     "text": "No click. Try the pattern near real speed, lightly, a few seconds at a time, and stop between tries. If your forearm or triceps tighten, stop and adjust. Film one clip if something clicks.",
+     "items": [
+      {
+       "ex": "E2"
+      }
+     ],
+     "log": "note"
+    },
+    {
+     "key": "main",
+     "start": 8,
+     "end": 16,
+     "kind": "main",
+     "title": "Main: Economy",
+     "text": "Click on. Alternate the two exercises in 2-minute chunks: A, B, A, B. Go up a step after 4 clean reps in a row.",
+     "items": [
+      {
+       "ex": "E1"
+      },
+      {
+       "ex": "E2"
+      }
+     ],
+     "chunks": [
+      {
+       "i": 0,
+       "min": 2
+      },
+      {
+       "i": 1,
+       "min": 2
+      },
+      {
+       "i": 0,
+       "min": 2
+      },
+      {
+       "i": 1,
+       "min": 2
+      }
+     ],
+     "log": "tempo"
+    },
+    {
+     "key": "secondary",
+     "start": 16,
+     "end": 22,
+     "kind": "secondary",
+     "title": "Secondary: String skipping",
+     "text": "Click on. 3 minutes on A, then 3 minutes on B.",
+     "items": [
+      {
+       "ex": "K1"
+      },
+      {
+       "ex": "K2"
+      }
+     ],
+     "chunks": [
+      {
+       "i": 0,
+       "min": 3
+      },
+      {
+       "i": 1,
+       "min": 3
+      }
+     ],
+     "log": "tempo"
+    },
+    {
+     "key": "combo",
+     "start": 22,
+     "end": 27,
+     "kind": "combo",
+     "title": "Combo lick",
+     "text": "Loop it as 1 bar, then 2 bars.",
+     "items": [
+      {
+       "ex": "C2"
+      }
+     ],
+     "log": "tempo"
+    },
+    {
+     "key": "wrap",
+     "start": 27,
+     "end": 30,
+     "kind": "wrap",
+     "title": "Log + play-out",
+     "text": "1 minute: log your tempos and tension. 2 minutes: play something musical over a backing loop.",
+     "log": "session"
+    }
+   ]
+  },
+  {
+   "date": "2026-11-05",
+   "week": 3,
+   "phase": 2,
+   "dow": 3,
+   "type": "weekday",
+   "main": "skipping",
+   "secondary": "alternate",
+   "minutes": 30,
+   "blocks": [
+    {
+     "key": "warmup",
+     "start": 0,
+     "end": 3,
+     "kind": "warmup",
+     "title": "Warm-up",
+     "text": "Light single-string tremolo on each string, then an easy 1-2-3-4 chromatic. Low volume, loose grip. This isn't a speed test.",
+     "log": "none"
+    },
+    {
+     "key": "lab",
+     "start": 3,
+     "end": 8,
+     "kind": "lab",
+     "title": "Motion lab: String skipping",
+     "text": "No click. Try the pattern near real speed, lightly, a few seconds at a time, and stop between tries. If your forearm or triceps tighten, stop and adjust. Film one clip if something clicks.",
+     "items": [
+      {
+       "ex": "K1"
+      }
+     ],
+     "log": "note"
+    },
+    {
+     "key": "main",
+     "start": 8,
+     "end": 16,
+     "kind": "main",
+     "title": "Main: String skipping",
+     "text": "Click on. Alternate the two exercises in 2-minute chunks: A, B, A, B. Go up a step after 4 clean reps in a row.",
+     "items": [
+      {
+       "ex": "K1"
+      },
+      {
+       "ex": "K2"
+      }
+     ],
+     "chunks": [
+      {
+       "i": 0,
+       "min": 2
+      },
+      {
+       "i": 1,
+       "min": 2
+      },
+      {
+       "i": 0,
+       "min": 2
+      },
+      {
+       "i": 1,
+       "min": 2
+      }
+     ],
+     "log": "tempo"
+    },
+    {
+     "key": "secondary",
+     "start": 16,
+     "end": 22,
+     "kind": "secondary",
+     "title": "Secondary: Alternate",
+     "text": "Click on. 3 minutes on A, then 3 minutes on B.",
+     "items": [
+      {
+       "ex": "A3"
+      },
+      {
+       "ex": "A4"
+      }
+     ],
+     "chunks": [
+      {
+       "i": 0,
+       "min": 3
+      },
+      {
+       "i": 1,
+       "min": 3
+      }
+     ],
+     "log": "tempo"
+    },
+    {
+     "key": "combo",
+     "start": 22,
+     "end": 27,
+     "kind": "combo",
+     "title": "Combo lick",
+     "text": "Loop it as 1 bar, then 2 bars.",
+     "items": [
+      {
+       "ex": "C2"
+      }
+     ],
+     "log": "tempo"
+    },
+    {
+     "key": "wrap",
+     "start": 27,
+     "end": 30,
+     "kind": "wrap",
+     "title": "Log + play-out",
+     "text": "1 minute: log your tempos and tension. 2 minutes: play something musical over a backing loop.",
+     "log": "session"
+    }
+   ]
+  },
+  {
+   "date": "2026-11-06",
+   "week": 3,
+   "phase": 2,
+   "dow": 4,
+   "type": "weekday",
+   "main": "sweep",
+   "secondary": "alternate",
+   "minutes": 30,
+   "blocks": [
+    {
+     "key": "warmup",
+     "start": 0,
+     "end": 3,
+     "kind": "warmup",
+     "title": "Warm-up",
+     "text": "Light single-string tremolo on each string, then an easy 1-2-3-4 chromatic. Low volume, loose grip. This isn't a speed test.",
+     "log": "none"
+    },
+    {
+     "key": "lab",
+     "start": 3,
+     "end": 8,
+     "kind": "lab",
+     "title": "Motion lab: Sweep",
+     "text": "No click. Try the pattern near real speed, lightly, a few seconds at a time, and stop between tries. If your forearm or triceps tighten, stop and adjust. Film one clip if something clicks.",
+     "items": [
+      {
+       "ex": "S2"
+      }
+     ],
+     "log": "note"
+    },
+    {
+     "key": "main",
+     "start": 8,
+     "end": 16,
+     "kind": "main",
+     "title": "Main: Sweep",
+     "text": "Click on. Alternate the two exercises in 2-minute chunks: A, B, A, B. Go up a step after 4 clean reps in a row.",
+     "items": [
+      {
+       "ex": "S2"
+      },
+      {
+       "ex": "S3"
+      }
+     ],
+     "chunks": [
+      {
+       "i": 0,
+       "min": 2
+      },
+      {
+       "i": 1,
+       "min": 2
+      },
+      {
+       "i": 0,
+       "min": 2
+      },
+      {
+       "i": 1,
+       "min": 2
+      }
+     ],
+     "log": "tempo"
+    },
+    {
+     "key": "secondary",
+     "start": 16,
+     "end": 22,
+     "kind": "secondary",
+     "title": "Secondary: Alternate",
+     "text": "Click on. 3 minutes on A, then 3 minutes on B.",
+     "items": [
+      {
+       "ex": "A3"
+      },
+      {
+       "ex": "A4"
+      }
+     ],
+     "chunks": [
+      {
+       "i": 0,
+       "min": 3
+      },
+      {
+       "i": 1,
+       "min": 3
+      }
+     ],
+     "log": "tempo"
+    },
+    {
+     "key": "combo",
+     "start": 22,
+     "end": 27,
+     "kind": "combo",
+     "title": "Combo lick",
+     "text": "Loop it as 1 bar, then 2 bars.",
+     "items": [
+      {
+       "ex": "C2"
+      }
+     ],
+     "log": "tempo"
+    },
+    {
+     "key": "wrap",
+     "start": 27,
+     "end": 30,
+     "kind": "wrap",
+     "title": "Log + play-out",
+     "text": "1 minute: log your tempos and tension. 2 minutes: play something musical over a backing loop.",
+     "log": "session"
+    }
+   ]
+  },
+  {
+   "date": "2026-11-07",
+   "week": 3,
+   "phase": 2,
+   "dow": 5,
+   "type": "weekend",
+   "main": "circuit",
+   "secondary": null,
+   "minutes": 90,
+   "retest": false,
+   "blocks": [
+    {
+     "key": "warmup",
+     "start": 0,
+     "end": 5,
+     "kind": "warmup",
+     "title": "Warm-up",
+     "text": "Light single-string tremolo on each string, then an easy 1-2-3-4 chromatic. Low volume, loose grip. This isn't a speed test.",
+     "log": "none"
+    },
+    {
+     "key": "retest",
+     "start": 5,
+     "end": 15,
+     "kind": "test",
+     "title": "Sweep baseline (T5) + motion lab",
+     "text": "Test T5 (5 min), then spend 5 minutes in the motion lab on whichever technique feels weakest.",
+     "items": [
+      {
+       "ex": "S2"
+      }
+     ],
+     "log": "test",
+     "tests": [
+      "T5"
+     ]
+    },
+    {
+     "key": "circuit",
+     "start": 15,
+     "end": 35,
+     "kind": "main",
+     "title": "Technique circuit (4 x 5 min)",
+     "text": "Interleaved: Alternate, Sweep, Economy, Skip. Click on.",
+     "items": [
+      {
+       "ex": "A3"
+      },
+      {
+       "ex": "S2"
+      },
+      {
+       "ex": "E1"
+      },
+      {
+       "ex": "K1"
+      }
+     ],
+     "chunks": [
+      {
+       "i": 0,
+       "min": 5
+      },
+      {
+       "i": 1,
+       "min": 5
+      },
+      {
+       "i": 2,
+       "min": 5
+      },
+      {
+       "i": 3,
+       "min": 5
+      }
+     ],
+     "log": "tempo"
+    },
+    {
+     "key": "break",
+     "start": 35,
+     "end": 40,
+     "kind": "break",
+     "title": "Off-guitar break",
+     "text": "Walk, get water. No noodling.",
+     "log": "none"
+    },
+    {
+     "key": "combo",
+     "start": 40,
+     "end": 55,
+     "kind": "combo",
+     "title": "Combo licks + record a take",
+     "text": "Work through the combos, then record one take in Ableton.",
+     "items": [
+      {
+       "ex": "C2"
+      },
+      {
+       "ex": "C0"
+      }
+     ],
+     "chunks": [
+      {
+       "i": 0,
+       "min": 8
+      },
+      {
+       "i": 1,
+       "min": 7
+      }
+     ],
+     "log": "tempo"
+    },
+    {
+     "key": "review",
+     "start": 55,
+     "end": 60,
+     "kind": "wrap",
+     "title": "Review + log",
+     "text": "Listen back to your take. Log tempos. Pick next week's weakest technique.",
+     "log": "session"
+    },
+    {
+     "key": "music",
+     "start": 60,
+     "end": 90,
+     "kind": "music",
+     "title": "Musical time (optional, up to 30 min)",
+     "text": "Play songs (A7 / Synyster solos fit this material), jam over backing tracks, or write licks with this week's techniques.",
+     "log": "none"
+    }
+   ]
+  },
+  {
+   "date": "2026-11-08",
+   "week": 3,
+   "phase": 2,
+   "dow": 6,
+   "type": "rest",
+   "main": null,
+   "secondary": null,
+   "minutes": 0,
+   "blocks": [
+    {
+     "key": "rest",
+     "start": 0,
+     "end": 0,
+     "kind": "rest",
+     "title": "Rest day",
+     "text": "Take the day off, or play 20-45 minutes of songs only. If anything is sore, take it fully off.",
+     "log": "none"
+    }
+   ]
+  },
+  {
+   "date": "2026-11-09",
+   "week": 4,
+   "phase": 2,
+   "dow": 0,
+   "type": "weekday",
+   "main": "alternate",
+   "secondary": "sweep",
+   "minutes": 30,
+   "blocks": [
+    {
+     "key": "warmup",
+     "start": 0,
+     "end": 3,
+     "kind": "warmup",
+     "title": "Warm-up",
+     "text": "Light single-string tremolo on each string, then an easy 1-2-3-4 chromatic. Low volume, loose grip. This isn't a speed test.",
+     "log": "none"
+    },
+    {
+     "key": "lab",
+     "start": 3,
+     "end": 8,
+     "kind": "lab",
+     "title": "Motion lab: Alternate",
+     "text": "No click. Try the pattern near real speed, lightly, a few seconds at a time, and stop between tries. If your forearm or triceps tighten, stop and adjust. Film one clip if something clicks.",
+     "items": [
+      {
+       "ex": "A3"
+      }
+     ],
+     "log": "note"
+    },
+    {
+     "key": "main",
+     "start": 8,
+     "end": 16,
+     "kind": "main",
+     "title": "Main: Alternate",
+     "text": "Click on. Alternate the two exercises in 2-minute chunks: A, B, A, B. Go up a step after 4 clean reps in a row.",
+     "items": [
+      {
+       "ex": "A4"
+      },
+      {
+       "ex": "A3"
+      }
+     ],
+     "chunks": [
+      {
+       "i": 0,
+       "min": 2
+      },
+      {
+       "i": 1,
+       "min": 2
+      },
+      {
+       "i": 0,
+       "min": 2
+      },
+      {
+       "i": 1,
+       "min": 2
+      }
+     ],
+     "log": "tempo"
+    },
+    {
+     "key": "secondary",
+     "start": 16,
+     "end": 22,
+     "kind": "secondary",
+     "title": "Secondary: Sweep",
+     "text": "Click on. 3 minutes on A, then 3 minutes on B.",
+     "items": [
+      {
+       "ex": "S3"
+      },
+      {
+       "ex": "S2"
+      }
+     ],
+     "chunks": [
+      {
+       "i": 0,
+       "min": 3
+      },
+      {
+       "i": 1,
+       "min": 3
+      }
+     ],
+     "log": "tempo"
+    },
+    {
+     "key": "combo",
+     "start": 22,
+     "end": 27,
+     "kind": "combo",
+     "title": "Combo lick",
+     "text": "Loop it as 1 bar, then 2 bars.",
+     "items": [
+      {
+       "ex": "C2"
+      }
+     ],
+     "log": "tempo"
+    },
+    {
+     "key": "wrap",
+     "start": 27,
+     "end": 30,
+     "kind": "wrap",
+     "title": "Log + play-out",
+     "text": "1 minute: log your tempos and tension. 2 minutes: play something musical over a backing loop.",
+     "log": "session"
+    }
+   ]
+  },
+  {
+   "date": "2026-11-10",
+   "week": 4,
+   "phase": 2,
+   "dow": 1,
+   "type": "weekday",
+   "main": "sweep",
+   "secondary": "economy",
+   "minutes": 30,
+   "blocks": [
+    {
+     "key": "warmup",
+     "start": 0,
+     "end": 3,
+     "kind": "warmup",
+     "title": "Warm-up",
+     "text": "Light single-string tremolo on each string, then an easy 1-2-3-4 chromatic. Low volume, loose grip. This isn't a speed test.",
+     "log": "none"
+    },
+    {
+     "key": "lab",
+     "start": 3,
+     "end": 8,
+     "kind": "lab",
+     "title": "Motion lab: Sweep",
+     "text": "No click. Try the pattern near real speed, lightly, a few seconds at a time, and stop between tries. If your forearm or triceps tighten, stop and adjust. Film one clip if something clicks.",
+     "items": [
+      {
+       "ex": "S3"
+      }
+     ],
+     "log": "note"
+    },
+    {
+     "key": "main",
+     "start": 8,
+     "end": 16,
+     "kind": "main",
+     "title": "Main: Sweep",
+     "text": "Click on. Alternate the two exercises in 2-minute chunks: A, B, A, B. Go up a step after 4 clean reps in a row.",
+     "items": [
+      {
+       "ex": "S3"
+      },
+      {
+       "ex": "S2"
+      }
+     ],
+     "chunks": [
+      {
+       "i": 0,
+       "min": 2
+      },
+      {
+       "i": 1,
+       "min": 2
+      },
+      {
+       "i": 0,
+       "min": 2
+      },
+      {
+       "i": 1,
+       "min": 2
+      }
+     ],
+     "log": "tempo"
+    },
+    {
+     "key": "secondary",
+     "start": 16,
+     "end": 22,
+     "kind": "secondary",
+     "title": "Secondary: Economy",
+     "text": "Click on. 3 minutes on A, then 3 minutes on B.",
+     "items": [
+      {
+       "ex": "E2"
+      },
+      {
+       "ex": "E1"
+      }
+     ],
+     "chunks": [
+      {
+       "i": 0,
+       "min": 3
+      },
+      {
+       "i": 1,
+       "min": 3
+      }
+     ],
+     "log": "tempo"
+    },
+    {
+     "key": "combo",
+     "start": 22,
+     "end": 27,
+     "kind": "combo",
+     "title": "Combo lick",
+     "text": "Loop it as 1 bar, then 2 bars.",
+     "items": [
+      {
+       "ex": "C2"
+      }
+     ],
+     "log": "tempo"
+    },
+    {
+     "key": "wrap",
+     "start": 27,
+     "end": 30,
+     "kind": "wrap",
+     "title": "Log + play-out",
+     "text": "1 minute: log your tempos and tension. 2 minutes: play something musical over a backing loop.",
+     "log": "session"
+    }
+   ]
+  },
+  {
+   "date": "2026-11-11",
+   "week": 4,
+   "phase": 2,
+   "dow": 2,
+   "type": "weekday",
+   "main": "economy",
+   "secondary": "skipping",
+   "minutes": 30,
+   "blocks": [
+    {
+     "key": "warmup",
+     "start": 0,
+     "end": 3,
+     "kind": "warmup",
+     "title": "Warm-up",
+     "text": "Light single-string tremolo on each string, then an easy 1-2-3-4 chromatic. Low volume, loose grip. This isn't a speed test.",
+     "log": "none"
+    },
+    {
+     "key": "lab",
+     "start": 3,
+     "end": 8,
+     "kind": "lab",
+     "title": "Motion lab: Economy",
+     "text": "No click. Try the pattern near real speed, lightly, a few seconds at a time, and stop between tries. If your forearm or triceps tighten, stop and adjust. Film one clip if something clicks.",
+     "items": [
+      {
+       "ex": "E2"
+      }
+     ],
+     "log": "note"
+    },
+    {
+     "key": "main",
+     "start": 8,
+     "end": 16,
+     "kind": "main",
+     "title": "Main: Economy",
+     "text": "Click on. Alternate the two exercises in 2-minute chunks: A, B, A, B. Go up a step after 4 clean reps in a row.",
+     "items": [
+      {
+       "ex": "E2"
+      },
+      {
+       "ex": "E1"
+      }
+     ],
+     "chunks": [
+      {
+       "i": 0,
+       "min": 2
+      },
+      {
+       "i": 1,
+       "min": 2
+      },
+      {
+       "i": 0,
+       "min": 2
+      },
+      {
+       "i": 1,
+       "min": 2
+      }
+     ],
+     "log": "tempo"
+    },
+    {
+     "key": "secondary",
+     "start": 16,
+     "end": 22,
+     "kind": "secondary",
+     "title": "Secondary: String skipping",
+     "text": "Click on. 3 minutes on A, then 3 minutes on B.",
+     "items": [
+      {
+       "ex": "K2"
+      },
+      {
+       "ex": "K1"
+      }
+     ],
+     "chunks": [
+      {
+       "i": 0,
+       "min": 3
+      },
+      {
+       "i": 1,
+       "min": 3
+      }
+     ],
+     "log": "tempo"
+    },
+    {
+     "key": "combo",
+     "start": 22,
+     "end": 27,
+     "kind": "combo",
+     "title": "Combo lick",
+     "text": "Loop it as 1 bar, then 2 bars.",
+     "items": [
+      {
+       "ex": "C2"
+      }
+     ],
+     "log": "tempo"
+    },
+    {
+     "key": "wrap",
+     "start": 27,
+     "end": 30,
+     "kind": "wrap",
+     "title": "Log + play-out",
+     "text": "1 minute: log your tempos and tension. 2 minutes: play something musical over a backing loop.",
+     "log": "session"
+    }
+   ]
+  },
+  {
+   "date": "2026-11-12",
+   "week": 4,
+   "phase": 2,
+   "dow": 3,
+   "type": "weekday",
+   "main": "skipping",
+   "secondary": "alternate",
+   "minutes": 30,
+   "blocks": [
+    {
+     "key": "warmup",
+     "start": 0,
+     "end": 3,
+     "kind": "warmup",
+     "title": "Warm-up",
+     "text": "Light single-string tremolo on each string, then an easy 1-2-3-4 chromatic. Low volume, loose grip. This isn't a speed test.",
+     "log": "none"
+    },
+    {
+     "key": "lab",
+     "start": 3,
+     "end": 8,
+     "kind": "lab",
+     "title": "Motion lab: String skipping",
+     "text": "No click. Try the pattern near real speed, lightly, a few seconds at a time, and stop between tries. If your forearm or triceps tighten, stop and adjust. Film one clip if something clicks.",
+     "items": [
+      {
+       "ex": "K2"
+      }
+     ],
+     "log": "note"
+    },
+    {
+     "key": "main",
+     "start": 8,
+     "end": 16,
+     "kind": "main",
+     "title": "Main: String skipping",
+     "text": "Click on. Alternate the two exercises in 2-minute chunks: A, B, A, B. Go up a step after 4 clean reps in a row.",
+     "items": [
+      {
+       "ex": "K2"
+      },
+      {
+       "ex": "K1"
+      }
+     ],
+     "chunks": [
+      {
+       "i": 0,
+       "min": 2
+      },
+      {
+       "i": 1,
+       "min": 2
+      },
+      {
+       "i": 0,
+       "min": 2
+      },
+      {
+       "i": 1,
+       "min": 2
+      }
+     ],
+     "log": "tempo"
+    },
+    {
+     "key": "secondary",
+     "start": 16,
+     "end": 22,
+     "kind": "secondary",
+     "title": "Secondary: Alternate",
+     "text": "Click on. 3 minutes on A, then 3 minutes on B.",
+     "items": [
+      {
+       "ex": "A4"
+      },
+      {
+       "ex": "A3"
+      }
+     ],
+     "chunks": [
+      {
+       "i": 0,
+       "min": 3
+      },
+      {
+       "i": 1,
+       "min": 3
+      }
+     ],
+     "log": "tempo"
+    },
+    {
+     "key": "combo",
+     "start": 22,
+     "end": 27,
+     "kind": "combo",
+     "title": "Combo lick",
+     "text": "Loop it as 1 bar, then 2 bars.",
+     "items": [
+      {
+       "ex": "C2"
+      }
+     ],
+     "log": "tempo"
+    },
+    {
+     "key": "wrap",
+     "start": 27,
+     "end": 30,
+     "kind": "wrap",
+     "title": "Log + play-out",
+     "text": "1 minute: log your tempos and tension. 2 minutes: play something musical over a backing loop.",
+     "log": "session"
+    }
+   ]
+  },
+  {
+   "date": "2026-11-13",
+   "week": 4,
+   "phase": 2,
+   "dow": 4,
+   "type": "weekday",
+   "main": "sweep",
+   "secondary": "alternate",
+   "minutes": 30,
+   "blocks": [
+    {
+     "key": "warmup",
+     "start": 0,
+     "end": 3,
+     "kind": "warmup",
+     "title": "Warm-up",
+     "text": "Light single-string tremolo on each string, then an easy 1-2-3-4 chromatic. Low volume, loose grip. This isn't a speed test.",
+     "log": "none"
+    },
+    {
+     "key": "lab",
+     "start": 3,
+     "end": 8,
+     "kind": "lab",
+     "title": "Motion lab: Sweep",
+     "text": "No click. Try the pattern near real speed, lightly, a few seconds at a time, and stop between tries. If your forearm or triceps tighten, stop and adjust. Film one clip if something clicks.",
+     "items": [
+      {
+       "ex": "S3"
+      }
+     ],
+     "log": "note"
+    },
+    {
+     "key": "main",
+     "start": 8,
+     "end": 16,
+     "kind": "main",
+     "title": "Main: Sweep",
+     "text": "Click on. Alternate the two exercises in 2-minute chunks: A, B, A, B. Go up a step after 4 clean reps in a row.",
+     "items": [
+      {
+       "ex": "S3"
+      },
+      {
+       "ex": "S2"
+      }
+     ],
+     "chunks": [
+      {
+       "i": 0,
+       "min": 2
+      },
+      {
+       "i": 1,
+       "min": 2
+      },
+      {
+       "i": 0,
+       "min": 2
+      },
+      {
+       "i": 1,
+       "min": 2
+      }
+     ],
+     "log": "tempo"
+    },
+    {
+     "key": "secondary",
+     "start": 16,
+     "end": 22,
+     "kind": "secondary",
+     "title": "Secondary: Alternate",
+     "text": "Click on. 3 minutes on A, then 3 minutes on B.",
+     "items": [
+      {
+       "ex": "A4"
+      },
+      {
+       "ex": "A3"
+      }
+     ],
+     "chunks": [
+      {
+       "i": 0,
+       "min": 3
+      },
+      {
+       "i": 1,
+       "min": 3
+      }
+     ],
+     "log": "tempo"
+    },
+    {
+     "key": "combo",
+     "start": 22,
+     "end": 27,
+     "kind": "combo",
+     "title": "Combo lick",
+     "text": "Loop it as 1 bar, then 2 bars.",
+     "items": [
+      {
+       "ex": "C2"
+      }
+     ],
+     "log": "tempo"
+    },
+    {
+     "key": "wrap",
+     "start": 27,
+     "end": 30,
+     "kind": "wrap",
+     "title": "Log + play-out",
+     "text": "1 minute: log your tempos and tension. 2 minutes: play something musical over a backing loop.",
+     "log": "session"
+    }
+   ]
+  },
+  {
+   "date": "2026-11-14",
+   "week": 4,
+   "phase": 2,
+   "dow": 5,
+   "type": "weekend",
+   "main": "circuit",
+   "secondary": null,
+   "minutes": 90,
+   "retest": true,
+   "blocks": [
+    {
+     "key": "warmup",
+     "start": 0,
+     "end": 5,
+     "kind": "warmup",
+     "title": "Warm-up",
+     "text": "Light single-string tremolo on each string, then an easy 1-2-3-4 chromatic. Low volume, loose grip. This isn't a speed test.",
+     "log": "none"
+    },
+    {
+     "key": "retest",
+     "start": 5,
+     "end": 20,
+     "kind": "test",
+     "title": "Retest (Week 4)",
+     "text": "Same protocol as the baseline, about 2.5 minutes per test. Record a phone video of at least one test.",
+     "items": [
+      {
+       "ex": "A1"
+      },
+      {
+       "ex": "A2"
+      },
+      {
+       "ex": "A3"
+      },
+      {
+       "ex": "E1"
+      },
+      {
+       "ex": "S2"
+      },
+      {
+       "ex": "K3"
+      }
+     ],
+     "log": "test",
+     "tests": [
+      "T1",
+      "T2",
+      "T3",
+      "T4",
+      "T5",
+      "T6"
+     ]
+    },
+    {
+     "key": "circuit",
+     "start": 20,
+     "end": 36,
+     "kind": "main",
+     "title": "Technique circuit (4 x 4 min)",
+     "text": "Interleaved: Alternate, Sweep, Economy, Skip. Click on.",
+     "items": [
+      {
+       "ex": "A4"
+      },
+      {
+       "ex": "S3"
+      },
+      {
+       "ex": "E2"
+      },
+      {
+       "ex": "K2"
+      }
+     ],
+     "chunks": [
+      {
+       "i": 0,
+       "min": 4
+      },
+      {
+       "i": 1,
+       "min": 4
+      },
+      {
+       "i": 2,
+       "min": 4
+      },
+      {
+       "i": 3,
+       "min": 4
+      }
+     ],
+     "log": "tempo"
+    },
+    {
+     "key": "break",
+     "start": 36,
+     "end": 40,
+     "kind": "break",
+     "title": "Off-guitar break",
+     "text": "Walk, get water. No noodling.",
+     "log": "none"
+    },
+    {
+     "key": "combo",
+     "start": 40,
+     "end": 55,
+     "kind": "combo",
+     "title": "Combo licks + record a take",
+     "text": "Work through the combos, then record one take in Ableton.",
+     "items": [
+      {
+       "ex": "C2"
+      }
+     ],
+     "log": "tempo"
+    },
+    {
+     "key": "review",
+     "start": 55,
+     "end": 60,
+     "kind": "wrap",
+     "title": "Review + log",
+     "text": "Listen back to your take. Log tempos. Pick next week's weakest technique. Advance check: did at least 3 of 4 techniques hit their targets this phase? If not, tap 'Repeat this week'.",
+     "log": "session"
+    },
+    {
+     "key": "music",
+     "start": 60,
+     "end": 90,
+     "kind": "music",
+     "title": "Musical time (optional, up to 30 min)",
+     "text": "Play songs (A7 / Synyster solos fit this material), jam over backing tracks, or write licks with this week's techniques.",
+     "log": "none"
+    }
+   ]
+  },
+  {
+   "date": "2026-11-15",
+   "week": 4,
+   "phase": 2,
+   "dow": 6,
+   "type": "rest",
+   "main": null,
+   "secondary": null,
+   "minutes": 0,
+   "blocks": [
+    {
+     "key": "rest",
+     "start": 0,
+     "end": 0,
+     "kind": "rest",
+     "title": "Rest day",
+     "text": "Take the day off, or play 20-45 minutes of songs only. If anything is sore, take it fully off.",
+     "log": "none"
+    }
+   ]
+  },
+  {
+   "date": "2026-11-16",
+   "week": 5,
+   "phase": 3,
+   "dow": 0,
+   "type": "weekday",
+   "main": "alternate",
+   "secondary": "sweep",
+   "minutes": 30,
+   "blocks": [
+    {
+     "key": "warmup",
+     "start": 0,
+     "end": 3,
+     "kind": "warmup",
+     "title": "Warm-up",
+     "text": "Light single-string tremolo on each string, then an easy 1-2-3-4 chromatic. Low volume, loose grip. This isn't a speed test.",
+     "log": "none"
+    },
+    {
+     "key": "lab",
+     "start": 3,
+     "end": 8,
+     "kind": "lab",
+     "title": "Motion lab: Alternate",
+     "text": "No click. Try the pattern near real speed, lightly, a few seconds at a time, and stop between tries. If your forearm or triceps tighten, stop and adjust. Film one clip if something clicks.",
+     "items": [
+      {
+       "ex": "A4"
+      }
+     ],
+     "log": "note"
+    },
+    {
+     "key": "main",
+     "start": 8,
+     "end": 16,
+     "kind": "main",
+     "title": "Main: Alternate",
+     "text": "Click on. Alternate the two exercises in 2-minute chunks: A, B, A, B. Go up a step after 4 clean reps in a row.",
+     "items": [
+      {
+       "ex": "A4"
+      },
+      {
+       "ex": "A5"
+      }
+     ],
+     "chunks": [
+      {
+       "i": 0,
+       "min": 2
+      },
+      {
+       "i": 1,
+       "min": 2
+      },
+      {
+       "i": 0,
+       "min": 2
+      },
+      {
+       "i": 1,
+       "min": 2
+      }
+     ],
+     "log": "tempo"
+    },
+    {
+     "key": "secondary",
+     "start": 16,
+     "end": 22,
+     "kind": "secondary",
+     "title": "Secondary: Sweep",
+     "text": "Click on. 3 minutes on A, then 3 minutes on B.",
+     "items": [
+      {
+       "ex": "S3"
+      },
+      {
+       "ex": "S4"
+      }
+     ],
+     "chunks": [
+      {
+       "i": 0,
+       "min": 3
+      },
+      {
+       "i": 1,
+       "min": 3
+      }
+     ],
+     "log": "tempo"
+    },
+    {
+     "key": "combo",
+     "start": 22,
+     "end": 27,
+     "kind": "combo",
+     "title": "Combo lick",
+     "text": "Loop it as 1 bar, then 2 bars.",
+     "items": [
+      {
+       "ex": "C1"
+      }
+     ],
+     "log": "tempo"
+    },
+    {
+     "key": "wrap",
+     "start": 27,
+     "end": 30,
+     "kind": "wrap",
+     "title": "Log + play-out",
+     "text": "1 minute: log your tempos and tension. 2 minutes: play something musical over a backing loop.",
+     "log": "session"
+    }
+   ]
+  },
+  {
+   "date": "2026-11-17",
+   "week": 5,
+   "phase": 3,
+   "dow": 1,
+   "type": "weekday",
+   "main": "sweep",
+   "secondary": "economy",
+   "minutes": 30,
+   "blocks": [
+    {
+     "key": "warmup",
+     "start": 0,
+     "end": 3,
+     "kind": "warmup",
+     "title": "Warm-up",
+     "text": "Light single-string tremolo on each string, then an easy 1-2-3-4 chromatic. Low volume, loose grip. This isn't a speed test.",
+     "log": "none"
+    },
+    {
+     "key": "lab",
+     "start": 3,
+     "end": 8,
+     "kind": "lab",
+     "title": "Motion lab: Sweep",
+     "text": "No click. Try the pattern near real speed, lightly, a few seconds at a time, and stop between tries. If your forearm or triceps tighten, stop and adjust. Film one clip if something clicks.",
+     "items": [
+      {
+       "ex": "S3"
+      }
+     ],
+     "log": "note"
+    },
+    {
+     "key": "main",
+     "start": 8,
+     "end": 16,
+     "kind": "main",
+     "title": "Main: Sweep",
+     "text": "Click on. Alternate the two exercises in 2-minute chunks: A, B, A, B. Go up a step after 4 clean reps in a row.",
+     "items": [
+      {
+       "ex": "S3"
+      },
+      {
+       "ex": "S4"
+      }
+     ],
+     "chunks": [
+      {
+       "i": 0,
+       "min": 2
+      },
+      {
+       "i": 1,
+       "min": 2
+      },
+      {
+       "i": 0,
+       "min": 2
+      },
+      {
+       "i": 1,
+       "min": 2
+      }
+     ],
+     "log": "tempo"
+    },
+    {
+     "key": "secondary",
+     "start": 16,
+     "end": 22,
+     "kind": "secondary",
+     "title": "Secondary: Economy",
+     "text": "Click on. 3 minutes on A, then 3 minutes on B.",
+     "items": [
+      {
+       "ex": "E2"
+      },
+      {
+       "ex": "E3"
+      }
+     ],
+     "chunks": [
+      {
+       "i": 0,
+       "min": 3
+      },
+      {
+       "i": 1,
+       "min": 3
+      }
+     ],
+     "log": "tempo"
+    },
+    {
+     "key": "combo",
+     "start": 22,
+     "end": 27,
+     "kind": "combo",
+     "title": "Combo lick",
+     "text": "Loop it as 1 bar, then 2 bars.",
+     "items": [
+      {
+       "ex": "C2"
+      }
+     ],
+     "log": "tempo"
+    },
+    {
+     "key": "wrap",
+     "start": 27,
+     "end": 30,
+     "kind": "wrap",
+     "title": "Log + play-out",
+     "text": "1 minute: log your tempos and tension. 2 minutes: play something musical over a backing loop.",
+     "log": "session"
+    }
+   ]
+  },
+  {
+   "date": "2026-11-18",
+   "week": 5,
+   "phase": 3,
+   "dow": 2,
+   "type": "weekday",
+   "main": "economy",
+   "secondary": "skipping",
+   "minutes": 30,
+   "blocks": [
+    {
+     "key": "warmup",
+     "start": 0,
+     "end": 3,
+     "kind": "warmup",
+     "title": "Warm-up",
+     "text": "Light single-string tremolo on each string, then an easy 1-2-3-4 chromatic. Low volume, loose grip. This isn't a speed test.",
+     "log": "none"
+    },
+    {
+     "key": "lab",
+     "start": 3,
+     "end": 8,
+     "kind": "lab",
+     "title": "Motion lab: Economy",
+     "text": "No click. Try the pattern near real speed, lightly, a few seconds at a time, and stop between tries. If your forearm or triceps tighten, stop and adjust. Film one clip if something clicks.",
+     "items": [
+      {
+       "ex": "E2"
+      }
+     ],
+     "log": "note"
+    },
+    {
+     "key": "main",
+     "start": 8,
+     "end": 16,
+     "kind": "main",
+     "title": "Main: Economy",
+     "text": "Click on. Alternate the two exercises in 2-minute chunks: A, B, A, B. Go up a step after 4 clean reps in a row.",
+     "items": [
+      {
+       "ex": "E2"
+      },
+      {
+       "ex": "E3"
+      }
+     ],
+     "chunks": [
+      {
+       "i": 0,
+       "min": 2
+      },
+      {
+       "i": 1,
+       "min": 2
+      },
+      {
+       "i": 0,
+       "min": 2
+      },
+      {
+       "i": 1,
+       "min": 2
+      }
+     ],
+     "log": "tempo"
+    },
+    {
+     "key": "secondary",
+     "start": 16,
+     "end": 22,
+     "kind": "secondary",
+     "title": "Secondary: String skipping",
+     "text": "Click on. 3 minutes on A, then 3 minutes on B.",
+     "items": [
+      {
+       "ex": "K2"
+      },
+      {
+       "ex": "K3"
+      }
+     ],
+     "chunks": [
+      {
+       "i": 0,
+       "min": 3
+      },
+      {
+       "i": 1,
+       "min": 3
+      }
+     ],
+     "log": "tempo"
+    },
+    {
+     "key": "combo",
+     "start": 22,
+     "end": 27,
+     "kind": "combo",
+     "title": "Combo lick",
+     "text": "Loop it as 1 bar, then 2 bars.",
+     "items": [
+      {
+       "ex": "C1"
+      }
+     ],
+     "log": "tempo"
+    },
+    {
+     "key": "wrap",
+     "start": 27,
+     "end": 30,
+     "kind": "wrap",
+     "title": "Log + play-out",
+     "text": "1 minute: log your tempos and tension. 2 minutes: play something musical over a backing loop.",
+     "log": "session"
+    }
+   ]
+  },
+  {
+   "date": "2026-11-19",
+   "week": 5,
+   "phase": 3,
+   "dow": 3,
+   "type": "weekday",
+   "main": "skipping",
+   "secondary": "alternate",
+   "minutes": 30,
+   "blocks": [
+    {
+     "key": "warmup",
+     "start": 0,
+     "end": 3,
+     "kind": "warmup",
+     "title": "Warm-up",
+     "text": "Light single-string tremolo on each string, then an easy 1-2-3-4 chromatic. Low volume, loose grip. This isn't a speed test.",
+     "log": "none"
+    },
+    {
+     "key": "lab",
+     "start": 3,
+     "end": 8,
+     "kind": "lab",
+     "title": "Motion lab: String skipping",
+     "text": "No click. Try the pattern near real speed, lightly, a few seconds at a time, and stop between tries. If your forearm or triceps tighten, stop and adjust. Film one clip if something clicks.",
+     "items": [
+      {
+       "ex": "K3"
+      }
+     ],
+     "log": "note"
+    },
+    {
+     "key": "main",
+     "start": 8,
+     "end": 16,
+     "kind": "main",
+     "title": "Main: String skipping",
+     "text": "Click on. Alternate the two exercises in 2-minute chunks: A, B, A, B. Go up a step after 4 clean reps in a row.",
+     "items": [
+      {
+       "ex": "K2"
+      },
+      {
+       "ex": "K3"
+      }
+     ],
+     "chunks": [
+      {
+       "i": 0,
+       "min": 2
+      },
+      {
+       "i": 1,
+       "min": 2
+      },
+      {
+       "i": 0,
+       "min": 2
+      },
+      {
+       "i": 1,
+       "min": 2
+      }
+     ],
+     "log": "tempo"
+    },
+    {
+     "key": "secondary",
+     "start": 16,
+     "end": 22,
+     "kind": "secondary",
+     "title": "Secondary: Alternate",
+     "text": "Click on. 3 minutes on A, then 3 minutes on B.",
+     "items": [
+      {
+       "ex": "A4"
+      },
+      {
+       "ex": "A5"
+      }
+     ],
+     "chunks": [
+      {
+       "i": 0,
+       "min": 3
+      },
+      {
+       "i": 1,
+       "min": 3
+      }
+     ],
+     "log": "tempo"
+    },
+    {
+     "key": "combo",
+     "start": 22,
+     "end": 27,
+     "kind": "combo",
+     "title": "Combo lick",
+     "text": "Loop it as 1 bar, then 2 bars.",
+     "items": [
+      {
+       "ex": "C2"
+      }
+     ],
+     "log": "tempo"
+    },
+    {
+     "key": "wrap",
+     "start": 27,
+     "end": 30,
+     "kind": "wrap",
+     "title": "Log + play-out",
+     "text": "1 minute: log your tempos and tension. 2 minutes: play something musical over a backing loop.",
+     "log": "session"
+    }
+   ]
+  },
+  {
+   "date": "2026-11-20",
+   "week": 5,
+   "phase": 3,
+   "dow": 4,
+   "type": "weekday",
+   "main": "sweep",
+   "secondary": "alternate",
+   "minutes": 30,
+   "blocks": [
+    {
+     "key": "warmup",
+     "start": 0,
+     "end": 3,
+     "kind": "warmup",
+     "title": "Warm-up",
+     "text": "Light single-string tremolo on each string, then an easy 1-2-3-4 chromatic. Low volume, loose grip. This isn't a speed test.",
+     "log": "none"
+    },
+    {
+     "key": "lab",
+     "start": 3,
+     "end": 8,
+     "kind": "lab",
+     "title": "Motion lab: Sweep",
+     "text": "No click. Try the pattern near real speed, lightly, a few seconds at a time, and stop between tries. If your forearm or triceps tighten, stop and adjust. Film one clip if something clicks.",
+     "items": [
+      {
+       "ex": "S3"
+      }
+     ],
+     "log": "note"
+    },
+    {
+     "key": "main",
+     "start": 8,
+     "end": 16,
+     "kind": "main",
+     "title": "Main: Sweep",
+     "text": "Click on. Alternate the two exercises in 2-minute chunks: A, B, A, B. Go up a step after 4 clean reps in a row.",
+     "items": [
+      {
+       "ex": "S3"
+      },
+      {
+       "ex": "S4"
+      }
+     ],
+     "chunks": [
+      {
+       "i": 0,
+       "min": 2
+      },
+      {
+       "i": 1,
+       "min": 2
+      },
+      {
+       "i": 0,
+       "min": 2
+      },
+      {
+       "i": 1,
+       "min": 2
+      }
+     ],
+     "log": "tempo"
+    },
+    {
+     "key": "secondary",
+     "start": 16,
+     "end": 22,
+     "kind": "secondary",
+     "title": "Secondary: Alternate",
+     "text": "Click on. 3 minutes on A, then 3 minutes on B.",
+     "items": [
+      {
+       "ex": "A4"
+      },
+      {
+       "ex": "A5"
+      }
+     ],
+     "chunks": [
+      {
+       "i": 0,
+       "min": 3
+      },
+      {
+       "i": 1,
+       "min": 3
+      }
+     ],
+     "log": "tempo"
+    },
+    {
+     "key": "combo",
+     "start": 22,
+     "end": 27,
+     "kind": "combo",
+     "title": "Combo lick",
+     "text": "Loop it as 1 bar, then 2 bars.",
+     "items": [
+      {
+       "ex": "C1"
+      }
+     ],
+     "log": "tempo"
+    },
+    {
+     "key": "wrap",
+     "start": 27,
+     "end": 30,
+     "kind": "wrap",
+     "title": "Log + play-out",
+     "text": "1 minute: log your tempos and tension. 2 minutes: play something musical over a backing loop.",
+     "log": "session"
+    }
+   ]
+  },
+  {
+   "date": "2026-11-21",
+   "week": 5,
+   "phase": 3,
+   "dow": 5,
+   "type": "weekend",
+   "main": "circuit",
+   "secondary": null,
+   "minutes": 90,
+   "retest": false,
+   "blocks": [
+    {
+     "key": "warmup",
+     "start": 0,
+     "end": 5,
+     "kind": "warmup",
+     "title": "Warm-up",
+     "text": "Light single-string tremolo on each string, then an easy 1-2-3-4 chromatic. Low volume, loose grip. This isn't a speed test.",
+     "log": "none"
+    },
+    {
+     "key": "lab",
+     "start": 5,
+     "end": 15,
+     "kind": "lab",
+     "title": "Long motion lab",
+     "text": "Pick your weakest technique (check your log). Use speed-first probes, then film and review a slow-motion clip.",
+     "items": [
+      {
+       "ex": "S3"
+      },
+      {
+       "ex": "A4"
+      }
+     ],
+     "log": "note"
+    },
+    {
+     "key": "circuit",
+     "start": 15,
+     "end": 35,
+     "kind": "main",
+     "title": "Technique circuit (4 x 5 min)",
+     "text": "Interleaved: Alternate, Sweep, Economy, Skip. Click on.",
+     "items": [
+      {
+       "ex": "A4"
+      },
+      {
+       "ex": "S3"
+      },
+      {
+       "ex": "E2"
+      },
+      {
+       "ex": "K2"
+      }
+     ],
+     "chunks": [
+      {
+       "i": 0,
+       "min": 5
+      },
+      {
+       "i": 1,
+       "min": 5
+      },
+      {
+       "i": 2,
+       "min": 5
+      },
+      {
+       "i": 3,
+       "min": 5
+      }
+     ],
+     "log": "tempo"
+    },
+    {
+     "key": "break",
+     "start": 35,
+     "end": 40,
+     "kind": "break",
+     "title": "Off-guitar break",
+     "text": "Walk, get water. No noodling.",
+     "log": "none"
+    },
+    {
+     "key": "combo",
+     "start": 40,
+     "end": 55,
+     "kind": "combo",
+     "title": "Combo licks + record a take",
+     "text": "Work through the combos, then record one take in Ableton.",
+     "items": [
+      {
+       "ex": "C1"
+      },
+      {
+       "ex": "C2"
+      }
+     ],
+     "chunks": [
+      {
+       "i": 0,
+       "min": 8
+      },
+      {
+       "i": 1,
+       "min": 7
+      }
+     ],
+     "log": "tempo"
+    },
+    {
+     "key": "review",
+     "start": 55,
+     "end": 60,
+     "kind": "wrap",
+     "title": "Review + log",
+     "text": "Listen back to your take. Log tempos. Pick next week's weakest technique.",
+     "log": "session"
+    },
+    {
+     "key": "music",
+     "start": 60,
+     "end": 90,
+     "kind": "music",
+     "title": "Musical time (optional, up to 30 min)",
+     "text": "Play songs (A7 / Synyster solos fit this material), jam over backing tracks, or write licks with this week's techniques.",
+     "log": "none"
+    }
+   ]
+  },
+  {
+   "date": "2026-11-22",
+   "week": 5,
+   "phase": 3,
+   "dow": 6,
+   "type": "rest",
+   "main": null,
+   "secondary": null,
+   "minutes": 0,
+   "blocks": [
+    {
+     "key": "rest",
+     "start": 0,
+     "end": 0,
+     "kind": "rest",
+     "title": "Rest day",
+     "text": "Take the day off, or play 20-45 minutes of songs only. If anything is sore, take it fully off.",
+     "log": "none"
+    }
+   ]
+  },
+  {
+   "date": "2026-11-23",
+   "week": 6,
+   "phase": 3,
+   "dow": 0,
+   "type": "weekday",
+   "main": "alternate",
+   "secondary": "sweep",
+   "minutes": 30,
+   "blocks": [
+    {
+     "key": "warmup",
+     "start": 0,
+     "end": 3,
+     "kind": "warmup",
+     "title": "Warm-up",
+     "text": "Light single-string tremolo on each string, then an easy 1-2-3-4 chromatic. Low volume, loose grip. This isn't a speed test.",
+     "log": "none"
+    },
+    {
+     "key": "lab",
+     "start": 3,
+     "end": 8,
+     "kind": "lab",
+     "title": "Motion lab: Alternate",
+     "text": "No click. Try the pattern near real speed, lightly, a few seconds at a time, and stop between tries. If your forearm or triceps tighten, stop and adjust. Film one clip if something clicks.",
+     "items": [
+      {
+       "ex": "A4"
+      }
+     ],
+     "log": "note"
+    },
+    {
+     "key": "main",
+     "start": 8,
+     "end": 16,
+     "kind": "main",
+     "title": "Main: Alternate",
+     "text": "Click on. Alternate the two exercises in 2-minute chunks: A, B, A, B. Go up a step after 4 clean reps in a row.",
+     "items": [
+      {
+       "ex": "A5"
+      },
+      {
+       "ex": "A4"
+      }
+     ],
+     "chunks": [
+      {
+       "i": 0,
+       "min": 2
+      },
+      {
+       "i": 1,
+       "min": 2
+      },
+      {
+       "i": 0,
+       "min": 2
+      },
+      {
+       "i": 1,
+       "min": 2
+      }
+     ],
+     "log": "tempo"
+    },
+    {
+     "key": "secondary",
+     "start": 16,
+     "end": 22,
+     "kind": "secondary",
+     "title": "Secondary: Sweep",
+     "text": "Click on. 3 minutes on A, then 3 minutes on B.",
+     "items": [
+      {
+       "ex": "S4"
+      },
+      {
+       "ex": "S3"
+      }
+     ],
+     "chunks": [
+      {
+       "i": 0,
+       "min": 3
+      },
+      {
+       "i": 1,
+       "min": 3
+      }
+     ],
+     "log": "tempo"
+    },
+    {
+     "key": "combo",
+     "start": 22,
+     "end": 27,
+     "kind": "combo",
+     "title": "Combo lick",
+     "text": "Loop it as 1 bar, then 2 bars.",
+     "items": [
+      {
+       "ex": "C3"
+      }
+     ],
+     "log": "tempo"
+    },
+    {
+     "key": "wrap",
+     "start": 27,
+     "end": 30,
+     "kind": "wrap",
+     "title": "Log + play-out",
+     "text": "1 minute: log your tempos and tension. 2 minutes: play something musical over a backing loop.",
+     "log": "session"
+    }
+   ]
+  },
+  {
+   "date": "2026-11-24",
+   "week": 6,
+   "phase": 3,
+   "dow": 1,
+   "type": "weekday",
+   "main": "sweep",
+   "secondary": "economy",
+   "minutes": 30,
+   "blocks": [
+    {
+     "key": "warmup",
+     "start": 0,
+     "end": 3,
+     "kind": "warmup",
+     "title": "Warm-up",
+     "text": "Light single-string tremolo on each string, then an easy 1-2-3-4 chromatic. Low volume, loose grip. This isn't a speed test.",
+     "log": "none"
+    },
+    {
+     "key": "lab",
+     "start": 3,
+     "end": 8,
+     "kind": "lab",
+     "title": "Motion lab: Sweep",
+     "text": "No click. Try the pattern near real speed, lightly, a few seconds at a time, and stop between tries. If your forearm or triceps tighten, stop and adjust. Film one clip if something clicks.",
+     "items": [
+      {
+       "ex": "S4"
+      }
+     ],
+     "log": "note"
+    },
+    {
+     "key": "main",
+     "start": 8,
+     "end": 16,
+     "kind": "main",
+     "title": "Main: Sweep",
+     "text": "Click on. Alternate the two exercises in 2-minute chunks: A, B, A, B. Go up a step after 4 clean reps in a row.",
+     "items": [
+      {
+       "ex": "S4"
+      },
+      {
+       "ex": "S3"
+      }
+     ],
+     "chunks": [
+      {
+       "i": 0,
+       "min": 2
+      },
+      {
+       "i": 1,
+       "min": 2
+      },
+      {
+       "i": 0,
+       "min": 2
+      },
+      {
+       "i": 1,
+       "min": 2
+      }
+     ],
+     "log": "tempo"
+    },
+    {
+     "key": "secondary",
+     "start": 16,
+     "end": 22,
+     "kind": "secondary",
+     "title": "Secondary: Economy",
+     "text": "Click on. 3 minutes on A, then 3 minutes on B.",
+     "items": [
+      {
+       "ex": "E3"
+      },
+      {
+       "ex": "E2"
+      }
+     ],
+     "chunks": [
+      {
+       "i": 0,
+       "min": 3
+      },
+      {
+       "i": 1,
+       "min": 3
+      }
+     ],
+     "log": "tempo"
+    },
+    {
+     "key": "combo",
+     "start": 22,
+     "end": 27,
+     "kind": "combo",
+     "title": "Combo lick",
+     "text": "Loop it as 1 bar, then 2 bars.",
+     "items": [
+      {
+       "ex": "C1"
+      }
+     ],
+     "log": "tempo"
+    },
+    {
+     "key": "wrap",
+     "start": 27,
+     "end": 30,
+     "kind": "wrap",
+     "title": "Log + play-out",
+     "text": "1 minute: log your tempos and tension. 2 minutes: play something musical over a backing loop.",
+     "log": "session"
+    }
+   ]
+  },
+  {
+   "date": "2026-11-25",
+   "week": 6,
+   "phase": 3,
+   "dow": 2,
+   "type": "weekday",
+   "main": "economy",
+   "secondary": "skipping",
+   "minutes": 30,
+   "blocks": [
+    {
+     "key": "warmup",
+     "start": 0,
+     "end": 3,
+     "kind": "warmup",
+     "title": "Warm-up",
+     "text": "Light single-string tremolo on each string, then an easy 1-2-3-4 chromatic. Low volume, loose grip. This isn't a speed test.",
+     "log": "none"
+    },
+    {
+     "key": "lab",
+     "start": 3,
+     "end": 8,
+     "kind": "lab",
+     "title": "Motion lab: Economy",
+     "text": "No click. Try the pattern near real speed, lightly, a few seconds at a time, and stop between tries. If your forearm or triceps tighten, stop and adjust. Film one clip if something clicks.",
+     "items": [
+      {
+       "ex": "E3"
+      }
+     ],
+     "log": "note"
+    },
+    {
+     "key": "main",
+     "start": 8,
+     "end": 16,
+     "kind": "main",
+     "title": "Main: Economy",
+     "text": "Click on. Alternate the two exercises in 2-minute chunks: A, B, A, B. Go up a step after 4 clean reps in a row.",
+     "items": [
+      {
+       "ex": "E3"
+      },
+      {
+       "ex": "E2"
+      }
+     ],
+     "chunks": [
+      {
+       "i": 0,
+       "min": 2
+      },
+      {
+       "i": 1,
+       "min": 2
+      },
+      {
+       "i": 0,
+       "min": 2
+      },
+      {
+       "i": 1,
+       "min": 2
+      }
+     ],
+     "log": "tempo"
+    },
+    {
+     "key": "secondary",
+     "start": 16,
+     "end": 22,
+     "kind": "secondary",
+     "title": "Secondary: String skipping",
+     "text": "Click on. 3 minutes on A, then 3 minutes on B.",
+     "items": [
+      {
+       "ex": "K3"
+      },
+      {
+       "ex": "K2"
+      }
+     ],
+     "chunks": [
+      {
+       "i": 0,
+       "min": 3
+      },
+      {
+       "i": 1,
+       "min": 3
+      }
+     ],
+     "log": "tempo"
+    },
+    {
+     "key": "combo",
+     "start": 22,
+     "end": 27,
+     "kind": "combo",
+     "title": "Combo lick",
+     "text": "Loop it as 1 bar, then 2 bars.",
+     "items": [
+      {
+       "ex": "C3"
+      }
+     ],
+     "log": "tempo"
+    },
+    {
+     "key": "wrap",
+     "start": 27,
+     "end": 30,
+     "kind": "wrap",
+     "title": "Log + play-out",
+     "text": "1 minute: log your tempos and tension. 2 minutes: play something musical over a backing loop.",
+     "log": "session"
+    }
+   ]
+  },
+  {
+   "date": "2026-11-26",
+   "week": 6,
+   "phase": 3,
+   "dow": 3,
+   "type": "weekday",
+   "main": "skipping",
+   "secondary": "alternate",
+   "minutes": 30,
+   "blocks": [
+    {
+     "key": "warmup",
+     "start": 0,
+     "end": 3,
+     "kind": "warmup",
+     "title": "Warm-up",
+     "text": "Light single-string tremolo on each string, then an easy 1-2-3-4 chromatic. Low volume, loose grip. This isn't a speed test.",
+     "log": "none"
+    },
+    {
+     "key": "lab",
+     "start": 3,
+     "end": 8,
+     "kind": "lab",
+     "title": "Motion lab: String skipping",
+     "text": "No click. Try the pattern near real speed, lightly, a few seconds at a time, and stop between tries. If your forearm or triceps tighten, stop and adjust. Film one clip if something clicks.",
+     "items": [
+      {
+       "ex": "K3"
+      }
+     ],
+     "log": "note"
+    },
+    {
+     "key": "main",
+     "start": 8,
+     "end": 16,
+     "kind": "main",
+     "title": "Main: String skipping",
+     "text": "Click on. Alternate the two exercises in 2-minute chunks: A, B, A, B. Go up a step after 4 clean reps in a row.",
+     "items": [
+      {
+       "ex": "K3"
+      },
+      {
+       "ex": "K2"
+      }
+     ],
+     "chunks": [
+      {
+       "i": 0,
+       "min": 2
+      },
+      {
+       "i": 1,
+       "min": 2
+      },
+      {
+       "i": 0,
+       "min": 2
+      },
+      {
+       "i": 1,
+       "min": 2
+      }
+     ],
+     "log": "tempo"
+    },
+    {
+     "key": "secondary",
+     "start": 16,
+     "end": 22,
+     "kind": "secondary",
+     "title": "Secondary: Alternate",
+     "text": "Click on. 3 minutes on A, then 3 minutes on B.",
+     "items": [
+      {
+       "ex": "A5"
+      },
+      {
+       "ex": "A4"
+      }
+     ],
+     "chunks": [
+      {
+       "i": 0,
+       "min": 3
+      },
+      {
+       "i": 1,
+       "min": 3
+      }
+     ],
+     "log": "tempo"
+    },
+    {
+     "key": "combo",
+     "start": 22,
+     "end": 27,
+     "kind": "combo",
+     "title": "Combo lick",
+     "text": "Loop it as 1 bar, then 2 bars.",
+     "items": [
+      {
+       "ex": "C1"
+      }
+     ],
+     "log": "tempo"
+    },
+    {
+     "key": "wrap",
+     "start": 27,
+     "end": 30,
+     "kind": "wrap",
+     "title": "Log + play-out",
+     "text": "1 minute: log your tempos and tension. 2 minutes: play something musical over a backing loop.",
+     "log": "session"
+    }
+   ]
+  },
+  {
+   "date": "2026-11-27",
+   "week": 6,
+   "phase": 3,
+   "dow": 4,
+   "type": "weekday",
+   "main": "sweep",
+   "secondary": "alternate",
+   "minutes": 30,
+   "blocks": [
+    {
+     "key": "warmup",
+     "start": 0,
+     "end": 3,
+     "kind": "warmup",
+     "title": "Warm-up",
+     "text": "Light single-string tremolo on each string, then an easy 1-2-3-4 chromatic. Low volume, loose grip. This isn't a speed test.",
+     "log": "none"
+    },
+    {
+     "key": "lab",
+     "start": 3,
+     "end": 8,
+     "kind": "lab",
+     "title": "Motion lab: Sweep",
+     "text": "No click. Try the pattern near real speed, lightly, a few seconds at a time, and stop between tries. If your forearm or triceps tighten, stop and adjust. Film one clip if something clicks.",
+     "items": [
+      {
+       "ex": "S4"
+      }
+     ],
+     "log": "note"
+    },
+    {
+     "key": "main",
+     "start": 8,
+     "end": 16,
+     "kind": "main",
+     "title": "Main: Sweep",
+     "text": "Click on. Alternate the two exercises in 2-minute chunks: A, B, A, B. Go up a step after 4 clean reps in a row.",
+     "items": [
+      {
+       "ex": "S4"
+      },
+      {
+       "ex": "S3"
+      }
+     ],
+     "chunks": [
+      {
+       "i": 0,
+       "min": 2
+      },
+      {
+       "i": 1,
+       "min": 2
+      },
+      {
+       "i": 0,
+       "min": 2
+      },
+      {
+       "i": 1,
+       "min": 2
+      }
+     ],
+     "log": "tempo"
+    },
+    {
+     "key": "secondary",
+     "start": 16,
+     "end": 22,
+     "kind": "secondary",
+     "title": "Secondary: Alternate",
+     "text": "Click on. 3 minutes on A, then 3 minutes on B.",
+     "items": [
+      {
+       "ex": "A5"
+      },
+      {
+       "ex": "A4"
+      }
+     ],
+     "chunks": [
+      {
+       "i": 0,
+       "min": 3
+      },
+      {
+       "i": 1,
+       "min": 3
+      }
+     ],
+     "log": "tempo"
+    },
+    {
+     "key": "combo",
+     "start": 22,
+     "end": 27,
+     "kind": "combo",
+     "title": "Combo lick",
+     "text": "Loop it as 1 bar, then 2 bars.",
+     "items": [
+      {
+       "ex": "C3"
+      }
+     ],
+     "log": "tempo"
+    },
+    {
+     "key": "wrap",
+     "start": 27,
+     "end": 30,
+     "kind": "wrap",
+     "title": "Log + play-out",
+     "text": "1 minute: log your tempos and tension. 2 minutes: play something musical over a backing loop.",
+     "log": "session"
+    }
+   ]
+  },
+  {
+   "date": "2026-11-28",
+   "week": 6,
+   "phase": 3,
+   "dow": 5,
+   "type": "weekend",
+   "main": "circuit",
+   "secondary": null,
+   "minutes": 90,
+   "retest": true,
+   "blocks": [
+    {
+     "key": "warmup",
+     "start": 0,
+     "end": 5,
+     "kind": "warmup",
+     "title": "Warm-up",
+     "text": "Light single-string tremolo on each string, then an easy 1-2-3-4 chromatic. Low volume, loose grip. This isn't a speed test.",
+     "log": "none"
+    },
+    {
+     "key": "retest",
+     "start": 5,
+     "end": 20,
+     "kind": "test",
+     "title": "Retest (Week 6)",
+     "text": "Same protocol as the baseline, about 2.5 minutes per test. Record a phone video of at least one test.",
+     "items": [
+      {
+       "ex": "A1"
+      },
+      {
+       "ex": "A2"
+      },
+      {
+       "ex": "A3"
+      },
+      {
+       "ex": "E1"
+      },
+      {
+       "ex": "S2"
+      },
+      {
+       "ex": "K3"
+      }
+     ],
+     "log": "test",
+     "tests": [
+      "T1",
+      "T2",
+      "T3",
+      "T4",
+      "T5",
+      "T6"
+     ]
+    },
+    {
+     "key": "circuit",
+     "start": 20,
+     "end": 36,
+     "kind": "main",
+     "title": "Technique circuit (4 x 4 min)",
+     "text": "Interleaved: Alternate, Sweep, Economy, Skip. Click on.",
+     "items": [
+      {
+       "ex": "A5"
+      },
+      {
+       "ex": "S4"
+      },
+      {
+       "ex": "E3"
+      },
+      {
+       "ex": "K3"
+      }
+     ],
+     "chunks": [
+      {
+       "i": 0,
+       "min": 4
+      },
+      {
+       "i": 1,
+       "min": 4
+      },
+      {
+       "i": 2,
+       "min": 4
+      },
+      {
+       "i": 3,
+       "min": 4
+      }
+     ],
+     "log": "tempo"
+    },
+    {
+     "key": "break",
+     "start": 36,
+     "end": 40,
+     "kind": "break",
+     "title": "Off-guitar break",
+     "text": "Walk, get water. No noodling.",
+     "log": "none"
+    },
+    {
+     "key": "combo",
+     "start": 40,
+     "end": 55,
+     "kind": "combo",
+     "title": "Combo licks + record a take",
+     "text": "Work through the combos, then record one take in Ableton.",
+     "items": [
+      {
+       "ex": "C3"
+      },
+      {
+       "ex": "C1"
+      }
+     ],
+     "chunks": [
+      {
+       "i": 0,
+       "min": 8
+      },
+      {
+       "i": 1,
+       "min": 7
+      }
+     ],
+     "log": "tempo"
+    },
+    {
+     "key": "review",
+     "start": 55,
+     "end": 60,
+     "kind": "wrap",
+     "title": "Review + log",
+     "text": "Listen back to your take. Log tempos. Pick next week's weakest technique. Advance check: did at least 3 of 4 techniques hit their targets this phase? If not, tap 'Repeat this week'.",
+     "log": "session"
+    },
+    {
+     "key": "music",
+     "start": 60,
+     "end": 90,
+     "kind": "music",
+     "title": "Musical time (optional, up to 30 min)",
+     "text": "Play songs (A7 / Synyster solos fit this material), jam over backing tracks, or write licks with this week's techniques.",
+     "log": "none"
+    }
+   ]
+  },
+  {
+   "date": "2026-11-29",
+   "week": 6,
+   "phase": 3,
+   "dow": 6,
+   "type": "rest",
+   "main": null,
+   "secondary": null,
+   "minutes": 0,
+   "blocks": [
+    {
+     "key": "rest",
+     "start": 0,
+     "end": 0,
+     "kind": "rest",
+     "title": "Rest day",
+     "text": "Take the day off, or play 20-45 minutes of songs only. If anything is sore, take it fully off.",
+     "log": "none"
+    }
+   ]
+  },
+  {
+   "date": "2026-11-30",
+   "week": 7,
+   "phase": 4,
+   "dow": 0,
+   "type": "weekday",
+   "main": "alternate",
+   "secondary": "sweep",
+   "minutes": 30,
+   "blocks": [
+    {
+     "key": "warmup",
+     "start": 0,
+     "end": 3,
+     "kind": "warmup",
+     "title": "Warm-up",
+     "text": "Light single-string tremolo on each string, then an easy 1-2-3-4 chromatic. Low volume, loose grip. This isn't a speed test.",
+     "log": "none"
+    },
+    {
+     "key": "lab",
+     "start": 3,
+     "end": 8,
+     "kind": "lab",
+     "title": "Motion lab: Alternate",
+     "text": "No click. Try the pattern near real speed, lightly, a few seconds at a time, and stop between tries. If your forearm or triceps tighten, stop and adjust. Film one clip if something clicks.",
+     "items": [
+      {
+       "ex": "A5"
+      }
+     ],
+     "log": "note"
+    },
+    {
+     "key": "main",
+     "start": 8,
+     "end": 16,
+     "kind": "main",
+     "title": "Main: Alternate",
+     "text": "Click on. Alternate the two exercises in 2-minute chunks: A, B, A, B. Go up a step after 4 clean reps in a row.",
+     "items": [
+      {
+       "ex": "A5"
+      },
+      {
+       "ex": "A6"
+      }
+     ],
+     "chunks": [
+      {
+       "i": 0,
+       "min": 2
+      },
+      {
+       "i": 1,
+       "min": 2
+      },
+      {
+       "i": 0,
+       "min": 2
+      },
+      {
+       "i": 1,
+       "min": 2
+      }
+     ],
+     "log": "tempo"
+    },
+    {
+     "key": "secondary",
+     "start": 16,
+     "end": 22,
+     "kind": "secondary",
+     "title": "Secondary: Sweep",
+     "text": "Click on. 3 minutes on A, then 3 minutes on B.",
+     "items": [
+      {
+       "ex": "S4"
+      },
+      {
+       "ex": "S5"
+      }
+     ],
+     "chunks": [
+      {
+       "i": 0,
+       "min": 3
+      },
+      {
+       "i": 1,
+       "min": 3
+      }
+     ],
+     "log": "tempo"
+    },
+    {
+     "key": "combo",
+     "start": 22,
+     "end": 27,
+     "kind": "combo",
+     "title": "Combo lick",
+     "text": "Loop it as 1 bar, then 2 bars.",
+     "items": [
+      {
+       "ex": "C3"
+      }
+     ],
+     "log": "tempo"
+    },
+    {
+     "key": "wrap",
+     "start": 27,
+     "end": 30,
+     "kind": "wrap",
+     "title": "Log + play-out",
+     "text": "1 minute: log your tempos and tension. 2 minutes: play something musical over a backing loop.",
+     "log": "session"
+    }
+   ]
+  },
+  {
+   "date": "2026-12-01",
+   "week": 7,
+   "phase": 4,
+   "dow": 1,
+   "type": "weekday",
+   "main": "sweep",
+   "secondary": "economy",
+   "minutes": 30,
+   "blocks": [
+    {
+     "key": "warmup",
+     "start": 0,
+     "end": 3,
+     "kind": "warmup",
+     "title": "Warm-up",
+     "text": "Light single-string tremolo on each string, then an easy 1-2-3-4 chromatic. Low volume, loose grip. This isn't a speed test.",
+     "log": "none"
+    },
+    {
+     "key": "lab",
+     "start": 3,
+     "end": 8,
+     "kind": "lab",
+     "title": "Motion lab: Sweep",
+     "text": "No click. Try the pattern near real speed, lightly, a few seconds at a time, and stop between tries. If your forearm or triceps tighten, stop and adjust. Film one clip if something clicks.",
+     "items": [
+      {
+       "ex": "S4"
+      }
+     ],
+     "log": "note"
+    },
+    {
+     "key": "main",
+     "start": 8,
+     "end": 16,
+     "kind": "main",
+     "title": "Main: Sweep",
+     "text": "Click on. Alternate the two exercises in 2-minute chunks: A, B, A, B. Go up a step after 4 clean reps in a row.",
+     "items": [
+      {
+       "ex": "S4"
+      },
+      {
+       "ex": "S5"
+      }
+     ],
+     "chunks": [
+      {
+       "i": 0,
+       "min": 2
+      },
+      {
+       "i": 1,
+       "min": 2
+      },
+      {
+       "i": 0,
+       "min": 2
+      },
+      {
+       "i": 1,
+       "min": 2
+      }
+     ],
+     "log": "tempo"
+    },
+    {
+     "key": "secondary",
+     "start": 16,
+     "end": 22,
+     "kind": "secondary",
+     "title": "Secondary: Economy",
+     "text": "Click on. 3 minutes on A, then 3 minutes on B.",
+     "items": [
+      {
+       "ex": "E3"
+      },
+      {
+       "ex": "E2"
+      }
+     ],
+     "chunks": [
+      {
+       "i": 0,
+       "min": 3
+      },
+      {
+       "i": 1,
+       "min": 3
+      }
+     ],
+     "log": "tempo"
+    },
+    {
+     "key": "combo",
+     "start": 22,
+     "end": 27,
+     "kind": "combo",
+     "title": "Combo lick",
+     "text": "Draft and loop your own 2-bar lick.",
+     "items": [
+      {
+       "ex": "TL"
+      }
+     ],
+     "log": "tempo"
+    },
+    {
+     "key": "wrap",
+     "start": 27,
+     "end": 30,
+     "kind": "wrap",
+     "title": "Log + play-out",
+     "text": "1 minute: log your tempos and tension. 2 minutes: play something musical over a backing loop.",
+     "log": "session"
+    }
+   ]
+  },
+  {
+   "date": "2026-12-02",
+   "week": 7,
+   "phase": 4,
+   "dow": 2,
+   "type": "weekday",
+   "main": "economy",
+   "secondary": "skipping",
+   "minutes": 30,
+   "blocks": [
+    {
+     "key": "warmup",
+     "start": 0,
+     "end": 3,
+     "kind": "warmup",
+     "title": "Warm-up",
+     "text": "Light single-string tremolo on each string, then an easy 1-2-3-4 chromatic. Low volume, loose grip. This isn't a speed test.",
+     "log": "none"
+    },
+    {
+     "key": "lab",
+     "start": 3,
+     "end": 8,
+     "kind": "lab",
+     "title": "Motion lab: Economy",
+     "text": "No click. Try the pattern near real speed, lightly, a few seconds at a time, and stop between tries. If your forearm or triceps tighten, stop and adjust. Film one clip if something clicks.",
+     "items": [
+      {
+       "ex": "E3"
+      }
+     ],
+     "log": "note"
+    },
+    {
+     "key": "main",
+     "start": 8,
+     "end": 16,
+     "kind": "main",
+     "title": "Main: Economy",
+     "text": "Click on. Alternate the two exercises in 2-minute chunks: A, B, A, B. Go up a step after 4 clean reps in a row.",
+     "items": [
+      {
+       "ex": "E3"
+      },
+      {
+       "ex": "E2"
+      }
+     ],
+     "chunks": [
+      {
+       "i": 0,
+       "min": 2
+      },
+      {
+       "i": 1,
+       "min": 2
+      },
+      {
+       "i": 0,
+       "min": 2
+      },
+      {
+       "i": 1,
+       "min": 2
+      }
+     ],
+     "log": "tempo"
+    },
+    {
+     "key": "secondary",
+     "start": 16,
+     "end": 22,
+     "kind": "secondary",
+     "title": "Secondary: String skipping",
+     "text": "Click on. 3 minutes on A, then 3 minutes on B.",
+     "items": [
+      {
+       "ex": "K3"
+      },
+      {
+       "ex": "K2"
+      }
+     ],
+     "chunks": [
+      {
+       "i": 0,
+       "min": 3
+      },
+      {
+       "i": 1,
+       "min": 3
+      }
+     ],
+     "log": "tempo"
+    },
+    {
+     "key": "combo",
+     "start": 22,
+     "end": 27,
+     "kind": "combo",
+     "title": "Combo lick",
+     "text": "Loop it as 1 bar, then 2 bars.",
+     "items": [
+      {
+       "ex": "C3"
+      }
+     ],
+     "log": "tempo"
+    },
+    {
+     "key": "wrap",
+     "start": 27,
+     "end": 30,
+     "kind": "wrap",
+     "title": "Log + play-out",
+     "text": "1 minute: log your tempos and tension. 2 minutes: play something musical over a backing loop.",
+     "log": "session"
+    }
+   ]
+  },
+  {
+   "date": "2026-12-03",
+   "week": 7,
+   "phase": 4,
+   "dow": 3,
+   "type": "weekday",
+   "main": "skipping",
+   "secondary": "alternate",
+   "minutes": 30,
+   "blocks": [
+    {
+     "key": "warmup",
+     "start": 0,
+     "end": 3,
+     "kind": "warmup",
+     "title": "Warm-up",
+     "text": "Light single-string tremolo on each string, then an easy 1-2-3-4 chromatic. Low volume, loose grip. This isn't a speed test.",
+     "log": "none"
+    },
+    {
+     "key": "lab",
+     "start": 3,
+     "end": 8,
+     "kind": "lab",
+     "title": "Motion lab: String skipping",
+     "text": "No click. Try the pattern near real speed, lightly, a few seconds at a time, and stop between tries. If your forearm or triceps tighten, stop and adjust. Film one clip if something clicks.",
+     "items": [
+      {
+       "ex": "K3"
+      }
+     ],
+     "log": "note"
+    },
+    {
+     "key": "main",
+     "start": 8,
+     "end": 16,
+     "kind": "main",
+     "title": "Main: String skipping",
+     "text": "Click on. Alternate the two exercises in 2-minute chunks: A, B, A, B. Go up a step after 4 clean reps in a row.",
+     "items": [
+      {
+       "ex": "K3"
+      },
+      {
+       "ex": "K2"
+      }
+     ],
+     "chunks": [
+      {
+       "i": 0,
+       "min": 2
+      },
+      {
+       "i": 1,
+       "min": 2
+      },
+      {
+       "i": 0,
+       "min": 2
+      },
+      {
+       "i": 1,
+       "min": 2
+      }
+     ],
+     "log": "tempo"
+    },
+    {
+     "key": "secondary",
+     "start": 16,
+     "end": 22,
+     "kind": "secondary",
+     "title": "Secondary: Alternate",
+     "text": "Click on. 3 minutes on A, then 3 minutes on B.",
+     "items": [
+      {
+       "ex": "A5"
+      },
+      {
+       "ex": "A6"
+      }
+     ],
+     "chunks": [
+      {
+       "i": 0,
+       "min": 3
+      },
+      {
+       "i": 1,
+       "min": 3
+      }
+     ],
+     "log": "tempo"
+    },
+    {
+     "key": "combo",
+     "start": 22,
+     "end": 27,
+     "kind": "combo",
+     "title": "Combo lick",
+     "text": "Draft and loop your own 2-bar lick.",
+     "items": [
+      {
+       "ex": "TL"
+      }
+     ],
+     "log": "tempo"
+    },
+    {
+     "key": "wrap",
+     "start": 27,
+     "end": 30,
+     "kind": "wrap",
+     "title": "Log + play-out",
+     "text": "1 minute: log your tempos and tension. 2 minutes: play something musical over a backing loop.",
+     "log": "session"
+    }
+   ]
+  },
+  {
+   "date": "2026-12-04",
+   "week": 7,
+   "phase": 4,
+   "dow": 4,
+   "type": "weekday",
+   "main": "sweep",
+   "secondary": "alternate",
+   "minutes": 30,
+   "blocks": [
+    {
+     "key": "warmup",
+     "start": 0,
+     "end": 3,
+     "kind": "warmup",
+     "title": "Warm-up",
+     "text": "Light single-string tremolo on each string, then an easy 1-2-3-4 chromatic. Low volume, loose grip. This isn't a speed test.",
+     "log": "none"
+    },
+    {
+     "key": "lab",
+     "start": 3,
+     "end": 8,
+     "kind": "lab",
+     "title": "Motion lab: Sweep",
+     "text": "No click. Try the pattern near real speed, lightly, a few seconds at a time, and stop between tries. If your forearm or triceps tighten, stop and adjust. Film one clip if something clicks.",
+     "items": [
+      {
+       "ex": "S4"
+      }
+     ],
+     "log": "note"
+    },
+    {
+     "key": "main",
+     "start": 8,
+     "end": 16,
+     "kind": "main",
+     "title": "Main: Sweep",
+     "text": "Click on. Alternate the two exercises in 2-minute chunks: A, B, A, B. Go up a step after 4 clean reps in a row.",
+     "items": [
+      {
+       "ex": "S4"
+      },
+      {
+       "ex": "S5"
+      }
+     ],
+     "chunks": [
+      {
+       "i": 0,
+       "min": 2
+      },
+      {
+       "i": 1,
+       "min": 2
+      },
+      {
+       "i": 0,
+       "min": 2
+      },
+      {
+       "i": 1,
+       "min": 2
+      }
+     ],
+     "log": "tempo"
+    },
+    {
+     "key": "secondary",
+     "start": 16,
+     "end": 22,
+     "kind": "secondary",
+     "title": "Secondary: Alternate",
+     "text": "Click on. 3 minutes on A, then 3 minutes on B.",
+     "items": [
+      {
+       "ex": "A5"
+      },
+      {
+       "ex": "A6"
+      }
+     ],
+     "chunks": [
+      {
+       "i": 0,
+       "min": 3
+      },
+      {
+       "i": 1,
+       "min": 3
+      }
+     ],
+     "log": "tempo"
+    },
+    {
+     "key": "combo",
+     "start": 22,
+     "end": 27,
+     "kind": "combo",
+     "title": "Combo lick",
+     "text": "Loop it as 1 bar, then 2 bars.",
+     "items": [
+      {
+       "ex": "C3"
+      }
+     ],
+     "log": "tempo"
+    },
+    {
+     "key": "wrap",
+     "start": 27,
+     "end": 30,
+     "kind": "wrap",
+     "title": "Log + play-out",
+     "text": "1 minute: log your tempos and tension. 2 minutes: play something musical over a backing loop.",
+     "log": "session"
+    }
+   ]
+  },
+  {
+   "date": "2026-12-05",
+   "week": 7,
+   "phase": 4,
+   "dow": 5,
+   "type": "weekend",
+   "main": "circuit",
+   "secondary": null,
+   "minutes": 90,
+   "retest": false,
+   "blocks": [
+    {
+     "key": "warmup",
+     "start": 0,
+     "end": 5,
+     "kind": "warmup",
+     "title": "Warm-up",
+     "text": "Light single-string tremolo on each string, then an easy 1-2-3-4 chromatic. Low volume, loose grip. This isn't a speed test.",
+     "log": "none"
+    },
+    {
+     "key": "lab",
+     "start": 5,
+     "end": 15,
+     "kind": "lab",
+     "title": "Long motion lab",
+     "text": "Pick your weakest technique (check your log). Use speed-first probes, then film and review a slow-motion clip.",
+     "items": [
+      {
+       "ex": "S4"
+      },
+      {
+       "ex": "A5"
+      }
+     ],
+     "log": "note"
+    },
+    {
+     "key": "circuit",
+     "start": 15,
+     "end": 35,
+     "kind": "main",
+     "title": "Technique circuit (4 x 5 min)",
+     "text": "Interleaved: Alternate, Sweep, Economy, Skip. Click on.",
+     "items": [
+      {
+       "ex": "A5"
+      },
+      {
+       "ex": "S4"
+      },
+      {
+       "ex": "E3"
+      },
+      {
+       "ex": "K3"
+      }
+     ],
+     "chunks": [
+      {
+       "i": 0,
+       "min": 5
+      },
+      {
+       "i": 1,
+       "min": 5
+      },
+      {
+       "i": 2,
+       "min": 5
+      },
+      {
+       "i": 3,
+       "min": 5
+      }
+     ],
+     "log": "tempo"
+    },
+    {
+     "key": "break",
+     "start": 35,
+     "end": 40,
+     "kind": "break",
+     "title": "Off-guitar break",
+     "text": "Walk, get water. No noodling.",
+     "log": "none"
+    },
+    {
+     "key": "combo",
+     "start": 40,
+     "end": 55,
+     "kind": "combo",
+     "title": "Combo licks + record a take",
+     "text": "Work through the combos, then record one take in Ableton.",
+     "items": [
+      {
+       "ex": "C3"
+      },
+      {
+       "ex": "TL"
+      }
+     ],
+     "chunks": [
+      {
+       "i": 0,
+       "min": 8
+      },
+      {
+       "i": 1,
+       "min": 7
+      }
+     ],
+     "log": "tempo"
+    },
+    {
+     "key": "review",
+     "start": 55,
+     "end": 60,
+     "kind": "wrap",
+     "title": "Review + log",
+     "text": "Listen back to your take. Log tempos. Pick next week's weakest technique.",
+     "log": "session"
+    },
+    {
+     "key": "music",
+     "start": 60,
+     "end": 90,
+     "kind": "music",
+     "title": "Musical time (optional, up to 30 min)",
+     "text": "Play songs (A7 / Synyster solos fit this material), jam over backing tracks, or write licks with this week's techniques.",
+     "log": "none"
+    }
+   ]
+  },
+  {
+   "date": "2026-12-06",
+   "week": 7,
+   "phase": 4,
+   "dow": 6,
+   "type": "rest",
+   "main": null,
+   "secondary": null,
+   "minutes": 0,
+   "blocks": [
+    {
+     "key": "rest",
+     "start": 0,
+     "end": 0,
+     "kind": "rest",
+     "title": "Rest day",
+     "text": "Take the day off, or play 20-45 minutes of songs only. If anything is sore, take it fully off.",
+     "log": "none"
+    }
+   ]
+  },
+  {
+   "date": "2026-12-07",
+   "week": 8,
+   "phase": 4,
+   "dow": 0,
+   "type": "weekday",
+   "main": "alternate",
+   "secondary": "sweep",
+   "minutes": 30,
+   "blocks": [
+    {
+     "key": "warmup",
+     "start": 0,
+     "end": 3,
+     "kind": "warmup",
+     "title": "Warm-up",
+     "text": "Light single-string tremolo on each string, then an easy 1-2-3-4 chromatic. Low volume, loose grip. This isn't a speed test.",
+     "log": "none"
+    },
+    {
+     "key": "lab",
+     "start": 3,
+     "end": 8,
+     "kind": "lab",
+     "title": "Motion lab: Alternate",
+     "text": "No click. Try the pattern near real speed, lightly, a few seconds at a time, and stop between tries. If your forearm or triceps tighten, stop and adjust. Film one clip if something clicks.",
+     "items": [
+      {
+       "ex": "A5"
+      }
+     ],
+     "log": "note"
+    },
+    {
+     "key": "main",
+     "start": 8,
+     "end": 16,
+     "kind": "main",
+     "title": "Main: Alternate",
+     "text": "Click on. Alternate the two exercises in 2-minute chunks: A, B, A, B. Go up a step after 4 clean reps in a row.",
+     "items": [
+      {
+       "ex": "A5"
+      },
+      {
+       "ex": "A6"
+      }
+     ],
+     "chunks": [
+      {
+       "i": 0,
+       "min": 2
+      },
+      {
+       "i": 1,
+       "min": 2
+      },
+      {
+       "i": 0,
+       "min": 2
+      },
+      {
+       "i": 1,
+       "min": 2
+      }
+     ],
+     "log": "tempo"
+    },
+    {
+     "key": "secondary",
+     "start": 16,
+     "end": 22,
+     "kind": "secondary",
+     "title": "Secondary: Sweep",
+     "text": "Click on. 3 minutes on A, then 3 minutes on B.",
+     "items": [
+      {
+       "ex": "S4"
+      },
+      {
+       "ex": "S5"
+      }
+     ],
+     "chunks": [
+      {
+       "i": 0,
+       "min": 3
+      },
+      {
+       "i": 1,
+       "min": 3
+      }
+     ],
+     "log": "tempo"
+    },
+    {
+     "key": "combo",
+     "start": 22,
+     "end": 27,
+     "kind": "combo",
+     "title": "Combo lick",
+     "text": "Draft and loop your own 2-bar lick.",
+     "items": [
+      {
+       "ex": "TL"
+      }
+     ],
+     "log": "tempo"
+    },
+    {
+     "key": "wrap",
+     "start": 27,
+     "end": 30,
+     "kind": "wrap",
+     "title": "Log + play-out",
+     "text": "1 minute: log your tempos and tension. 2 minutes: play something musical over a backing loop.",
+     "log": "session"
+    }
+   ]
+  },
+  {
+   "date": "2026-12-08",
+   "week": 8,
+   "phase": 4,
+   "dow": 1,
+   "type": "weekday",
+   "main": "sweep",
+   "secondary": "economy",
+   "minutes": 30,
+   "blocks": [
+    {
+     "key": "warmup",
+     "start": 0,
+     "end": 3,
+     "kind": "warmup",
+     "title": "Warm-up",
+     "text": "Light single-string tremolo on each string, then an easy 1-2-3-4 chromatic. Low volume, loose grip. This isn't a speed test.",
+     "log": "none"
+    },
+    {
+     "key": "lab",
+     "start": 3,
+     "end": 8,
+     "kind": "lab",
+     "title": "Motion lab: Sweep",
+     "text": "No click. Try the pattern near real speed, lightly, a few seconds at a time, and stop between tries. If your forearm or triceps tighten, stop and adjust. Film one clip if something clicks.",
+     "items": [
+      {
+       "ex": "S4"
+      }
+     ],
+     "log": "note"
+    },
+    {
+     "key": "main",
+     "start": 8,
+     "end": 16,
+     "kind": "main",
+     "title": "Main: Sweep",
+     "text": "Click on. Alternate the two exercises in 2-minute chunks: A, B, A, B. Go up a step after 4 clean reps in a row.",
+     "items": [
+      {
+       "ex": "S4"
+      },
+      {
+       "ex": "S5"
+      }
+     ],
+     "chunks": [
+      {
+       "i": 0,
+       "min": 2
+      },
+      {
+       "i": 1,
+       "min": 2
+      },
+      {
+       "i": 0,
+       "min": 2
+      },
+      {
+       "i": 1,
+       "min": 2
+      }
+     ],
+     "log": "tempo"
+    },
+    {
+     "key": "secondary",
+     "start": 16,
+     "end": 22,
+     "kind": "secondary",
+     "title": "Secondary: Economy",
+     "text": "Click on. 3 minutes on A, then 3 minutes on B.",
+     "items": [
+      {
+       "ex": "E3",
+       "focus": "ascending"
+      },
+      {
+       "ex": "E3",
+       "focus": "descending"
+      }
+     ],
+     "chunks": [
+      {
+       "i": 0,
+       "min": 3
+      },
+      {
+       "i": 1,
+       "min": 3
+      }
+     ],
+     "log": "tempo"
+    },
+    {
+     "key": "combo",
+     "start": 22,
+     "end": 27,
+     "kind": "combo",
+     "title": "Combo lick",
+     "text": "Loop it as 1 bar, then 2 bars.",
+     "items": [
+      {
+       "ex": "C3"
+      }
+     ],
+     "log": "tempo"
+    },
+    {
+     "key": "wrap",
+     "start": 27,
+     "end": 30,
+     "kind": "wrap",
+     "title": "Log + play-out",
+     "text": "1 minute: log your tempos and tension. 2 minutes: play something musical over a backing loop.",
+     "log": "session"
+    }
+   ]
+  },
+  {
+   "date": "2026-12-09",
+   "week": 8,
+   "phase": 4,
+   "dow": 2,
+   "type": "weekday",
+   "main": "economy",
+   "secondary": "skipping",
+   "minutes": 30,
+   "blocks": [
+    {
+     "key": "warmup",
+     "start": 0,
+     "end": 3,
+     "kind": "warmup",
+     "title": "Warm-up",
+     "text": "Light single-string tremolo on each string, then an easy 1-2-3-4 chromatic. Low volume, loose grip. This isn't a speed test.",
+     "log": "none"
+    },
+    {
+     "key": "lab",
+     "start": 3,
+     "end": 8,
+     "kind": "lab",
+     "title": "Motion lab: Economy",
+     "text": "No click. Try the pattern near real speed, lightly, a few seconds at a time, and stop between tries. If your forearm or triceps tighten, stop and adjust. Film one clip if something clicks.",
+     "items": [
+      {
+       "ex": "E3"
+      }
+     ],
+     "log": "note"
+    },
+    {
+     "key": "main",
+     "start": 8,
+     "end": 16,
+     "kind": "main",
+     "title": "Main: Economy",
+     "text": "Click on. Alternate the two exercises in 2-minute chunks: A, B, A, B. Go up a step after 4 clean reps in a row.",
+     "items": [
+      {
+       "ex": "E3",
+       "focus": "ascending"
+      },
+      {
+       "ex": "E3",
+       "focus": "descending"
+      }
+     ],
+     "chunks": [
+      {
+       "i": 0,
+       "min": 2
+      },
+      {
+       "i": 1,
+       "min": 2
+      },
+      {
+       "i": 0,
+       "min": 2
+      },
+      {
+       "i": 1,
+       "min": 2
+      }
+     ],
+     "log": "tempo"
+    },
+    {
+     "key": "secondary",
+     "start": 16,
+     "end": 22,
+     "kind": "secondary",
+     "title": "Secondary: String skipping",
+     "text": "Click on. 3 minutes on A, then 3 minutes on B.",
+     "items": [
+      {
+       "ex": "K3"
+      },
+      {
+       "ex": "K2"
+      }
+     ],
+     "chunks": [
+      {
+       "i": 0,
+       "min": 3
+      },
+      {
+       "i": 1,
+       "min": 3
+      }
+     ],
+     "log": "tempo"
+    },
+    {
+     "key": "combo",
+     "start": 22,
+     "end": 27,
+     "kind": "combo",
+     "title": "Combo lick",
+     "text": "Draft and loop your own 2-bar lick.",
+     "items": [
+      {
+       "ex": "TL"
+      }
+     ],
+     "log": "tempo"
+    },
+    {
+     "key": "wrap",
+     "start": 27,
+     "end": 30,
+     "kind": "wrap",
+     "title": "Log + play-out",
+     "text": "1 minute: log your tempos and tension. 2 minutes: play something musical over a backing loop.",
+     "log": "session"
+    }
+   ]
+  },
+  {
+   "date": "2026-12-10",
+   "week": 8,
+   "phase": 4,
+   "dow": 3,
+   "type": "weekday",
+   "main": "skipping",
+   "secondary": "alternate",
+   "minutes": 30,
+   "blocks": [
+    {
+     "key": "warmup",
+     "start": 0,
+     "end": 3,
+     "kind": "warmup",
+     "title": "Warm-up",
+     "text": "Light single-string tremolo on each string, then an easy 1-2-3-4 chromatic. Low volume, loose grip. This isn't a speed test.",
+     "log": "none"
+    },
+    {
+     "key": "lab",
+     "start": 3,
+     "end": 8,
+     "kind": "lab",
+     "title": "Motion lab: String skipping",
+     "text": "No click. Try the pattern near real speed, lightly, a few seconds at a time, and stop between tries. If your forearm or triceps tighten, stop and adjust. Film one clip if something clicks.",
+     "items": [
+      {
+       "ex": "K3"
+      }
+     ],
+     "log": "note"
+    },
+    {
+     "key": "main",
+     "start": 8,
+     "end": 16,
+     "kind": "main",
+     "title": "Main: String skipping",
+     "text": "Click on. Alternate the two exercises in 2-minute chunks: A, B, A, B. Go up a step after 4 clean reps in a row.",
+     "items": [
+      {
+       "ex": "K3"
+      },
+      {
+       "ex": "K2"
+      }
+     ],
+     "chunks": [
+      {
+       "i": 0,
+       "min": 2
+      },
+      {
+       "i": 1,
+       "min": 2
+      },
+      {
+       "i": 0,
+       "min": 2
+      },
+      {
+       "i": 1,
+       "min": 2
+      }
+     ],
+     "log": "tempo"
+    },
+    {
+     "key": "secondary",
+     "start": 16,
+     "end": 22,
+     "kind": "secondary",
+     "title": "Secondary: Alternate",
+     "text": "Click on. 3 minutes on A, then 3 minutes on B.",
+     "items": [
+      {
+       "ex": "A5"
+      },
+      {
+       "ex": "A6"
+      }
+     ],
+     "chunks": [
+      {
+       "i": 0,
+       "min": 3
+      },
+      {
+       "i": 1,
+       "min": 3
+      }
+     ],
+     "log": "tempo"
+    },
+    {
+     "key": "combo",
+     "start": 22,
+     "end": 27,
+     "kind": "combo",
+     "title": "Combo lick",
+     "text": "Loop it as 1 bar, then 2 bars.",
+     "items": [
+      {
+       "ex": "C3"
+      }
+     ],
+     "log": "tempo"
+    },
+    {
+     "key": "wrap",
+     "start": 27,
+     "end": 30,
+     "kind": "wrap",
+     "title": "Log + play-out",
+     "text": "1 minute: log your tempos and tension. 2 minutes: play something musical over a backing loop.",
+     "log": "session"
+    }
+   ]
+  },
+  {
+   "date": "2026-12-11",
+   "week": 8,
+   "phase": 4,
+   "dow": 4,
+   "type": "weekday",
+   "main": "sweep",
+   "secondary": "alternate",
+   "minutes": 30,
+   "blocks": [
+    {
+     "key": "warmup",
+     "start": 0,
+     "end": 3,
+     "kind": "warmup",
+     "title": "Warm-up",
+     "text": "Light single-string tremolo on each string, then an easy 1-2-3-4 chromatic. Low volume, loose grip. This isn't a speed test.",
+     "log": "none"
+    },
+    {
+     "key": "lab",
+     "start": 3,
+     "end": 8,
+     "kind": "lab",
+     "title": "Motion lab: Sweep",
+     "text": "No click. Try the pattern near real speed, lightly, a few seconds at a time, and stop between tries. If your forearm or triceps tighten, stop and adjust. Film one clip if something clicks.",
+     "items": [
+      {
+       "ex": "S4"
+      }
+     ],
+     "log": "note"
+    },
+    {
+     "key": "main",
+     "start": 8,
+     "end": 16,
+     "kind": "main",
+     "title": "Main: Sweep",
+     "text": "Click on. Alternate the two exercises in 2-minute chunks: A, B, A, B. Go up a step after 4 clean reps in a row.",
+     "items": [
+      {
+       "ex": "S4"
+      },
+      {
+       "ex": "S5"
+      }
+     ],
+     "chunks": [
+      {
+       "i": 0,
+       "min": 2
+      },
+      {
+       "i": 1,
+       "min": 2
+      },
+      {
+       "i": 0,
+       "min": 2
+      },
+      {
+       "i": 1,
+       "min": 2
+      }
+     ],
+     "log": "tempo"
+    },
+    {
+     "key": "secondary",
+     "start": 16,
+     "end": 22,
+     "kind": "secondary",
+     "title": "Secondary: Alternate",
+     "text": "Click on. 3 minutes on A, then 3 minutes on B.",
+     "items": [
+      {
+       "ex": "A5"
+      },
+      {
+       "ex": "A6"
+      }
+     ],
+     "chunks": [
+      {
+       "i": 0,
+       "min": 3
+      },
+      {
+       "i": 1,
+       "min": 3
+      }
+     ],
+     "log": "tempo"
+    },
+    {
+     "key": "combo",
+     "start": 22,
+     "end": 27,
+     "kind": "combo",
+     "title": "Combo lick",
+     "text": "Draft and loop your own 2-bar lick.",
+     "items": [
+      {
+       "ex": "TL"
+      }
+     ],
+     "log": "tempo"
+    },
+    {
+     "key": "wrap",
+     "start": 27,
+     "end": 30,
+     "kind": "wrap",
+     "title": "Log + play-out",
+     "text": "1 minute: log your tempos and tension. 2 minutes: play something musical over a backing loop.",
+     "log": "session"
+    }
+   ]
+  },
+  {
+   "date": "2026-12-12",
+   "week": 8,
+   "phase": 4,
+   "dow": 5,
+   "type": "weekend",
+   "main": "circuit",
+   "secondary": null,
+   "minutes": 90,
+   "retest": true,
+   "blocks": [
+    {
+     "key": "warmup",
+     "start": 0,
+     "end": 5,
+     "kind": "warmup",
+     "title": "Warm-up",
+     "text": "Light single-string tremolo on each string, then an easy 1-2-3-4 chromatic. Low volume, loose grip. This isn't a speed test.",
+     "log": "none"
+    },
+    {
+     "key": "retest",
+     "start": 5,
+     "end": 20,
+     "kind": "test",
+     "title": "Retest (Week 8)",
+     "text": "Same protocol as the baseline, about 2.5 minutes per test. Record a phone video of at least one test.",
+     "items": [
+      {
+       "ex": "A1"
+      },
+      {
+       "ex": "A2"
+      },
+      {
+       "ex": "A3"
+      },
+      {
+       "ex": "E1"
+      },
+      {
+       "ex": "S2"
+      },
+      {
+       "ex": "K3"
+      }
+     ],
+     "log": "test",
+     "tests": [
+      "T1",
+      "T2",
+      "T3",
+      "T4",
+      "T5",
+      "T6"
+     ]
+    },
+    {
+     "key": "circuit",
+     "start": 20,
+     "end": 36,
+     "kind": "main",
+     "title": "Technique circuit (4 x 4 min)",
+     "text": "Interleaved: Alternate, Sweep, Economy, Skip. Click on.",
+     "items": [
+      {
+       "ex": "A5"
+      },
+      {
+       "ex": "S4"
+      },
+      {
+       "ex": "E3",
+       "focus": "ascending"
+      },
+      {
+       "ex": "K3"
+      }
+     ],
+     "chunks": [
+      {
+       "i": 0,
+       "min": 4
+      },
+      {
+       "i": 1,
+       "min": 4
+      },
+      {
+       "i": 2,
+       "min": 4
+      },
+      {
+       "i": 3,
+       "min": 4
+      }
+     ],
+     "log": "tempo"
+    },
+    {
+     "key": "break",
+     "start": 36,
+     "end": 40,
+     "kind": "break",
+     "title": "Off-guitar break",
+     "text": "Walk, get water. No noodling.",
+     "log": "none"
+    },
+    {
+     "key": "combo",
+     "start": 40,
+     "end": 55,
+     "kind": "combo",
+     "title": "Combo licks + record a take",
+     "text": "Work through the combos, then record one take in Ableton. This is your Week 8 performance take.",
+     "items": [
+      {
+       "ex": "TL"
+      },
+      {
+       "ex": "C3"
+      }
+     ],
+     "chunks": [
+      {
+       "i": 0,
+       "min": 8
+      },
+      {
+       "i": 1,
+       "min": 7
+      }
+     ],
+     "log": "tempo"
+    },
+    {
+     "key": "review",
+     "start": 55,
+     "end": 60,
+     "kind": "wrap",
+     "title": "Review + log",
+     "text": "Listen back to your take. Log tempos. Pick next week's weakest technique.",
+     "log": "session"
+    },
+    {
+     "key": "music",
+     "start": 60,
+     "end": 90,
+     "kind": "music",
+     "title": "Musical time (optional, up to 30 min)",
+     "text": "Play songs (A7 / Synyster solos fit this material), jam over backing tracks, or write licks with this week's techniques.",
+     "log": "none"
+    }
+   ]
+  },
+  {
+   "date": "2026-12-13",
+   "week": 8,
+   "phase": 4,
+   "dow": 6,
+   "type": "rest",
+   "main": null,
+   "secondary": null,
+   "minutes": 0,
+   "blocks": [
+    {
+     "key": "rest",
+     "start": 0,
+     "end": 0,
+     "kind": "rest",
+     "title": "Rest day",
+     "text": "Take the day off, or play 20-45 minutes of songs only. If anything is sore, take it fully off.",
+     "log": "none"
+    }
+   ]
+  }
+ ]
+}
