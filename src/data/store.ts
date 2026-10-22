@@ -2,6 +2,7 @@ import { get, set } from 'idb-keyval';
 import { defaultRoutine, type Routine } from './routine';
 import { emptyProfile, type Profile } from '../game/progress';
 import { parseCustom, type CustomPattern } from './custom';
+import { emptyProgramLog, type ProgramLog } from './programLog';
 import { defaultMidiMapping, type MidiMapping } from '../input/midi';
 
 export type Settings = {
@@ -23,7 +24,7 @@ export const defaultSettings = (): Settings => ({
   audio: { deviceId: null, sensitivity: 0.6 },
 });
 
-export type AppData = { settings: Settings; profile: Profile; routine: Routine; custom: CustomPattern[] };
+export type AppData = { settings: Settings; profile: Profile; routine: Routine; custom: CustomPattern[]; program: ProgramLog };
 
 const KEY = 'practice-hub/v1';
 
@@ -38,7 +39,12 @@ export function normalize(raw: unknown): AppData {
   const routine = r.routine && Array.isArray(r.routine.items) && r.routine.items.length
     ? { ...defaultRoutine(), ...r.routine }
     : defaultRoutine();
-  return { settings, profile, routine, custom: parseCustom(r.custom) };
+  const pl = (r.program ?? {}) as Partial<ProgramLog>;
+  const program: ProgramLog = {
+    shifts: Array.isArray(pl.shifts) ? pl.shifts : emptyProgramLog().shifts,
+    sessions: pl.sessions && typeof pl.sessions === 'object' ? pl.sessions : {},
+  };
+  return { settings, profile, routine, custom: parseCustom(r.custom), program };
 }
 
 export async function loadData(): Promise<AppData> {

@@ -68,11 +68,14 @@ export const EXERCISES: Exercise[] = [
 ];
 
 let custom: Exercise[] = [];
+let programEx: Exercise[] = []; // program-mode exercises: resolvable by id, but not listed in the library
 /** Replace the user's saved pattern-builder exercises (call before rendering anything that looks them up). */
 export const registerCustom = (list: Exercise[]): void => { custom = list; };
+export const registerProgramExercises = (list: Exercise[]): void => { programEx = list; };
 export const allExercises = (): Exercise[] => [...EXERCISES, ...custom];
 export const isCustom = (id: string): boolean => custom.some((e) => e.id === id);
-export const findExercise = (id: string): Exercise | undefined => allExercises().find((e) => e.id === id);
+export const findExercise = (id: string): Exercise | undefined =>
+  allExercises().find((e) => e.id === id) ?? programEx.find((e) => e.id === id);
 
 export const exerciseById = (id: string): Exercise => {
   const ex = findExercise(id);

@@ -2,13 +2,14 @@ import { level, xpInLevel, XP_PER_LEVEL } from '../game/progress';
 
 export function TopBar(props: {
   xp: number; streak: number; step: number; steps: number; minLeft: number; onSettings: () => void;
-  view: 'practice' | 'history'; onView: (v: 'practice' | 'history') => void;
+  view: 'practice' | 'program' | 'history'; onView: (v: 'practice' | 'program' | 'history') => void; hasProgram: boolean;
 }) {
   const xp = xpInLevel(props.xp);
   return (
     <header className="topbar">
       <span className="brand">Practice Hub</span>
       <nav className="tabs" aria-label="Screens">
+        {props.hasProgram && <button type="button" className="tab" aria-pressed={props.view === 'program'} onClick={() => props.onView('program')}>Program</button>}
         <button type="button" className="tab" aria-pressed={props.view === 'practice'} onClick={() => props.onView('practice')}>Practice</button>
         <button type="button" className="tab" aria-pressed={props.view === 'history'} onClick={() => props.onView('history')}>History</button>
       </nav>

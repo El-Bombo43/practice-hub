@@ -1,12 +1,11 @@
 # Progress
 
-## Sessions 1–4 — done (99 tests; build passes; nothing hardware- or browser-tested)
-Scaffold + Pages deploy, metronome (count-in, gap click, playhead sweep, count switch), 13 exercises, scoring, routine, XP/level/streak/combo/PBs, IndexedDB + JSON backup. MIDI pads (learn mode, footswitch, enforced lanes, drum screen, balance tips). Guitar audio input (worklet + pure detector), stroke evenness, burst/endurance. Strum screen with accent scoring (Shift = accent on keyboard), pattern builder, History tab, toasts/+XP flash/end-of-routine summary.
-## Timing fixes after real-device testing
-- Clock: `audio/clock.ts` maps `event.timeStamp` (keyboard/MIDI) to the audio clock with the median of many `getOutputTimestamp()` readings; audio onsets subtract the median output lag. Replaces the plan's per-bar MIDI re-sync. Lookahead 150 ms; late clicks are counted and shown as "Click glitch".
-- Stray hits (beyond ±max(2×window, 60 ms)) show as dashed rings with a note; calibration reports spread and has ±1/±5 ms nudges; a "Re-center" bar shifts an input's calibration from the last ≥12 real hits.
-- Detector (`onsetCore.ts`): three bands (low <300 Hz with a long frame, mid 300–1200, high >1200), each judged against its own 1 s history and its recent average (not the previous frame); refractory = half a slot (35–80 ms); cap 24 dB. Tests use plucked-string signals (82–330 Hz, hum, sustain, palm mutes, dull low E). A first low-E note right after loud high-E notes can still be missed.
+## Sessions 1–4 + timing fixes — done
+Trainer (metronome, scoring, routine, XP/PBs, History), MIDI pads, guitar audio input (three-band onset detector, clock smoothing, re-center), strum screen + accents, pattern builder. See git history for detail.
+## Session 5 (8-week picking program) — code done, DATA FILE NOT YET IN THE REPO (132 tests; build passes)
+- Blocked: copying `plan/session-5.md` + `src/data/programs/picking-8wk.json` from branch `handoff/picking-program` was denied by the permission classifier (untrusted code integration). Build works without it (`import.meta.glob`; the Program tab stays hidden). To finish: `git checkout origin/handoff/picking-program -- src/data/programs/picking-8wk.json plan/session-5.md`; `programs/programs.test.ts` then validates it (checked once against a scratch copy: 53 sessions, 23 exercises OK).
+- Built: `data/program.ts` (types, `programDate`/shifts/"Repeat this week", `dayFor`, mapping to `Exercise`: strokes → lanes, bar widened to whole cycles, sweeps/legato `unscored`), `programLog.ts` (keys as the artifact, merge by date + newest `updatedAt` per key, import/export `practice-log/v1`, last-tempo, hints, CT/MC rows), Program tab (one session timer, 2-tone chime per block, 1 tone + flash per chunk, no click in lab/warmup/break/music, tabs in mono boxes, entry forms, CT auto-fill from clean max), History CT lines + test table, import/export dialog, "probe" label, manual ramp for program exercises (suggest, never apply).
 ## Decisions
-- Audio velocity = frame-RMS peak × 2 (clips at 0.5 RMS). Stroke direction = the matched slot's lane.
+- Program exercises get ids `prog-A2` (own PB/last BPM, hidden from the library); Space/footswitch drive the session on the Program tab; unscored hits are ignored.
 ## Known issues / next
-- Tune on the real Scarlett/pads: use the pick counter in Guitar input. Ideas: burst/endurance history, pads accent mode.
+- Nothing here is browser- or hardware-tested. Next: real-device tuning, pads accent mode.

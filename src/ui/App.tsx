@@ -1,6 +1,9 @@
 import { useEffect, useRef, useState, useSyncExternalStore } from 'react';
 import { toExercise, type CustomPattern } from '../data/custom';
-import { exerciseById, findExercise, registerCustom } from '../data/exercises';
+import { exerciseById, findExercise, registerCustom, registerProgramExercises } from '../data/exercises';
+import { dayFor, toHubExercise } from '../data/program';
+import { PROGRAMS } from '../data/programs';
+import type { ProgramLog } from '../data/programLog';
 import { defaultRoutine, type Routine, type RoutineItem } from '../data/routine';
 import { loadData, saveData, type AppData } from '../data/store';
 import { Practice } from '../game/practice';
@@ -16,6 +19,8 @@ import { History } from './History';
 import { LeftPanel } from './LeftPanel';
 import { MidiDialog } from './MidiDialog';
 import { PatternBuilder } from './PatternBuilder';
+import { ProgramLogDialog } from './ProgramLogDialog';
+import { ProgramSessionView } from './ProgramSession';
 import { RoutineBar } from './RoutineBar';
 import { SettingsDialog } from './SettingsDialog';
 import { Stats } from './Stats';
@@ -34,9 +39,12 @@ const hexToRgba = (hex: string, a: number): string => {
   return `rgba(${n >> 16}, ${(n >> 8) & 255}, ${n & 255}, ${a})`;
 };
 
+const program = PROGRAMS[0] ?? null; // the bundled 8-week program, when its JSON is present
+
 function Loaded({ initial }: { initial: AppData }) {
-  // Saved pattern-builder exercises must be registered before anything looks an exercise up.
+  // Saved pattern-builder and program exercises must be registered before anything looks an exercise up.
   const [custom, setCustom] = useState<CustomPattern[]>(() => {
+    if (program) registerProgramExercises(Object.values(program.exercises).map((e) => toHubExercise(e)));
     registerCustom(initial.custom.map(toExercise));
     return initial.custom;
   });
@@ -52,27 +60,34 @@ function Loaded({ initial }: { initial: AppData }) {
     return new Practice(initial.profile, initial.settings, exerciseById(it.exerciseId), !!it.burst);
   });
   const snap = useSyncExternalStore(ctrl.subscribe, ctrl.getSnapshot);
-  const [dialog, setDialog] = useState<null | 'settings' | 'midi' | 'audio' | 'builder' | 'summary'>(null);
-  const [view, setView] = useState<'practice' | 'history'>('practice');
+  const [dialog, setDialog] = useState<null | 'settings' | 'midi' | 'audio' | 'builder' | 'summary' | 'proglog'>(null);
+  const [programLog, setProgramLog] = useState<ProgramLog>(initial.program);
+  const today = dateKey();
+  const [viewDate, setViewDate] = useState(today);
+  // open on today's planned session when the program is running
+  const [view, setView] = useState<'practice' | 'program' | 'history'>(
+    () => (program && dayFor(today, program, initial.program.shifts).state === 'during' ? 'program' : 'practice'),
+  );
+  const toggleHook = useRef<(() => void) | null>(null);
   const [midi] = useState(() => new MidiManager());
   const [audio] = useState(() => new AudioInput());
   useAudio(audio);
   const nextRef = useRef<() => void>(() => {});
   const frozen = useRef(false);
   const latest = useRef<AppData>(initial);
-  latest.current = { settings: snap.settings, profile: snap.profile, routine, custom };
+  latest.current = { settings: snap.settings, profile: snap.profile, routine, custom, program: programLog };
 
   useEffect(() => attachKeyboard({
     instrument: () => ctrl.getSnapshot().exercise.instrument,
     onHit: (e) => inputBus.emit(e),
-    onToggle: () => ctrl.toggle(),
+    onToggle: () => (toggleHook.current ?? (() => ctrl.toggle()))(),
   }), [ctrl]);
   useEffect(() => () => ctrl.dispose(), [ctrl]);
 
   // Every input source (keyboard, MIDI) arrives on the bus.
   useEffect(() => inputBus.subscribe((e) => ctrl.hit(e)), [ctrl]);
   useEffect(() => {
-    midi.onAction = (a) => { if (a === 'toggle') ctrl.toggle(); else nextRef.current(); };
+    midi.onAction = (a) => { if (a === 'toggle') (toggleHook.current ?? (() => ctrl.toggle()))(); else nextRef.current(); };
     midi.onDeviceChosen = (id) => {
       const cur = ctrl.getSnapshot().settings;
       if (cur.midi.deviceId !== id) ctrl.applySettings({ ...cur, midi: { ...cur.midi, deviceId: id } });
@@ -100,7 +115,7 @@ function Loaded({ initial }: { initial: AppData }) {
   useEffect(() => {
     const t = setTimeout(() => { if (!frozen.current) void saveData(latest.current); }, 800);
     return () => clearTimeout(t);
-  }, [snap.profile, snap.settings, routine, custom]);
+  }, [snap.profile, snap.settings, routine, custom, programLog]);
   useEffect(() => {
     const flush = () => { if (!frozen.current) void saveData(latest.current); };
     window.addEventListener('pagehide', flush);
@@ -143,7 +158,11 @@ function Loaded({ initial }: { initial: AppData }) {
     const keep = items.findIndex((i) => i.uid === curUid);
     commit(items.length ? items : defaultRoutine().items, keep >= 0 ? keep : routine.step);
   };
-  const goView = (v: 'practice' | 'history') => { if (v === 'history') ctrl.pause(); setView(v); };
+  const goView = (v: 'practice' | 'program' | 'history') => {
+    if (v === 'history') ctrl.pause();
+    if (v === 'practice') startItem(routine.items[routine.step]); // back to the routine's exercise (a program block may have changed it)
+    setView(v);
+  };
 
   nextRef.current = () => { if (routine.step < routine.items.length - 1) select(routine.step + 1); };
 
@@ -177,8 +196,21 @@ function Loaded({ initial }: { initial: AppData }) {
           onSettings={() => setDialog('settings')}
           view={view}
           onView={goView}
+          hasProgram={!!program}
         />
-        {view === 'history' ? <History profile={snap.profile} /> : (
+        {program && (
+          <div hidden={view !== 'program'}>
+            <ProgramSessionView
+              program={program} log={programLog} onLog={(f) => setProgramLog(f)}
+              viewDate={viewDate} today={today} onViewDate={setViewDate}
+              ctrl={ctrl} snap={snap} midi={midi} audio={audio}
+              onRemap={() => setDialog('midi')} onAudioSetup={() => setDialog('audio')} onBuilder={() => setDialog('builder')}
+              onImport={() => setDialog('proglog')}
+              active={view === 'program'} registerToggle={(fn) => { toggleHook.current = fn; }}
+            />
+          </div>
+        )}
+        {view === 'history' ? <History profile={snap.profile} program={program} programLog={programLog} /> : view === 'program' ? null : (
           <>
             <div className="main">
               <LeftPanel ctrl={ctrl} snap={snap} nextBtn={nextBtn} midi={midi} onRemap={() => setDialog('midi')}
@@ -203,6 +235,9 @@ function Loaded({ initial }: { initial: AppData }) {
           onMidi={() => setDialog('midi')}
           onAudio={() => setDialog('audio')}
         />
+      )}
+      {dialog === 'proglog' && program && (
+        <ProgramLogDialog programId={program.program.id} log={programLog} onMerge={(f) => setProgramLog(f)} onClose={() => setDialog(null)} />
       )}
       {dialog === 'builder' && (
         <PatternBuilder saved={custom} onSave={saveCustom} onDelete={deleteCustom} onClose={() => setDialog(null)} />

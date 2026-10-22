@@ -261,7 +261,7 @@ export class Practice {
   }
 
   hit(ev: InputEvent): void {
-    if (!this.snap.running) return;
+    if (!this.snap.running || this.snap.exercise.unscored) return; // unscored exercises (sweeps): click and timer only
     const cal = this.snap.settings.calibrationMs[ev.source] ?? 0;
     this.hits.push({ time: ev.time - cal / 1000, lane: ev.lane, velocity: ev.velocity, source: ev.source });
   }
@@ -289,6 +289,7 @@ export class Practice {
       if (now < end + margin + 0.03) continue;
       this.bars.delete(bar);
       this.barEx.delete(bar);
+      if (ex.unscored) { this.hits = []; continue; }
       if (bar < 1) { // count-in: not scored
         this.hits = this.hits.filter((h) => h.time >= end - margin);
         continue;
@@ -375,6 +376,7 @@ export class Practice {
     let toast: string | null = null;
     if (level(out.profile.xp) > level(profile.xp)) toast = `Level up · Lv ${level(out.profile.xp)}`;
     else if (out.newBest) toast = `New personal best · ${repBpm} BPM`;
+    else if (out.suggestRaise) toast = `${exercise.ramp.cleanRepsToAdvance} clean reps in a row: raise the click +${exercise.ramp.stepBpm} when it feels easy`;
     else if (out.stepped) toast = `Tempo up → ${out.bpm} BPM`;
     if (out.bpm !== this.snap.bpm) this.metro.setBpm(out.bpm, true);
     this.set({

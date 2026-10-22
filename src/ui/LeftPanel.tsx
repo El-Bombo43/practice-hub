@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { isProgramExerciseId } from '../data/program';
 import type { Practice, Snapshot } from '../game/practice';
 import { recentUnderrun } from '../audio/clock';
 import type { AudioInput } from '../input/audioOnset';
@@ -30,9 +31,9 @@ export function LeftPanel(props: {
       let next: { text: string; rest: boolean } | null = null;
       if (left !== null) next = { text: `Endurance · ${Math.ceil(left)} s left`, rest: false };
       else if (info && ctrl.getSnapshot().mode === 'burst') {
-        next = info.phase === 'rest' ? { text: 'Burst · rest bar, don’t play', rest: true }
-          : info.phase === 'count-in' ? { text: 'Burst · count-in', rest: false }
-          : { text: `Burst · bar ${((info.bar - 1) % 4) + 1} of 3`, rest: false };
+        next = info.phase === 'rest' ? { text: `${ctrl.getSnapshot().exercise.id.startsWith('prog-') ? 'Probe' : 'Burst'} · rest bar, don’t play`, rest: true }
+          : info.phase === 'count-in' ? { text: `${ctrl.getSnapshot().exercise.id.startsWith('prog-') ? 'Probe' : 'Burst'} · count-in`, rest: false }
+          : { text: `${ctrl.getSnapshot().exercise.id.startsWith('prog-') ? 'Probe' : 'Burst'} · bar ${((info.bar - 1) % 4) + 1} of 3`, rest: false };
       } else if (info?.phase === 'count-in') next = { text: 'Count-in', rest: false };
       if (ctrl.getSnapshot().running && recentUnderrun()) next = { text: 'Click glitch: this tab was busy, timing may be off', rest: false };
       setStatus((cur) => (cur?.text === next?.text && cur?.rest === next?.rest ? cur : next));
@@ -47,6 +48,8 @@ export function LeftPanel(props: {
   const more = Math.max(0, need - live.cleanStreak);
   const diff = pb === undefined ? null : bpm - pb;
   const burst = snap.mode === 'burst';
+  const program = isProgramExerciseId(ex.id); // program mode calls burst a probe: a short fast attempt to find a motion
+  const burstWord = program ? 'Probe' : 'Burst';
 
   return (
     <section className="left">
@@ -59,14 +62,14 @@ export function LeftPanel(props: {
         <div className="tempo">{bpm}</div>
         <div className="tempo-sub">
           BPM · {SUB_NAMES[ex.subdivision]}
-          {burst && <> · <span className="accent">burst: clean max + 8</span></>}
+          {burst && <> · <span className="accent">{burstWord.toLowerCase()}: clean max + 8</span></>}
           {!burst && diff !== null && (
             <> · <span className="accent">{diff === 0 ? 'at your clean max' : diff > 0 ? `${diff} over your clean max` : `${-diff} under your clean max`}</span></>
           )}
           {!burst && diff === null && <> · no clean max yet</>}
         </div>
       </div>
-      {snap.subOptions.length > 1 && (
+      {!ex.unscored && snap.subOptions.length > 1 && (
         <div className="toggles" role="group" aria-label="Count">
           <span className="hint">Count</span>
           {snap.subOptions.map((n) => (
@@ -79,13 +82,15 @@ export function LeftPanel(props: {
       <div className="beats" role="img" aria-label={beat >= 0 ? `Beat ${beat + 1} of ${ex.beatsPerBar}` : 'Stopped'}>
         {Array.from({ length: ex.beatsPerBar }, (_, i) => <div key={i} className={i === beat ? 'on' : ''} />)}
       </div>
+      {!ex.unscored && (
       <div className="reps">
         <span className="label">Clean reps</span>
         <div className="pips" role="img" aria-label={`${live.cleanStreak} of ${need} clean reps`}>
           {Array.from({ length: need }, (_, i) => <div key={i} className={i < live.cleanStreak ? 'on' : ''} />)}
         </div>
-        <span className="mono accent" style={{ fontSize: 14 }}>{more} more → {Math.min(300, bpm + ex.ramp.stepBpm)}</span>
+        <span className="mono accent" style={{ fontSize: 14 }}>{more} more → {ex.ramp.manual ? 'try ' : ''}{Math.min(300, bpm + ex.ramp.stepBpm)}</span>
       </div>
+      )}
       {ex.instrument === 'guitar' && (
         <div className="chips">
           <span>Guitar input:</span>
@@ -126,11 +131,11 @@ export function LeftPanel(props: {
           <button type="button" className="toggle" aria-pressed={snap.leadWeaker}
             onClick={() => ctrl.setLeadWeaker(!snap.leadWeaker)}>Lead with weaker hand</button>
         )}
-        {ex.instrument === 'guitar' && (
+        {ex.instrument === 'guitar' && !ex.unscored && (
           <button type="button" className="toggle" aria-pressed={burst}
-            onClick={() => ctrl.setMode(burst ? 'normal' : 'burst')}>Burst mode</button>
+            onClick={() => ctrl.setMode(burst ? 'normal' : 'burst')}>{burstWord} mode</button>
         )}
-        {([30, 60] as const).map((sec) => {
+        {!ex.unscored && ([30, 60] as const).map((sec) => {
           const on = snap.mode === 'endurance' && snap.enduranceSec === sec;
           return (
             <button type="button" key={sec} className="toggle" aria-pressed={on}

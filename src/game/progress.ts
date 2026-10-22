@@ -64,6 +64,7 @@ export type RepOutcome = {
   bpm: number; // tempo to use for the next rep
   xpGain: number;
   stepped: boolean;
+  suggestRaise: boolean; // manual ramp (program mode): the clean-rep target was hit; the click is the player's call
   newBest: boolean;
 };
 
@@ -82,7 +83,8 @@ export function applyRep(
   if (ramp.advance) xpGain += 25;
   if (newBest) xpGain += 50;
 
-  const nextBpm = ramp.advance ? clampBpm(bpm + ex.ramp.stepBpm) : bpm;
+  const applyStep = ramp.advance && !ex.ramp.manual;
+  const nextBpm = applyStep ? clampBpm(bpm + ex.ramp.stepBpm) : bpm;
   const personalBests = !frozen && rep.clean && (prevBest === undefined || bpm > prevBest)
     ? { ...profile.personalBests, [ex.id]: bpm }
     : profile.personalBests;
@@ -133,7 +135,7 @@ export function applyRep(
     personalBests,
     lastBpm: frozen ? profile.lastBpm : { ...profile.lastBpm, [ex.id]: nextBpm },
   };
-  return { live: nextLive, profile: nextProfile, bpm: nextBpm, xpGain, stepped: ramp.advance, newBest };
+  return { live: nextLive, profile: nextProfile, bpm: nextBpm, xpGain, stepped: applyStep, suggestRaise: ramp.advance && !!ex.ramp.manual, newBest };
 }
 
 export const level = (xp: number): number => Math.floor(xp / XP_PER_LEVEL) + 1;

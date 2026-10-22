@@ -10,7 +10,8 @@ export type Exercise = {
   subdivision: 2 | 3 | 4 | 6; // notes per beat
   pattern: Slot[]; // one bar; length = beatsPerBar * subdivision
   startBpm: number;
-  ramp: { stepBpm: number; cleanRepsToAdvance: number };
+  ramp: { stepBpm: number; cleanRepsToAdvance: number; manual?: boolean }; // manual: suggest the step, don't apply it
   windowMs: number; // default 15
   minutes: number; // default length in a routine
+  unscored?: boolean; // click and timer only: no onset scoring (sweeps, legato)
 };
