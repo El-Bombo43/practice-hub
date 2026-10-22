@@ -11,14 +11,14 @@ Handoff from The Music Journey chat, Oct 22 2026. Trent started an 8-week pickin
 
 ## The data (`picking-8wk.json`)
 - `program`: `id`, `title`, `techniques` (key → label), `week1Monday` (2026-10-19), `kickoff` (2026-10-22), `end`, `phases[] {n, name, weeks, goal}`, `rules[]`, `safety[]`.
-- `exercises`: 23 entries, `A1–A6, E1–E3, S0–S5, K1–K3, C0–C3, TL`.
+- `exercises`: 27 entries, `A1–A6, E1–E3, S0–S5, K1–K3, L1–L4, C0–C3, TL`. `L1–L4` are legato warm-ups (technique `legato`, `scorable: false`).
   - Fields: `name, technique (alternate|economy|sweep|skipping|combo), purpose, how, tempo, cue, next, source, tabs[] {label, tab}`.
   - `tab` is monospace ASCII with aligned columns. When there's a pick row, it's the last line.
   - `hub`: `{subdivision, scorable, strokes[][]}`. `strokes[i]` is the per-note stroke list for `tabs[i]`: `D` = down, `U` = up, `L` = legato note (hammer-on or pull-off: sounds but isn't picked). `x` in a tab means a muted string.
 - `tests`: `T1–T6` → `{name, technique, ex, pattern}`. `ex` is the exercise whose tab the test uses.
 - `sessions`: 53 rows, Oct 22 to Dec 13, one per date. Rest days are included.
   - Row fields: `{date, week, phase, dow (0 = Mon), type: kickoff|weekday|weekend|rest, main, secondary, minutes, retest?, blocks[]}`.
-  - `blocks[]`: `{key, start, end (min), kind: warmup|lab|main|secondary|combo|wrap|test|break|music|rest, title, text, items?: [{ex, focus?}], chunks?: [{i, min}], log: none|note|tempo|test|session, test?|tests?}`.
+  - `blocks[]`: `{key, start, end (min), kind: warmup|legato|lab|main|secondary|combo|wrap|test|break|music|rest, title, text, items?: [{ex, focus?}], chunks?: [{i, min}], log: none|note|tempo|test|session, test?|tests?}`.
   - `chunks` is the A/B order: `i` indexes `items`. Weekday main = A2 B2 A2 B2 and secondary = A3 B3. The Saturday circuit is 4 × 4–5 min.
 
 ## Tasks
@@ -37,7 +37,7 @@ Handoff from The Music Journey chat, Oct 22 2026. Trent started an 8-week pickin
    - Block list with minute stamps.
    - One timer runs the whole session: a 2-tone chime at each block change, 1 tone plus a flash at each chunk switch.
    - The active exercise card is highlighted, and every card shows its `tabs` in a monospace box.
-   - `lab`, `warmup`, `break` and `music` blocks run with **no click and no scoring**. The motion lab is meant to be speed-first exploration without a click.
+   - `lab`, `warmup`, `legato`, `break` and `music` blocks run with **no click and no scoring**. A `legato` block is the warm-up on Tue/Thu and non-retest Saturdays. It shows its exercise card and tab, but logs nothing. The motion lab is meant to be speed-first exploration without a click.
 4. **Logging.** Use the same keys as the artifact, so imports line up:
    - Exercises: `"{blockKey}:{exId}:{focus}"` → `{ct, tension, clean3, note}`.
    - Tests: `"test:{Tn}"` → `{ct, mc, tension, video, note}`.

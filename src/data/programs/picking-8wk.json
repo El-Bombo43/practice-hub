@@ -7,7 +7,8 @@
    "alternate": "Alternate",
    "economy": "Economy",
    "sweep": "Sweep",
-   "skipping": "String skipping"
+   "skipping": "String skipping",
+   "legato": "Legato"
   },
   "week1Monday": "2026-10-19",
   "kickoff": "2026-10-22",
@@ -780,6 +781,152 @@
     ]
    }
   },
+  "L1": {
+   "id": "L1",
+   "name": "Trill Ladder",
+   "technique": "legato",
+   "purpose": "Build fretting-hand strength and even hammer-ons and pull-offs.",
+   "how": "Pick the first note once, then trill with hammer-ons and pull-offs for about 25 seconds per finger pair: 1-3 as shown, then 1-2, 1-4, 2-3, 2-4, 3-4. Flick each pull-off slightly toward the floor so it sounds as loud as the hammer-on. Rest your picking-hand palm on the unused strings to mute them.",
+   "tempo": "No click. Even and relaxed matters more than speed.",
+   "cue": "Hammer-ons and pull-offs equally loud.",
+   "next": "Move on to L2 in Week 3.",
+   "tabs": [
+    {
+     "label": "Fingers 1-3 (then 1-2, 1-4, 2-3, 2-4, 3-4)",
+     "tab": "e|-5h7p5h7p5h7p5h7-|\n   D"
+    }
+   ],
+   "source": "Common legato drill (JustinGuitar hammer-on / pull-off lessons)",
+   "hub": {
+    "subdivision": 4,
+    "scorable": false,
+    "strokes": [
+     [
+      "D",
+      "L",
+      "L",
+      "L",
+      "L",
+      "L",
+      "L",
+      "L"
+     ]
+    ]
+   }
+  },
+  "L2": {
+   "id": "L2",
+   "name": "One-String Legato Loop",
+   "technique": "legato",
+   "purpose": "Three fingers in a row with no picking.",
+   "how": "Pick B12 once, hammer 13 and 15, pull back to 13 and 12, and keep looping without picking again. Then play the same shape on G (12-14-16) and e (13-15-17).",
+   "tempo": "No click at first. Once it's even, set a slow click and fit it to triplets.",
+   "cue": "Every note at the same volume, with no gaps when you change direction.",
+   "next": "Move on to L3 in Week 5.",
+   "tabs": [
+    {
+     "label": "Loop, pick only once",
+     "tab": "B|-12h13h15p13p12-|\n   D"
+    }
+   ],
+   "source": "Common legato drill",
+   "hub": {
+    "subdivision": 6,
+    "scorable": false,
+    "strokes": [
+     [
+      "D",
+      "L",
+      "L",
+      "L",
+      "L"
+     ]
+    ]
+   }
+  },
+  "L3": {
+   "id": "L3",
+   "name": "Three-String Legato Run",
+   "technique": "legato",
+   "purpose": "Legato across string changes.",
+   "how": "These are the same notes as A5, but you pick only the first note on each string. Hammer on going up, pull off coming down. Play A5 right after to hear the difference.",
+   "tempo": "Slow click, triplets.",
+   "cue": "The picked note isn't louder than the legato notes.",
+   "next": "Move on to L4 in Week 7.",
+   "tabs": [
+    {
+     "label": "Ascending: pick one note per string",
+     "tab": "e|-------------------13h15h17-|\nB|----------13h15h17----------|\nG|-12h14h16-------------------|\n   D        D        D"
+    },
+    {
+     "label": "Descending",
+     "tab": "e|-17p15p13-------------------|\nB|----------17p15p13----------|\nG|-------------------16p14p12-|\n   U        U        U"
+    }
+   ],
+   "source": "3-note-per-string legato, Satriani / Holdsworth style",
+   "hub": {
+    "subdivision": 6,
+    "scorable": false,
+    "strokes": [
+     [
+      "D",
+      "L",
+      "L",
+      "D",
+      "L",
+      "L",
+      "D",
+      "L",
+      "L"
+     ],
+     [
+      "U",
+      "L",
+      "L",
+      "U",
+      "L",
+      "L",
+      "U",
+      "L",
+      "L"
+     ]
+    ]
+   }
+  },
+  "L4": {
+   "id": "L4",
+   "name": "Pick-Legato Mix",
+   "technique": "legato",
+   "purpose": "Blend picked and legato notes in one run. Most fast mixed licks are built this way.",
+   "how": "A5's notes again: on each string, two picked notes and one hammer-on. The hammer-on lands exactly on the grid where a picked note would.",
+   "tempo": "Slow click, sextuplets.",
+   "cue": "No change in rhythm between picked and hammered notes.",
+   "next": "The next 8-week block expands this into a full legato program.",
+   "tabs": [
+    {
+     "label": "Two picked, one hammer-on per string",
+     "tab": "e|-------------------13-15h17-|\nB|----------13-15h17----------|\nG|-12-14h16-------------------|\n   D  U     D  U     D  U"
+    }
+   ],
+   "source": "Common pick-legato hybrid pattern",
+   "hub": {
+    "subdivision": 6,
+    "scorable": false,
+    "strokes": [
+     [
+      "D",
+      "U",
+      "L",
+      "D",
+      "U",
+      "L",
+      "D",
+      "U",
+      "L"
+     ]
+    ]
+   }
+  },
   "C0": {
    "id": "C0",
    "name": "Same Notes, Two Pickings",
@@ -1267,9 +1414,14 @@
      "key": "warmup",
      "start": 0,
      "end": 5,
-     "kind": "warmup",
-     "title": "Warm-up",
-     "text": "Light single-string tremolo on each string, then an easy 1-2-3-4 chromatic. Low volume, loose grip. This isn't a speed test.",
+     "kind": "legato",
+     "title": "Warm-up: legato",
+     "text": "Today's warm-up is legato. Keep it easy: low volume, loose grip, no speed goal. Do a few seconds of light tremolo first if your hands are cold.",
+     "items": [
+      {
+       "ex": "L1"
+      }
+     ],
      "log": "none"
     },
     {
@@ -1530,9 +1682,14 @@
      "key": "warmup",
      "start": 0,
      "end": 3,
-     "kind": "warmup",
-     "title": "Warm-up",
-     "text": "Light single-string tremolo on each string, then an easy 1-2-3-4 chromatic. Low volume, loose grip. This isn't a speed test.",
+     "kind": "legato",
+     "title": "Warm-up: legato",
+     "text": "Today's warm-up is legato. Keep it easy: low volume, loose grip, no speed goal. Do a few seconds of light tremolo first if your hands are cold.",
+     "items": [
+      {
+       "ex": "L1"
+      }
+     ],
      "log": "none"
     },
     {
@@ -1776,9 +1933,14 @@
      "key": "warmup",
      "start": 0,
      "end": 3,
-     "kind": "warmup",
-     "title": "Warm-up",
-     "text": "Light single-string tremolo on each string, then an easy 1-2-3-4 chromatic. Low volume, loose grip. This isn't a speed test.",
+     "kind": "legato",
+     "title": "Warm-up: legato",
+     "text": "Today's warm-up is legato. Keep it easy: low volume, loose grip, no speed goal. Do a few seconds of light tremolo first if your hands are cold.",
+     "items": [
+      {
+       "ex": "L1"
+      }
+     ],
      "log": "none"
     },
     {
@@ -2298,9 +2460,14 @@
      "key": "warmup",
      "start": 0,
      "end": 3,
-     "kind": "warmup",
-     "title": "Warm-up",
-     "text": "Light single-string tremolo on each string, then an easy 1-2-3-4 chromatic. Low volume, loose grip. This isn't a speed test.",
+     "kind": "legato",
+     "title": "Warm-up: legato",
+     "text": "Today's warm-up is legato. Keep it easy: low volume, loose grip, no speed goal. Do a few seconds of light tremolo first if your hands are cold.",
+     "items": [
+      {
+       "ex": "L2"
+      }
+     ],
      "log": "none"
     },
     {
@@ -2538,9 +2705,14 @@
      "key": "warmup",
      "start": 0,
      "end": 3,
-     "kind": "warmup",
-     "title": "Warm-up",
-     "text": "Light single-string tremolo on each string, then an easy 1-2-3-4 chromatic. Low volume, loose grip. This isn't a speed test.",
+     "kind": "legato",
+     "title": "Warm-up: legato",
+     "text": "Today's warm-up is legato. Keep it easy: low volume, loose grip, no speed goal. Do a few seconds of light tremolo first if your hands are cold.",
+     "items": [
+      {
+       "ex": "L2"
+      }
+     ],
      "log": "none"
     },
     {
@@ -2779,9 +2951,14 @@
      "key": "warmup",
      "start": 0,
      "end": 5,
-     "kind": "warmup",
-     "title": "Warm-up",
-     "text": "Light single-string tremolo on each string, then an easy 1-2-3-4 chromatic. Low volume, loose grip. This isn't a speed test.",
+     "kind": "legato",
+     "title": "Warm-up: legato",
+     "text": "Today's warm-up is legato. Keep it easy: low volume, loose grip, no speed goal. Do a few seconds of light tremolo first if your hands are cold.",
+     "items": [
+      {
+       "ex": "L2"
+      }
+     ],
      "log": "none"
     },
     {
@@ -3053,9 +3230,14 @@
      "key": "warmup",
      "start": 0,
      "end": 3,
-     "kind": "warmup",
-     "title": "Warm-up",
-     "text": "Light single-string tremolo on each string, then an easy 1-2-3-4 chromatic. Low volume, loose grip. This isn't a speed test.",
+     "kind": "legato",
+     "title": "Warm-up: legato",
+     "text": "Today's warm-up is legato. Keep it easy: low volume, loose grip, no speed goal. Do a few seconds of light tremolo first if your hands are cold.",
+     "items": [
+      {
+       "ex": "L2"
+      }
+     ],
      "log": "none"
     },
     {
@@ -3293,9 +3475,14 @@
      "key": "warmup",
      "start": 0,
      "end": 3,
-     "kind": "warmup",
-     "title": "Warm-up",
-     "text": "Light single-string tremolo on each string, then an easy 1-2-3-4 chromatic. Low volume, loose grip. This isn't a speed test.",
+     "kind": "legato",
+     "title": "Warm-up: legato",
+     "text": "Today's warm-up is legato. Keep it easy: low volume, loose grip, no speed goal. Do a few seconds of light tremolo first if your hands are cold.",
+     "items": [
+      {
+       "ex": "L2"
+      }
+     ],
      "log": "none"
     },
     {
@@ -3815,9 +4002,14 @@
      "key": "warmup",
      "start": 0,
      "end": 3,
-     "kind": "warmup",
-     "title": "Warm-up",
-     "text": "Light single-string tremolo on each string, then an easy 1-2-3-4 chromatic. Low volume, loose grip. This isn't a speed test.",
+     "kind": "legato",
+     "title": "Warm-up: legato",
+     "text": "Today's warm-up is legato. Keep it easy: low volume, loose grip, no speed goal. Do a few seconds of light tremolo first if your hands are cold.",
+     "items": [
+      {
+       "ex": "L3"
+      }
+     ],
      "log": "none"
     },
     {
@@ -4055,9 +4247,14 @@
      "key": "warmup",
      "start": 0,
      "end": 3,
-     "kind": "warmup",
-     "title": "Warm-up",
-     "text": "Light single-string tremolo on each string, then an easy 1-2-3-4 chromatic. Low volume, loose grip. This isn't a speed test.",
+     "kind": "legato",
+     "title": "Warm-up: legato",
+     "text": "Today's warm-up is legato. Keep it easy: low volume, loose grip, no speed goal. Do a few seconds of light tremolo first if your hands are cold.",
+     "items": [
+      {
+       "ex": "L3"
+      }
+     ],
      "log": "none"
     },
     {
@@ -4296,9 +4493,14 @@
      "key": "warmup",
      "start": 0,
      "end": 5,
-     "kind": "warmup",
-     "title": "Warm-up",
-     "text": "Light single-string tremolo on each string, then an easy 1-2-3-4 chromatic. Low volume, loose grip. This isn't a speed test.",
+     "kind": "legato",
+     "title": "Warm-up: legato",
+     "text": "Today's warm-up is legato. Keep it easy: low volume, loose grip, no speed goal. Do a few seconds of light tremolo first if your hands are cold.",
+     "items": [
+      {
+       "ex": "L3"
+      }
+     ],
      "log": "none"
     },
     {
@@ -4570,9 +4772,14 @@
      "key": "warmup",
      "start": 0,
      "end": 3,
-     "kind": "warmup",
-     "title": "Warm-up",
-     "text": "Light single-string tremolo on each string, then an easy 1-2-3-4 chromatic. Low volume, loose grip. This isn't a speed test.",
+     "kind": "legato",
+     "title": "Warm-up: legato",
+     "text": "Today's warm-up is legato. Keep it easy: low volume, loose grip, no speed goal. Do a few seconds of light tremolo first if your hands are cold.",
+     "items": [
+      {
+       "ex": "L3"
+      }
+     ],
      "log": "none"
     },
     {
@@ -4810,9 +5017,14 @@
      "key": "warmup",
      "start": 0,
      "end": 3,
-     "kind": "warmup",
-     "title": "Warm-up",
-     "text": "Light single-string tremolo on each string, then an easy 1-2-3-4 chromatic. Low volume, loose grip. This isn't a speed test.",
+     "kind": "legato",
+     "title": "Warm-up: legato",
+     "text": "Today's warm-up is legato. Keep it easy: low volume, loose grip, no speed goal. Do a few seconds of light tremolo first if your hands are cold.",
+     "items": [
+      {
+       "ex": "L3"
+      }
+     ],
      "log": "none"
     },
     {
@@ -5345,9 +5557,14 @@
      "key": "warmup",
      "start": 0,
      "end": 3,
-     "kind": "warmup",
-     "title": "Warm-up",
-     "text": "Light single-string tremolo on each string, then an easy 1-2-3-4 chromatic. Low volume, loose grip. This isn't a speed test.",
+     "kind": "legato",
+     "title": "Warm-up: legato",
+     "text": "Today's warm-up is legato. Keep it easy: low volume, loose grip, no speed goal. Do a few seconds of light tremolo first if your hands are cold.",
+     "items": [
+      {
+       "ex": "L4"
+      }
+     ],
      "log": "none"
     },
     {
@@ -5585,9 +5802,14 @@
      "key": "warmup",
      "start": 0,
      "end": 3,
-     "kind": "warmup",
-     "title": "Warm-up",
-     "text": "Light single-string tremolo on each string, then an easy 1-2-3-4 chromatic. Low volume, loose grip. This isn't a speed test.",
+     "kind": "legato",
+     "title": "Warm-up: legato",
+     "text": "Today's warm-up is legato. Keep it easy: low volume, loose grip, no speed goal. Do a few seconds of light tremolo first if your hands are cold.",
+     "items": [
+      {
+       "ex": "L4"
+      }
+     ],
      "log": "none"
     },
     {
@@ -5826,9 +6048,14 @@
      "key": "warmup",
      "start": 0,
      "end": 5,
-     "kind": "warmup",
-     "title": "Warm-up",
-     "text": "Light single-string tremolo on each string, then an easy 1-2-3-4 chromatic. Low volume, loose grip. This isn't a speed test.",
+     "kind": "legato",
+     "title": "Warm-up: legato",
+     "text": "Today's warm-up is legato. Keep it easy: low volume, loose grip, no speed goal. Do a few seconds of light tremolo first if your hands are cold.",
+     "items": [
+      {
+       "ex": "L4"
+      }
+     ],
      "log": "none"
     },
     {
@@ -6100,9 +6327,14 @@
      "key": "warmup",
      "start": 0,
      "end": 3,
-     "kind": "warmup",
-     "title": "Warm-up",
-     "text": "Light single-string tremolo on each string, then an easy 1-2-3-4 chromatic. Low volume, loose grip. This isn't a speed test.",
+     "kind": "legato",
+     "title": "Warm-up: legato",
+     "text": "Today's warm-up is legato. Keep it easy: low volume, loose grip, no speed goal. Do a few seconds of light tremolo first if your hands are cold.",
+     "items": [
+      {
+       "ex": "L4"
+      }
+     ],
      "log": "none"
     },
     {
@@ -6344,9 +6576,14 @@
      "key": "warmup",
      "start": 0,
      "end": 3,
-     "kind": "warmup",
-     "title": "Warm-up",
-     "text": "Light single-string tremolo on each string, then an easy 1-2-3-4 chromatic. Low volume, loose grip. This isn't a speed test.",
+     "kind": "legato",
+     "title": "Warm-up: legato",
+     "text": "Today's warm-up is legato. Keep it easy: low volume, loose grip, no speed goal. Do a few seconds of light tremolo first if your hands are cold.",
+     "items": [
+      {
+       "ex": "L4"
+      }
+     ],
      "log": "none"
     },
     {
