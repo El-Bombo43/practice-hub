@@ -11,7 +11,7 @@ Handoff from The Music Journey chat, Oct 22 2026. Trent started an 8-week pickin
 
 ## The data (`picking-8wk.json`)
 - `program`: `id`, `title`, `techniques` (key → label), `week1Monday` (2026-10-19), `kickoff` (2026-10-22), `end`, `phases[] {n, name, weeks, goal}`, `rules[]`, `safety[]`.
-- `exercises`: 27 entries, `A1–A6, E1–E3, S0–S5, K1–K3, L1–L4, C0–C3, TL`. `L1–L4` are legato warm-ups (technique `legato`, `scorable: false`).
+- `exercises`: 29 entries, `A1–A6, E1–E3, S0–S5, K1–K3, L1–L4, W1–W2, C0–C3, TL`. `L1–L4` are legato warm-ups (technique `legato`, `scorable: false`); `W1–W2` are the picking warm-up (tremolo, chromatic), run as a chunked warm-up block.
   - Fields: `name, technique (alternate|economy|sweep|skipping|combo), purpose, how, tempo, cue, next, source, tabs[] {label, tab}`.
   - `tab` is monospace ASCII with aligned columns. When there's a pick row, it's the last line.
   - `hub`: `{subdivision, scorable, strokes[][]}`. `strokes[i]` is the per-note stroke list for `tabs[i]`: `D` = down, `U` = up, `L` = legato note (hammer-on or pull-off: sounds but isn't picked). `x` in a tab means a muted string.
@@ -39,8 +39,8 @@ Handoff from The Music Journey chat, Oct 22 2026. Trent started an 8-week pickin
    - The active exercise card is highlighted, and every card shows its `tabs` in a monospace box.
    - `lab`, `warmup`, `legato`, `break` and `music` blocks run with **no click and no scoring**. A `legato` block is the warm-up on Tue/Thu and non-retest Saturdays. It shows its exercise card and tab, but logs nothing. The motion lab is meant to be speed-first exploration without a click.
 4. **Logging.** Use the same keys as the artifact, so imports line up:
-   - Exercises: `"{blockKey}:{exId}:{focus}"` → `{ct, tension, clean3, note}`.
-   - Tests: `"test:{Tn}"` → `{ct, mc, tension, video, note}`.
+   - Exercises: `"{blockKey}:{exId}:{focus}"` → `{ct, sub, tension, clean3, note}`. `sub` is the counting (notes per beat: 1, 2, 3, 4 or 6) as a string; default it from `hub.subdivision`. Older entries may lack it.
+   - Tests: `"test:{Tn}"` → `{ct, mc, sub, tension, video, note}`. MC is captured as a ladder: start at CT, 5–10 s bursts ignoring wrong notes, +8–10 bpm per burst, last smooth tempo at tension ≤5.
    - Notes: `"{blockKey}:note"` → `{note}`.
    - Also per session: `note` and `done`.
    - When scoring ran, auto-fill `ct` from the session's clean max, and keep it editable.

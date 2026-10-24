@@ -57,7 +57,8 @@
    "Advance to the next phase when at least 3 of 4 techniques meet their targets. If they don't, repeat the second week of the phase. That's normal.",
    "Drop back a level if tension goes above 5/10, if anything hurts, or if video shows stringhopping.",
    "Stuck at 130-150 bpm 16ths? Film it. If it's stringhopping, go back to the motion lab instead of grinding the metronome.",
-   "Judge progress the next day, never at the end of a session."
+   "Judge progress the next day, never at the end of a session.",
+   "Always log the subdivision (8ths, 16ths, triplets, sextuplets) with a tempo. Bpm alone isn't comparable."
   ],
   "safety": [
    "Stop if tension reaches 5/10. Shake out, adjust your arm, try again.",
@@ -781,6 +782,104 @@
     ]
    }
   },
+  "W1": {
+   "id": "W1",
+   "name": "Tremolo Warm-up",
+   "technique": "alternate",
+   "purpose": "Get the picking hand moving loosely before anything fast.",
+   "how": "Fret 5 on each string, high e down to low E. Spend about 15 seconds per string on easy, constant tremolo. Light grip, low volume. Shake out your hand between strings if it tightens.",
+   "tempo": "No click, or a slow one (about 70 bpm, 16ths). This isn't a speed test.",
+   "cue": "Loose wrist and forearm, even sound.",
+   "next": "Same warm-up every picking day, so you can feel your hands day to day.",
+   "tabs": [
+    {
+     "label": "About 15 seconds per string",
+     "tab": "e|-5-5-5-5-----------------------------------------|\nB|---------5-5-5-5---------------------------------|\nG|-----------------5-5-5-5-------------------------|\nD|-------------------------5-5-5-5-----------------|\nA|---------------------------------5-5-5-5---------|\nE|-----------------------------------------5-5-5-5-|\n   D U D U D U D U D U D U D U D U D U D U D U D U"
+    }
+   ],
+   "source": "",
+   "hub": {
+    "subdivision": 4,
+    "scorable": true,
+    "strokes": [
+     [
+      "D",
+      "U",
+      "D",
+      "U",
+      "D",
+      "U",
+      "D",
+      "U",
+      "D",
+      "U",
+      "D",
+      "U",
+      "D",
+      "U",
+      "D",
+      "U",
+      "D",
+      "U",
+      "D",
+      "U",
+      "D",
+      "U",
+      "D",
+      "U"
+     ]
+    ]
+   }
+  },
+  "W2": {
+   "id": "W2",
+   "name": "Chromatic Warm-up",
+   "technique": "alternate",
+   "purpose": "Sync both hands and wake up all four fingers.",
+   "how": "1-2-3-4 at frets 5-8 on each string, low E up to high e, then back down. One finger per fret. Strict alternate picking starting on a downstroke. Keep your fingers close to the frets.",
+   "tempo": "Slow click (60-80 bpm, 8ths or 16ths), or no click.",
+   "cue": "Each note sounds as you pick it, with no buzz between notes.",
+   "next": "Same warm-up every picking day.",
+   "tabs": [
+    {
+     "label": "Up, then reverse it",
+     "tab": "e|-----------------------------------------5-6-7-8-|\nB|---------------------------------5-6-7-8---------|\nG|-------------------------5-6-7-8-----------------|\nD|-----------------5-6-7-8-------------------------|\nA|---------5-6-7-8---------------------------------|\nE|-5-6-7-8-----------------------------------------|\n   D U D U D U D U D U D U D U D U D U D U D U D U"
+    }
+   ],
+   "source": "Common warm-up; Petrucci, Rock Discipline",
+   "hub": {
+    "subdivision": 4,
+    "scorable": true,
+    "strokes": [
+     [
+      "D",
+      "U",
+      "D",
+      "U",
+      "D",
+      "U",
+      "D",
+      "U",
+      "D",
+      "U",
+      "D",
+      "U",
+      "D",
+      "U",
+      "D",
+      "U",
+      "D",
+      "U",
+      "D",
+      "U",
+      "D",
+      "U",
+      "D",
+      "U"
+     ]
+    ]
+   }
+  },
   "L1": {
    "id": "L1",
    "name": "Trill Ladder",
@@ -1175,8 +1274,26 @@
      "start": 0,
      "end": 5,
      "kind": "warmup",
-     "title": "Warm-up",
-     "text": "Light single-string tremolo on each string, then an easy 1-2-3-4 chromatic. Low volume, loose grip. This isn't a speed test.",
+     "title": "Warm-up: picking",
+     "text": "Tremolo first, then chromatic. The timer chimes at the switch. Low volume, loose grip. This isn't a speed test.",
+     "items": [
+      {
+       "ex": "W1"
+      },
+      {
+       "ex": "W2"
+      }
+     ],
+     "chunks": [
+      {
+       "i": 0,
+       "min": 2.5
+      },
+      {
+       "i": 1,
+       "min": 2.5
+      }
+     ],
      "log": "none"
     },
     {
@@ -1185,7 +1302,7 @@
      "end": 9,
      "kind": "test",
      "title": "Baseline T1: Single-string tremolo",
-     "text": "Clean tempo: the highest bpm where you get 4 bars clean, in time, with tension 3/10 or lower, on 2 of 3 tries. Motion ceiling: no click, the fastest smooth motion you can hold for 5-10 seconds, even if it's messy.",
+     "text": "Clean tempo (CT): the highest bpm where you get 4 bars clean, in time, with tension 3/10 or lower, on 2 of 3 tries. If tension is above 3, back the click off before you write the number down. Motion ceiling (MC): start the click at your CT and play 5-10 second bursts, ignoring wrong notes. Raise the click 8-10 bpm each burst and rest a few seconds between them. MC is the last tempo where the motion still felt smooth and loose (tension 5 or less). Log the subdivision you counted, too.",
      "items": [
       {
        "ex": "A1"
@@ -1200,7 +1317,7 @@
      "end": 13,
      "kind": "test",
      "title": "Baseline T2: Alternate, 1 string",
-     "text": "Clean tempo: the highest bpm where you get 4 bars clean, in time, with tension 3/10 or lower, on 2 of 3 tries. Motion ceiling: no click, the fastest smooth motion you can hold for 5-10 seconds, even if it's messy.",
+     "text": "Clean tempo (CT): the highest bpm where you get 4 bars clean, in time, with tension 3/10 or lower, on 2 of 3 tries. If tension is above 3, back the click off before you write the number down. Motion ceiling (MC): start the click at your CT and play 5-10 second bursts, ignoring wrong notes. Raise the click 8-10 bpm each burst and rest a few seconds between them. MC is the last tempo where the motion still felt smooth and loose (tension 5 or less). Log the subdivision you counted, too.",
      "items": [
       {
        "ex": "A2"
@@ -1215,7 +1332,7 @@
      "end": 17,
      "kind": "test",
      "title": "Baseline T3: Alternate, 2 strings",
-     "text": "Clean tempo: the highest bpm where you get 4 bars clean, in time, with tension 3/10 or lower, on 2 of 3 tries. Motion ceiling: no click, the fastest smooth motion you can hold for 5-10 seconds, even if it's messy.",
+     "text": "Clean tempo (CT): the highest bpm where you get 4 bars clean, in time, with tension 3/10 or lower, on 2 of 3 tries. If tension is above 3, back the click off before you write the number down. Motion ceiling (MC): start the click at your CT and play 5-10 second bursts, ignoring wrong notes. Raise the click 8-10 bpm each burst and rest a few seconds between them. MC is the last tempo where the motion still felt smooth and loose (tension 5 or less). Log the subdivision you counted, too.",
      "items": [
       {
        "ex": "A3"
@@ -1230,7 +1347,7 @@
      "end": 21,
      "kind": "test",
      "title": "Baseline T4: Economy",
-     "text": "Clean tempo: the highest bpm where you get 4 bars clean, in time, with tension 3/10 or lower, on 2 of 3 tries. Motion ceiling: no click, the fastest smooth motion you can hold for 5-10 seconds, even if it's messy.",
+     "text": "Clean tempo (CT): the highest bpm where you get 4 bars clean, in time, with tension 3/10 or lower, on 2 of 3 tries. If tension is above 3, back the click off before you write the number down. Motion ceiling (MC): start the click at your CT and play 5-10 second bursts, ignoring wrong notes. Raise the click 8-10 bpm each burst and rest a few seconds between them. MC is the last tempo where the motion still felt smooth and loose (tension 5 or less). Log the subdivision you counted, too.",
      "items": [
       {
        "ex": "E1"
@@ -1245,7 +1362,7 @@
      "end": 25,
      "kind": "test",
      "title": "Baseline T6: String skipping",
-     "text": "Clean tempo: the highest bpm where you get 4 bars clean, in time, with tension 3/10 or lower, on 2 of 3 tries. Motion ceiling: no click, the fastest smooth motion you can hold for 5-10 seconds, even if it's messy.",
+     "text": "Clean tempo (CT): the highest bpm where you get 4 bars clean, in time, with tension 3/10 or lower, on 2 of 3 tries. If tension is above 3, back the click off before you write the number down. Motion ceiling (MC): start the click at your CT and play 5-10 second bursts, ignoring wrong notes. Raise the click 8-10 bpm each burst and rest a few seconds between them. MC is the last tempo where the motion still felt smooth and loose (tension 5 or less). Log the subdivision you counted, too.",
      "items": [
       {
        "ex": "K3"
@@ -1294,8 +1411,26 @@
      "start": 0,
      "end": 3,
      "kind": "warmup",
-     "title": "Warm-up",
-     "text": "Light single-string tremolo on each string, then an easy 1-2-3-4 chromatic. Low volume, loose grip. This isn't a speed test.",
+     "title": "Warm-up: picking",
+     "text": "Tremolo first, then chromatic. The timer chimes at the switch. Low volume, loose grip. This isn't a speed test.",
+     "items": [
+      {
+       "ex": "W1"
+      },
+      {
+       "ex": "W2"
+      }
+     ],
+     "chunks": [
+      {
+       "i": 0,
+       "min": 1.5
+      },
+      {
+       "i": 1,
+       "min": 1.5
+      }
+     ],
      "log": "none"
     },
     {
@@ -1563,8 +1698,26 @@
      "start": 0,
      "end": 3,
      "kind": "warmup",
-     "title": "Warm-up",
-     "text": "Light single-string tremolo on each string, then an easy 1-2-3-4 chromatic. Low volume, loose grip. This isn't a speed test.",
+     "title": "Warm-up: picking",
+     "text": "Tremolo first, then chromatic. The timer chimes at the switch. Low volume, loose grip. This isn't a speed test.",
+     "items": [
+      {
+       "ex": "W1"
+      },
+      {
+       "ex": "W2"
+      }
+     ],
+     "chunks": [
+      {
+       "i": 0,
+       "min": 1.5
+      },
+      {
+       "i": 1,
+       "min": 1.5
+      }
+     ],
      "log": "none"
     },
     {
@@ -1810,8 +1963,26 @@
      "start": 0,
      "end": 3,
      "kind": "warmup",
-     "title": "Warm-up",
-     "text": "Light single-string tremolo on each string, then an easy 1-2-3-4 chromatic. Low volume, loose grip. This isn't a speed test.",
+     "title": "Warm-up: picking",
+     "text": "Tremolo first, then chromatic. The timer chimes at the switch. Low volume, loose grip. This isn't a speed test.",
+     "items": [
+      {
+       "ex": "W1"
+      },
+      {
+       "ex": "W2"
+      }
+     ],
+     "chunks": [
+      {
+       "i": 0,
+       "min": 1.5
+      },
+      {
+       "i": 1,
+       "min": 1.5
+      }
+     ],
      "log": "none"
     },
     {
@@ -2061,8 +2232,26 @@
      "start": 0,
      "end": 3,
      "kind": "warmup",
-     "title": "Warm-up",
-     "text": "Light single-string tremolo on each string, then an easy 1-2-3-4 chromatic. Low volume, loose grip. This isn't a speed test.",
+     "title": "Warm-up: picking",
+     "text": "Tremolo first, then chromatic. The timer chimes at the switch. Low volume, loose grip. This isn't a speed test.",
+     "items": [
+      {
+       "ex": "W1"
+      },
+      {
+       "ex": "W2"
+      }
+     ],
+     "chunks": [
+      {
+       "i": 0,
+       "min": 1.5
+      },
+      {
+       "i": 1,
+       "min": 1.5
+      }
+     ],
      "log": "none"
     },
     {
@@ -2182,8 +2371,26 @@
      "start": 0,
      "end": 5,
      "kind": "warmup",
-     "title": "Warm-up",
-     "text": "Light single-string tremolo on each string, then an easy 1-2-3-4 chromatic. Low volume, loose grip. This isn't a speed test.",
+     "title": "Warm-up: picking",
+     "text": "Tremolo first, then chromatic. The timer chimes at the switch. Low volume, loose grip. This isn't a speed test.",
+     "items": [
+      {
+       "ex": "W1"
+      },
+      {
+       "ex": "W2"
+      }
+     ],
+     "chunks": [
+      {
+       "i": 0,
+       "min": 2.5
+      },
+      {
+       "i": 1,
+       "min": 2.5
+      }
+     ],
      "log": "none"
     },
     {
@@ -2192,7 +2399,7 @@
      "end": 20,
      "kind": "test",
      "title": "Retest (Week 2)",
-     "text": "Same protocol as the baseline, about 2.5 minutes per test. Record a phone video of at least one test.",
+     "text": "Same protocol as the baseline, about 2.5 minutes per test. Clean tempo (CT): the highest bpm where you get 4 bars clean, in time, with tension 3/10 or lower, on 2 of 3 tries. If tension is above 3, back the click off before you write the number down. Motion ceiling (MC): start the click at your CT and play 5-10 second bursts, ignoring wrong notes. Raise the click 8-10 bpm each burst and rest a few seconds between them. MC is the last tempo where the motion still felt smooth and loose (tension 5 or less). Log the subdivision you counted, too. Record a phone video of at least one test.",
      "items": [
       {
        "ex": "A1"
@@ -2341,8 +2548,26 @@
      "start": 0,
      "end": 3,
      "kind": "warmup",
-     "title": "Warm-up",
-     "text": "Light single-string tremolo on each string, then an easy 1-2-3-4 chromatic. Low volume, loose grip. This isn't a speed test.",
+     "title": "Warm-up: picking",
+     "text": "Tremolo first, then chromatic. The timer chimes at the switch. Low volume, loose grip. This isn't a speed test.",
+     "items": [
+      {
+       "ex": "W1"
+      },
+      {
+       "ex": "W2"
+      }
+     ],
+     "chunks": [
+      {
+       "i": 0,
+       "min": 1.5
+      },
+      {
+       "i": 1,
+       "min": 1.5
+      }
+     ],
      "log": "none"
     },
     {
@@ -2586,8 +2811,26 @@
      "start": 0,
      "end": 3,
      "kind": "warmup",
-     "title": "Warm-up",
-     "text": "Light single-string tremolo on each string, then an easy 1-2-3-4 chromatic. Low volume, loose grip. This isn't a speed test.",
+     "title": "Warm-up: picking",
+     "text": "Tremolo first, then chromatic. The timer chimes at the switch. Low volume, loose grip. This isn't a speed test.",
+     "items": [
+      {
+       "ex": "W1"
+      },
+      {
+       "ex": "W2"
+      }
+     ],
+     "chunks": [
+      {
+       "i": 0,
+       "min": 1.5
+      },
+      {
+       "i": 1,
+       "min": 1.5
+      }
+     ],
      "log": "none"
     },
     {
@@ -2831,8 +3074,26 @@
      "start": 0,
      "end": 3,
      "kind": "warmup",
-     "title": "Warm-up",
-     "text": "Light single-string tremolo on each string, then an easy 1-2-3-4 chromatic. Low volume, loose grip. This isn't a speed test.",
+     "title": "Warm-up: picking",
+     "text": "Tremolo first, then chromatic. The timer chimes at the switch. Low volume, loose grip. This isn't a speed test.",
+     "items": [
+      {
+       "ex": "W1"
+      },
+      {
+       "ex": "W2"
+      }
+     ],
+     "chunks": [
+      {
+       "i": 0,
+       "min": 1.5
+      },
+      {
+       "i": 1,
+       "min": 1.5
+      }
+     ],
      "log": "none"
     },
     {
@@ -3111,8 +3372,26 @@
      "start": 0,
      "end": 3,
      "kind": "warmup",
-     "title": "Warm-up",
-     "text": "Light single-string tremolo on each string, then an easy 1-2-3-4 chromatic. Low volume, loose grip. This isn't a speed test.",
+     "title": "Warm-up: picking",
+     "text": "Tremolo first, then chromatic. The timer chimes at the switch. Low volume, loose grip. This isn't a speed test.",
+     "items": [
+      {
+       "ex": "W1"
+      },
+      {
+       "ex": "W2"
+      }
+     ],
+     "chunks": [
+      {
+       "i": 0,
+       "min": 1.5
+      },
+      {
+       "i": 1,
+       "min": 1.5
+      }
+     ],
      "log": "none"
     },
     {
@@ -3356,8 +3635,26 @@
      "start": 0,
      "end": 3,
      "kind": "warmup",
-     "title": "Warm-up",
-     "text": "Light single-string tremolo on each string, then an easy 1-2-3-4 chromatic. Low volume, loose grip. This isn't a speed test.",
+     "title": "Warm-up: picking",
+     "text": "Tremolo first, then chromatic. The timer chimes at the switch. Low volume, loose grip. This isn't a speed test.",
+     "items": [
+      {
+       "ex": "W1"
+      },
+      {
+       "ex": "W2"
+      }
+     ],
+     "chunks": [
+      {
+       "i": 0,
+       "min": 1.5
+      },
+      {
+       "i": 1,
+       "min": 1.5
+      }
+     ],
      "log": "none"
     },
     {
@@ -3601,8 +3898,26 @@
      "start": 0,
      "end": 3,
      "kind": "warmup",
-     "title": "Warm-up",
-     "text": "Light single-string tremolo on each string, then an easy 1-2-3-4 chromatic. Low volume, loose grip. This isn't a speed test.",
+     "title": "Warm-up: picking",
+     "text": "Tremolo first, then chromatic. The timer chimes at the switch. Low volume, loose grip. This isn't a speed test.",
+     "items": [
+      {
+       "ex": "W1"
+      },
+      {
+       "ex": "W2"
+      }
+     ],
+     "chunks": [
+      {
+       "i": 0,
+       "min": 1.5
+      },
+      {
+       "i": 1,
+       "min": 1.5
+      }
+     ],
      "log": "none"
     },
     {
@@ -3722,8 +4037,26 @@
      "start": 0,
      "end": 5,
      "kind": "warmup",
-     "title": "Warm-up",
-     "text": "Light single-string tremolo on each string, then an easy 1-2-3-4 chromatic. Low volume, loose grip. This isn't a speed test.",
+     "title": "Warm-up: picking",
+     "text": "Tremolo first, then chromatic. The timer chimes at the switch. Low volume, loose grip. This isn't a speed test.",
+     "items": [
+      {
+       "ex": "W1"
+      },
+      {
+       "ex": "W2"
+      }
+     ],
+     "chunks": [
+      {
+       "i": 0,
+       "min": 2.5
+      },
+      {
+       "i": 1,
+       "min": 2.5
+      }
+     ],
      "log": "none"
     },
     {
@@ -3732,7 +4065,7 @@
      "end": 20,
      "kind": "test",
      "title": "Retest (Week 4)",
-     "text": "Same protocol as the baseline, about 2.5 minutes per test. Record a phone video of at least one test.",
+     "text": "Same protocol as the baseline, about 2.5 minutes per test. Clean tempo (CT): the highest bpm where you get 4 bars clean, in time, with tension 3/10 or lower, on 2 of 3 tries. If tension is above 3, back the click off before you write the number down. Motion ceiling (MC): start the click at your CT and play 5-10 second bursts, ignoring wrong notes. Raise the click 8-10 bpm each burst and rest a few seconds between them. MC is the last tempo where the motion still felt smooth and loose (tension 5 or less). Log the subdivision you counted, too. Record a phone video of at least one test.",
      "items": [
       {
        "ex": "A1"
@@ -3883,8 +4216,26 @@
      "start": 0,
      "end": 3,
      "kind": "warmup",
-     "title": "Warm-up",
-     "text": "Light single-string tremolo on each string, then an easy 1-2-3-4 chromatic. Low volume, loose grip. This isn't a speed test.",
+     "title": "Warm-up: picking",
+     "text": "Tremolo first, then chromatic. The timer chimes at the switch. Low volume, loose grip. This isn't a speed test.",
+     "items": [
+      {
+       "ex": "W1"
+      },
+      {
+       "ex": "W2"
+      }
+     ],
+     "chunks": [
+      {
+       "i": 0,
+       "min": 1.5
+      },
+      {
+       "i": 1,
+       "min": 1.5
+      }
+     ],
      "log": "none"
     },
     {
@@ -4128,8 +4479,26 @@
      "start": 0,
      "end": 3,
      "kind": "warmup",
-     "title": "Warm-up",
-     "text": "Light single-string tremolo on each string, then an easy 1-2-3-4 chromatic. Low volume, loose grip. This isn't a speed test.",
+     "title": "Warm-up: picking",
+     "text": "Tremolo first, then chromatic. The timer chimes at the switch. Low volume, loose grip. This isn't a speed test.",
+     "items": [
+      {
+       "ex": "W1"
+      },
+      {
+       "ex": "W2"
+      }
+     ],
+     "chunks": [
+      {
+       "i": 0,
+       "min": 1.5
+      },
+      {
+       "i": 1,
+       "min": 1.5
+      }
+     ],
      "log": "none"
     },
     {
@@ -4373,8 +4742,26 @@
      "start": 0,
      "end": 3,
      "kind": "warmup",
-     "title": "Warm-up",
-     "text": "Light single-string tremolo on each string, then an easy 1-2-3-4 chromatic. Low volume, loose grip. This isn't a speed test.",
+     "title": "Warm-up: picking",
+     "text": "Tremolo first, then chromatic. The timer chimes at the switch. Low volume, loose grip. This isn't a speed test.",
+     "items": [
+      {
+       "ex": "W1"
+      },
+      {
+       "ex": "W2"
+      }
+     ],
+     "chunks": [
+      {
+       "i": 0,
+       "min": 1.5
+      },
+      {
+       "i": 1,
+       "min": 1.5
+      }
+     ],
      "log": "none"
     },
     {
@@ -4653,8 +5040,26 @@
      "start": 0,
      "end": 3,
      "kind": "warmup",
-     "title": "Warm-up",
-     "text": "Light single-string tremolo on each string, then an easy 1-2-3-4 chromatic. Low volume, loose grip. This isn't a speed test.",
+     "title": "Warm-up: picking",
+     "text": "Tremolo first, then chromatic. The timer chimes at the switch. Low volume, loose grip. This isn't a speed test.",
+     "items": [
+      {
+       "ex": "W1"
+      },
+      {
+       "ex": "W2"
+      }
+     ],
+     "chunks": [
+      {
+       "i": 0,
+       "min": 1.5
+      },
+      {
+       "i": 1,
+       "min": 1.5
+      }
+     ],
      "log": "none"
     },
     {
@@ -4898,8 +5303,26 @@
      "start": 0,
      "end": 3,
      "kind": "warmup",
-     "title": "Warm-up",
-     "text": "Light single-string tremolo on each string, then an easy 1-2-3-4 chromatic. Low volume, loose grip. This isn't a speed test.",
+     "title": "Warm-up: picking",
+     "text": "Tremolo first, then chromatic. The timer chimes at the switch. Low volume, loose grip. This isn't a speed test.",
+     "items": [
+      {
+       "ex": "W1"
+      },
+      {
+       "ex": "W2"
+      }
+     ],
+     "chunks": [
+      {
+       "i": 0,
+       "min": 1.5
+      },
+      {
+       "i": 1,
+       "min": 1.5
+      }
+     ],
      "log": "none"
     },
     {
@@ -5143,8 +5566,26 @@
      "start": 0,
      "end": 3,
      "kind": "warmup",
-     "title": "Warm-up",
-     "text": "Light single-string tremolo on each string, then an easy 1-2-3-4 chromatic. Low volume, loose grip. This isn't a speed test.",
+     "title": "Warm-up: picking",
+     "text": "Tremolo first, then chromatic. The timer chimes at the switch. Low volume, loose grip. This isn't a speed test.",
+     "items": [
+      {
+       "ex": "W1"
+      },
+      {
+       "ex": "W2"
+      }
+     ],
+     "chunks": [
+      {
+       "i": 0,
+       "min": 1.5
+      },
+      {
+       "i": 1,
+       "min": 1.5
+      }
+     ],
      "log": "none"
     },
     {
@@ -5264,8 +5705,26 @@
      "start": 0,
      "end": 5,
      "kind": "warmup",
-     "title": "Warm-up",
-     "text": "Light single-string tremolo on each string, then an easy 1-2-3-4 chromatic. Low volume, loose grip. This isn't a speed test.",
+     "title": "Warm-up: picking",
+     "text": "Tremolo first, then chromatic. The timer chimes at the switch. Low volume, loose grip. This isn't a speed test.",
+     "items": [
+      {
+       "ex": "W1"
+      },
+      {
+       "ex": "W2"
+      }
+     ],
+     "chunks": [
+      {
+       "i": 0,
+       "min": 2.5
+      },
+      {
+       "i": 1,
+       "min": 2.5
+      }
+     ],
      "log": "none"
     },
     {
@@ -5274,7 +5733,7 @@
      "end": 20,
      "kind": "test",
      "title": "Retest (Week 6)",
-     "text": "Same protocol as the baseline, about 2.5 minutes per test. Record a phone video of at least one test.",
+     "text": "Same protocol as the baseline, about 2.5 minutes per test. Clean tempo (CT): the highest bpm where you get 4 bars clean, in time, with tension 3/10 or lower, on 2 of 3 tries. If tension is above 3, back the click off before you write the number down. Motion ceiling (MC): start the click at your CT and play 5-10 second bursts, ignoring wrong notes. Raise the click 8-10 bpm each burst and rest a few seconds between them. MC is the last tempo where the motion still felt smooth and loose (tension 5 or less). Log the subdivision you counted, too. Record a phone video of at least one test.",
      "items": [
       {
        "ex": "A1"
@@ -5438,8 +5897,26 @@
      "start": 0,
      "end": 3,
      "kind": "warmup",
-     "title": "Warm-up",
-     "text": "Light single-string tremolo on each string, then an easy 1-2-3-4 chromatic. Low volume, loose grip. This isn't a speed test.",
+     "title": "Warm-up: picking",
+     "text": "Tremolo first, then chromatic. The timer chimes at the switch. Low volume, loose grip. This isn't a speed test.",
+     "items": [
+      {
+       "ex": "W1"
+      },
+      {
+       "ex": "W2"
+      }
+     ],
+     "chunks": [
+      {
+       "i": 0,
+       "min": 1.5
+      },
+      {
+       "i": 1,
+       "min": 1.5
+      }
+     ],
      "log": "none"
     },
     {
@@ -5683,8 +6160,26 @@
      "start": 0,
      "end": 3,
      "kind": "warmup",
-     "title": "Warm-up",
-     "text": "Light single-string tremolo on each string, then an easy 1-2-3-4 chromatic. Low volume, loose grip. This isn't a speed test.",
+     "title": "Warm-up: picking",
+     "text": "Tremolo first, then chromatic. The timer chimes at the switch. Low volume, loose grip. This isn't a speed test.",
+     "items": [
+      {
+       "ex": "W1"
+      },
+      {
+       "ex": "W2"
+      }
+     ],
+     "chunks": [
+      {
+       "i": 0,
+       "min": 1.5
+      },
+      {
+       "i": 1,
+       "min": 1.5
+      }
+     ],
      "log": "none"
     },
     {
@@ -5928,8 +6423,26 @@
      "start": 0,
      "end": 3,
      "kind": "warmup",
-     "title": "Warm-up",
-     "text": "Light single-string tremolo on each string, then an easy 1-2-3-4 chromatic. Low volume, loose grip. This isn't a speed test.",
+     "title": "Warm-up: picking",
+     "text": "Tremolo first, then chromatic. The timer chimes at the switch. Low volume, loose grip. This isn't a speed test.",
+     "items": [
+      {
+       "ex": "W1"
+      },
+      {
+       "ex": "W2"
+      }
+     ],
+     "chunks": [
+      {
+       "i": 0,
+       "min": 1.5
+      },
+      {
+       "i": 1,
+       "min": 1.5
+      }
+     ],
      "log": "none"
     },
     {
@@ -6208,8 +6721,26 @@
      "start": 0,
      "end": 3,
      "kind": "warmup",
-     "title": "Warm-up",
-     "text": "Light single-string tremolo on each string, then an easy 1-2-3-4 chromatic. Low volume, loose grip. This isn't a speed test.",
+     "title": "Warm-up: picking",
+     "text": "Tremolo first, then chromatic. The timer chimes at the switch. Low volume, loose grip. This isn't a speed test.",
+     "items": [
+      {
+       "ex": "W1"
+      },
+      {
+       "ex": "W2"
+      }
+     ],
+     "chunks": [
+      {
+       "i": 0,
+       "min": 1.5
+      },
+      {
+       "i": 1,
+       "min": 1.5
+      }
+     ],
      "log": "none"
     },
     {
@@ -6455,8 +6986,26 @@
      "start": 0,
      "end": 3,
      "kind": "warmup",
-     "title": "Warm-up",
-     "text": "Light single-string tremolo on each string, then an easy 1-2-3-4 chromatic. Low volume, loose grip. This isn't a speed test.",
+     "title": "Warm-up: picking",
+     "text": "Tremolo first, then chromatic. The timer chimes at the switch. Low volume, loose grip. This isn't a speed test.",
+     "items": [
+      {
+       "ex": "W1"
+      },
+      {
+       "ex": "W2"
+      }
+     ],
+     "chunks": [
+      {
+       "i": 0,
+       "min": 1.5
+      },
+      {
+       "i": 1,
+       "min": 1.5
+      }
+     ],
      "log": "none"
     },
     {
@@ -6702,8 +7251,26 @@
      "start": 0,
      "end": 3,
      "kind": "warmup",
-     "title": "Warm-up",
-     "text": "Light single-string tremolo on each string, then an easy 1-2-3-4 chromatic. Low volume, loose grip. This isn't a speed test.",
+     "title": "Warm-up: picking",
+     "text": "Tremolo first, then chromatic. The timer chimes at the switch. Low volume, loose grip. This isn't a speed test.",
+     "items": [
+      {
+       "ex": "W1"
+      },
+      {
+       "ex": "W2"
+      }
+     ],
+     "chunks": [
+      {
+       "i": 0,
+       "min": 1.5
+      },
+      {
+       "i": 1,
+       "min": 1.5
+      }
+     ],
      "log": "none"
     },
     {
@@ -6823,8 +7390,26 @@
      "start": 0,
      "end": 5,
      "kind": "warmup",
-     "title": "Warm-up",
-     "text": "Light single-string tremolo on each string, then an easy 1-2-3-4 chromatic. Low volume, loose grip. This isn't a speed test.",
+     "title": "Warm-up: picking",
+     "text": "Tremolo first, then chromatic. The timer chimes at the switch. Low volume, loose grip. This isn't a speed test.",
+     "items": [
+      {
+       "ex": "W1"
+      },
+      {
+       "ex": "W2"
+      }
+     ],
+     "chunks": [
+      {
+       "i": 0,
+       "min": 2.5
+      },
+      {
+       "i": 1,
+       "min": 2.5
+      }
+     ],
      "log": "none"
     },
     {
@@ -6833,7 +7418,7 @@
      "end": 20,
      "kind": "test",
      "title": "Retest (Week 8)",
-     "text": "Same protocol as the baseline, about 2.5 minutes per test. Record a phone video of at least one test.",
+     "text": "Same protocol as the baseline, about 2.5 minutes per test. Clean tempo (CT): the highest bpm where you get 4 bars clean, in time, with tension 3/10 or lower, on 2 of 3 tries. If tension is above 3, back the click off before you write the number down. Motion ceiling (MC): start the click at your CT and play 5-10 second bursts, ignoring wrong notes. Raise the click 8-10 bpm each burst and rest a few seconds between them. MC is the last tempo where the motion still felt smooth and loose (tension 5 or less). Log the subdivision you counted, too. Record a phone video of at least one test.",
      "items": [
       {
        "ex": "A1"
