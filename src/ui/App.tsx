@@ -26,6 +26,7 @@ import { SettingsDialog } from './SettingsDialog';
 import { Stats } from './Stats';
 import { SummaryDialog } from './SummaryDialog';
 import { Timeline } from './Timeline';
+import { WeakSpots } from './WeakSpots';
 import { TopBar } from './TopBar';
 
 export function App() {
@@ -219,6 +220,7 @@ function Loaded({ initial }: { initial: AppData }) {
                 <Timeline ctrl={ctrl} exercise={snap.exercise} last={snap.lastRep} />
                 <CenterBar snap={snap} ctrl={ctrl} />
                 <Stats snap={snap} ctrl={ctrl} />
+                <WeakSpots snap={snap} ctrl={ctrl} />
               </div>
             </div>
             <RoutineBar routine={routine} onSelect={select} onChange={commit} onBuilder={() => setDialog('builder')} />

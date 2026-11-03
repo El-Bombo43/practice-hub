@@ -75,6 +75,62 @@ function CleanMaxChart({ points, label, tests }: { points: { date: string; bpm: 
   );
 }
 
+/** Small hand-drawn trend line for a handful of runs. */
+function Trend({ points, unit, label }: { points: { date: string; v: number }[]; unit: string; label: string }) {
+  const w = 300, h = 90, p = 22;
+  const vs = points.map((q) => q.v);
+  const lo = Math.min(...vs), hi = Math.max(...vs);
+  const span = hi - lo || 1;
+  const x = (i: number) => p + (points.length === 1 ? (w - 2 * p) / 2 : (i / (points.length - 1)) * (w - 2 * p));
+  const y = (v: number) => h - 18 - ((v - lo) / span) * (h - 36);
+  const last = points[points.length - 1];
+  return (
+    <svg className="chart" viewBox={`0 0 ${w} ${h}`} width="100%" role="img" aria-label={`${label}: latest ${last.v}${unit}`}>
+      {points.length > 1 && <polyline fill="none" stroke="var(--accent)" strokeWidth="2.5" strokeLinejoin="round" points={points.map((q, i) => `${x(i)},${y(q.v)}`).join(' ')} />}
+      {points.map((q, i) => <circle key={i} cx={x(i)} cy={y(q.v)} r={i === points.length - 1 ? 4 : 3} fill="var(--accent)" />)}
+      <text x={p} y={h - 3}>{points[0].date.slice(5)}</text>
+      <text x={w - p} y={h - 3} textAnchor="end">{last.date.slice(5)}</text>
+      <text x={x(points.length - 1)} y={y(last.v) - 8} textAnchor="end" style={{ fill: 'var(--text)', fontWeight: 700 }}>{last.v}{unit}</text>
+    </svg>
+  );
+}
+
+function RunsPanel({ profile, selected }: { profile: Profile; selected: string | undefined }) {
+  const runs = profile.runs;
+  const mine = (type: 'burst' | 'endurance') => runs.filter((r) => r.type === type && (!selected || r.exerciseId === selected));
+  const burst = mine('burst');
+  const endurance = mine('endurance');
+  const recent = [...runs].reverse().slice(0, 10);
+  const drift = endurance.filter((r) => r.drift !== null).map((r) => ({ date: r.date, v: r.drift as number }));
+  const burstTempo = burst.map((r) => ({ date: r.date, v: r.bpm }));
+  return (
+    <section className="panel">
+      <h2 className="section-title" style={{ marginBottom: 8 }}>Burst and endurance</h2>
+      <div className="hgrid" style={{ marginBottom: 12 }}>
+        <div><span className="k small-mono">Burst tempo{selected ? `: ${exerciseLabel(selected)}` : ''}</span>
+          {burstTempo.length ? <Trend points={burstTempo} unit=" BPM" label="Burst tempo" /> : <p className="empty">No burst runs for this exercise yet.</p>}</div>
+        <div><span className="k small-mono">Endurance drift (ms per 10 s){selected ? `: ${exerciseLabel(selected)}` : ''}</span>
+          {drift.length ? <Trend points={drift} unit=" ms" label="Endurance drift" /> : <p className="empty">No endurance runs for this exercise yet.</p>}</div>
+      </div>
+      <table className="table">
+        <thead><tr><th>Date</th><th>Run</th><th>Exercise</th><th className="n">BPM</th><th className="n">Accuracy</th><th className="n">Result</th></tr></thead>
+        <tbody>
+          {recent.map((r) => (
+            <tr key={r.id}>
+              <td className="mono">{r.date.slice(5)}</td>
+              <td>{r.type === 'burst' ? 'Burst' : `Endurance ${r.seconds} s`}</td>
+              <td>{exerciseLabel(r.exerciseId)}</td>
+              <td className="n">{r.bpm}</td>
+              <td className="n">{r.accuracy === null ? '–' : `${r.accuracy}%`}</td>
+              <td className="n">{r.type === 'burst' ? `${r.cleanReps}/${r.reps} clean` : r.drift === null ? '–' : `drift ${r.drift > 0 ? '+' : r.drift < 0 ? '−' : ''}${Math.abs(r.drift)} ms`}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </section>
+  );
+}
+
 export function History({ profile, program, programLog }: { profile: Profile; program: Program | null; programLog: ProgramLog }) {
   const withHistory = exercisesWithHistory(profile.log);
   const [pick, setPick] = useState<string | null>(null);
@@ -133,6 +189,8 @@ export function History({ profile, program, programLog }: { profile: Profile; pr
           </div>
         </section>
       </div>
+
+      {profile.runs.length > 0 && <RunsPanel profile={profile} selected={current} />}
 
       {testTables.length > 0 && (
         <section className="panel">

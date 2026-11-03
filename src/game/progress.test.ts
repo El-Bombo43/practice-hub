@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { applyRep, strumTip, balance, burstBpm, burstPhase, drumTip, evenness, pickTip, emptyLive, emptyProfile, level, streak, tip, type Live } from './progress';
+import { applyRep, burstRun, upsertRun, weakSpots, strumTip, balance, burstBpm, burstPhase, drumTip, evenness, pickTip, emptyLive, emptyProfile, level, streak, tip, type Live } from './progress';
 import { scoreRep } from '../scoring/score';
 import { exerciseById } from '../data/exercises';
 
@@ -185,5 +185,58 @@ describe('strum accents', () => {
     expect(t.title).toBe('Beat-2 accent is getting lost'); // slot 5 (index 4) is beat 2; ties go to the first
     expect(t.text).toContain('Only 4% louder');
     expect(strumTip(emptyLive(), ex).tone).toBe('idle');
+  });
+});
+
+describe('weak spots', () => {
+  const ex = exerciseById('tremolo');
+  const times = Array.from({ length: 16 }, (_, i) => i * 0.125);
+  /** A bar where slot 5 is 25 ms late and slot 9 is never played. */
+  const bar = () => scoreRep(ex.pattern, times, times.flatMap((t, i) => (i === 9 ? [] : [t + (i === 5 ? 0.025 : 0)])), 15);
+  it('tracks per-slot late, early and missed counts', () => {
+    let live = emptyLive();
+    let p = emptyProfile();
+    for (let i = 0; i < 5; i++) { const o = applyRep(live, p, ex, 80, bar()); live = o.live; p = o.profile; }
+    expect(live.slots[5]).toMatchObject({ n: 5, late: 5, miss: 0 });
+    expect(live.slots[9]).toMatchObject({ n: 5, miss: 5 });
+    expect(live.slots[0]).toMatchObject({ n: 5, late: 0, early: 0, miss: 0 });
+    const spots = weakSpots(live.slots);
+    expect(spots.map((s) => [s.slot, s.issue])).toEqual([[5, 'late'], [9, 'miss']]);
+    expect(spots[0].meanOffsetMs).toBe(25);
+  });
+  it('needs at least 4 attempts and 3 failures; ghosts are never counted', () => {
+    let live = emptyLive();
+    const o = applyRep(live, emptyProfile(), ex, 80, bar());
+    live = o.live;
+    expect(weakSpots(live.slots)).toEqual([]);
+    const strum = exerciseById('strum-8ths');
+    const r = scoreRep(strum.pattern, Array.from({ length: 8 }, (_, i) => i * 0.25), [], 15);
+    const s = applyRep(emptyLive(), emptyProfile(), strum, 80, r).live;
+    expect(s.slots[1].n).toBe(0); // slot 2 is a ghost
+  });
+});
+
+describe('burst and endurance run records', () => {
+  const ex = exerciseById('tremolo');
+  const times = Array.from({ length: 16 }, (_, i) => i * 0.125);
+  const clean = scoreRep(ex.pattern, times, times, 15);
+  const sloppy = scoreRep(ex.pattern, times, times.map((t) => t + 0.03), 15);
+  it('a burst stint accumulates in one record', () => {
+    const base = { id: 's-burst', date: '2026-11-03', exerciseId: ex.id };
+    let r = burstRun(undefined, base, 128, clean);
+    r = burstRun(r, base, 128, sloppy);
+    r = burstRun(r, base, 128, clean);
+    expect(r).toMatchObject({ type: 'burst', bpm: 128, reps: 3, cleanReps: 2, expected: 48, onTime: 32, accuracy: 67 });
+  });
+  it('upsert replaces by id and caps the list', () => {
+    let p = emptyProfile();
+    const base = { id: 'a', date: 'd', exerciseId: 'x' };
+    p = upsertRun(p, burstRun(undefined, base, 100, clean));
+    p = upsertRun(p, burstRun(p.runs[0], base, 100, clean));
+    expect(p.runs.length).toBe(1);
+    expect(p.runs[0].reps).toBe(2);
+    for (let i = 0; i < 305; i++) p = upsertRun(p, burstRun(undefined, { ...base, id: `r${i}` }, 100, clean));
+    expect(p.runs.length).toBe(300);
+    expect(p.runs.at(-1)?.id).toBe('r304');
   });
 });

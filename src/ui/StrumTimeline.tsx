@@ -1,5 +1,6 @@
 import type { Exercise, Slot } from '../data/types';
 import type { LastRep, Practice } from '../game/practice';
+import { weakSpots } from '../game/progress';
 import { accentStats } from '../scoring/score';
 import { fmtOffset } from './format';
 import { StrayNote } from './StrayNote';
@@ -19,6 +20,7 @@ const arrowFor = (s: Slot, i: number): string => (s.lane ? (s.lane === 'down' ? 
 export function StrumTimeline({ ctrl, exercise, last }: { ctrl: Practice; exercise: Exercise; last: LastRep | null }) {
   const cols = exercise.pattern.length;
   const rep = last?.rep;
+  const weak = new Set(weakSpots(ctrl.getSnapshot().live.slots).map((w) => w.slot));
   const windowMs = last?.windowMs ?? 15;
   const bandW = Math.max(8, 2 * windowMs); // 1 px per ms
   const head = usePlayhead(ctrl, cols);
@@ -62,7 +64,7 @@ export function StrumTimeline({ ctrl, exercise, last }: { ctrl: Practice; exerci
             const dx = res?.hit && res.offsetMs !== null ? res.offsetMs : 0;
             const arrowCls = slot.accent && strike ? 'a-accent' : strike ? 'a-strike' : slot.ghost ? 'a-ghost' : 'a-rest';
             return (
-              <div key={i} className={`scol${strike ? '' : ' faded'}`}>
+              <div key={i} className={`scol${strike ? '' : ' faded'}${weak.has(i) ? ' weak' : ''}`}>
                 <span className="mark">{slot.accent && strike ? '>' : ''}</span>
                 <span className={`arrow ${arrowCls}`}>{slot.play || slot.ghost ? arrowFor(slot, i) : ''}</span>
                 <div className="cell" style={{ height: 56 }}>

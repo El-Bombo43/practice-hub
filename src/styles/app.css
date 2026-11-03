@@ -274,3 +274,7 @@ textarea { width: 100%; min-height: 160px; border-radius: 12px; border: 1px soli
 .phase { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 16px; padding: 12px 16px; border-radius: 14px; border: 1px solid var(--accent); }
 .phase.mc { border-color: var(--grid); background: var(--bg); }
 .phase b { font-size: 15px; } .phase span:not(.mono) { flex: 1 1 240px; font-size: 13px; color: var(--muted); }
+
+/* weak spots */
+.weak ul { margin: 8px 0; padding-left: 18px; display: flex; flex-direction: column; gap: 4px; font-size: 14px; }
+.col.weak .cell, .scol.weak .cell { outline: 1px dashed var(--muted); outline-offset: -1px; border-radius: 12px; }

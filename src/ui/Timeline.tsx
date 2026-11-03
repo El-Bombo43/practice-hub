@@ -1,6 +1,7 @@
 import { hasLanes } from '../data/exercises';
 import type { Exercise, Lane } from '../data/types';
 import type { LastRep, Practice } from '../game/practice';
+import { weakSpots } from '../game/progress';
 import { fmtOffset } from './format';
 import { StrayNote } from './StrayNote';
 import { StrumTimeline } from './StrumTimeline';
@@ -27,6 +28,7 @@ function HitTimeline({ ctrl, exercise: fallback, last }: { ctrl: Practice; exerc
   const windowMs = last?.windowMs ?? 15;
   const bandW = Math.max(8, 2 * windowMs * scale);
   const rep = last?.rep;
+  const weak = new Set(weakSpots(ctrl.getSnapshot().live.slots).map((w) => w.slot));
   const wrong = rep ? rep.slots.filter((s) => s.wrongLane).length : 0;
   const head = usePlayhead(ctrl, cols);
   const grid = { gridTemplateColumns: `repeat(${cols}, minmax(0, 1fr))` };
@@ -78,7 +80,7 @@ function HitTimeline({ ctrl, exercise: fallback, last }: { ctrl: Practice; exerc
             const dx = res?.hit && res.offsetMs !== null ? res.offsetMs * scale : 0;
             const vel = res?.hit && res.velocity !== undefined ? res.velocity : null;
             return (
-              <div key={i} className={`col${dense ? ' dense' : ''}${expected ? '' : ' rest'}`}>
+              <div key={i} className={`col${dense ? ' dense' : ''}${expected ? '' : ' rest'}${weak.has(i) ? ' weak' : ''}`}>
                 <div className="cell" style={{ height: cellH }}>
                   <div className="band" style={{ width: bandW, marginLeft: -bandW / 2 }} />
                   <div className="line" />

@@ -7,7 +7,7 @@ import type { Settings } from '../data/store';
 import type { InputEvent } from '../input/types';
 import { driftPer10s, scoreRep, slotTimesFromBeats, type Hit, type RepResult } from '../scoring/score';
 import {
-  applyRep, balance, burstBpm, burstPhase, clampBpm, dateKey, emptyLive, level, upsertLog, accuracyPct, type Hand, type Live, type Profile,
+  applyRep, balance, burstRun, upsertRun, burstBpm, burstPhase, clampBpm, dateKey, emptyLive, level, upsertLog, accuracyPct, type Hand, type Live, type Profile,
 } from './progress';
 
 export type Mode = 'normal' | 'burst' | 'endurance';
@@ -356,6 +356,13 @@ export class Practice {
     if (barEnd - this.endStart >= this.snap.enduranceSec) this.finishEndurance();
   }
 
+  private withBurstRun(profile: Profile, rep: RepResult, bpm: number): Profile {
+    if (this.snap.mode !== 'burst') return profile;
+    const id = `${this.stintId}-burst`;
+    const prev = profile.runs.find((r) => r.id === id);
+    return upsertRun(profile, burstRun(prev, { id, date: dateKey(), exerciseId: this.snap.exercise.id }, bpm, rep));
+  }
+
   private finishEndurance(): void {
     const t = this.endTotals;
     const report: EnduranceReport = {
@@ -367,7 +374,12 @@ export class Practice {
     };
     this.tickClock();
     this.halt();
-    this.set({ report });
+    const run = {
+      id: `${this.stintId}-endurance-${Date.now()}`, date: dateKey(), type: 'endurance' as const, exerciseId: this.snap.exercise.id,
+      bpm: report.bpm, seconds: report.seconds, reps: report.reps, cleanReps: report.cleanReps, onTime: t.onTime, expected: t.expected,
+      accuracy: report.accuracy, drift: report.drift, meanOffset: report.meanOffset,
+    };
+    this.set({ report, profile: upsertRun(this.snap.profile, run) });
   }
 
   private score(rep: RepResult, repBpm: number, exercise: Exercise): void {
@@ -381,7 +393,7 @@ export class Practice {
     if (out.bpm !== this.snap.bpm) this.metro.setBpm(out.bpm, true);
     this.set({
       live: out.live,
-      profile: this.withLog(out.profile, out.live),
+      profile: this.withLog(this.withBurstRun(out.profile, rep, repBpm), out.live),
       bpm: out.bpm,
       lastRep: { rep, bpm: repBpm, windowMs: settings.windowMs, exercise },
       sessionXp: this.snap.sessionXp + out.xpGain,

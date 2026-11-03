@@ -13,6 +13,7 @@ import type { AudioInput } from '../input/audioOnset';
 import type { MidiManager } from '../input/midi';
 import { LeftPanel } from './LeftPanel';
 import { Stats } from './Stats';
+import { WeakSpots } from './WeakSpots';
 import { Timeline } from './Timeline';
 import { useSessionClock } from './useSessionClock';
 
@@ -275,7 +276,7 @@ function SessionRun(props: ProgramSessionProps & { session: Session; programDate
             ) : (
               <div className="main">
                 <LeftPanel ctrl={ctrl} snap={snap} nextBtn={null} midi={props.midi} onRemap={props.onRemap} audio={props.audio} onAudioSetup={props.onAudioSetup} onBuilder={props.onBuilder} />
-                <div className="right"><Timeline ctrl={ctrl} exercise={snap.exercise} last={snap.lastRep} /><Stats snap={snap} ctrl={ctrl} /></div>
+                <div className="right"><Timeline ctrl={ctrl} exercise={snap.exercise} last={snap.lastRep} /><Stats snap={snap} ctrl={ctrl} /><WeakSpots snap={snap} ctrl={ctrl} /></div>
               </div>
             )
           )}

@@ -21,10 +21,37 @@ export type Profile = {
   subdivision: Record<string, number>; // chosen count per exercise (base id)
   dayMinutes: Record<string, number>; // local date → minutes practised
   log: LogEntry[];
+  runs: Run[]; // burst and endurance runs, for the History charts
 };
 
+/** A burst stint (updated in place as it goes) or one finished endurance run. */
+export type Run = {
+  id: string; date: string; type: 'burst' | 'endurance'; exerciseId: string;
+  bpm: number; seconds: number | null;
+  reps: number; cleanReps: number; onTime: number; expected: number;
+  accuracy: number | null; drift: number | null; meanOffset: number | null;
+};
+export const MAX_RUNS = 300;
+
+export function upsertRun(profile: Profile, run: Run): Profile {
+  const i = profile.runs.findIndex((r) => r.id === run.id);
+  const runs = i >= 0 ? profile.runs.map((r, j) => (j === i ? run : r)) : [...profile.runs, run];
+  return { ...profile, runs: runs.length > MAX_RUNS ? runs.slice(-MAX_RUNS) : runs };
+}
+
+/** Fold one burst-phase rep into the stint's run record. */
+export function burstRun(prev: Run | undefined, base: Pick<Run, 'id' | 'date' | 'exerciseId'>, bpm: number, rep: RepResult): Run {
+  const reps = (prev?.reps ?? 0) + 1;
+  const onTime = (prev?.onTime ?? 0) + rep.onTimeCount;
+  const expected = (prev?.expected ?? 0) + rep.expectedCount;
+  return {
+    ...base, type: 'burst', bpm, seconds: null, reps, cleanReps: (prev?.cleanReps ?? 0) + (rep.clean ? 1 : 0),
+    onTime, expected, accuracy: expected ? Math.round((100 * onTime) / expected) : null, drift: null, meanOffset: null,
+  };
+}
+
 export const emptyProfile = (): Profile => ({
-  xp: 0, bestCombo: 0, personalBests: {}, lastBpm: {}, subdivision: {}, dayMinutes: {}, log: [],
+  xp: 0, bestCombo: 0, personalBests: {}, lastBpm: {}, subdivision: {}, dayMinutes: {}, log: [], runs: [],
 });
 
 export type Hand = 'L' | 'R';
@@ -46,12 +73,16 @@ export type Live = {
   hands: Record<Hand, HandStats>; // pad exercises only: velocity and offset per hand
   strokes: Record<Stroke, HandStats>; // guitar: velocity (peak) and offset per stroke direction
   accents: { landed: number; total: number; bySlot: Record<number, { sum: number; n: number }> }; // strum accents
+  slots: SlotStat[]; // per slot of the current pattern: how often it was on time, late, early or missed
 };
+
+export type SlotStat = { n: number; late: number; early: number; miss: number; offSum: number; offN: number };
+const emptySlot = (): SlotStat => ({ n: 0, late: 0, early: 0, miss: 0, offSum: 0, offN: 0 });
 
 export const emptyLive = (): Live => ({
   combo: 0, bestCombo: 0, cleanStreak: 0, reps: 0, expected: 0, onTime: 0, offsetSum: 0, offsetN: 0,
   bestCleanBpm: null, hands: { L: emptyHand(), R: emptyHand() }, strokes: { down: emptyHand(), up: emptyHand() },
-  accents: { landed: 0, total: 0, bySlot: {} },
+  accents: { landed: 0, total: 0, bySlot: {} }, slots: [],
 });
 
 export const MIN_BPM = 30;
@@ -114,6 +145,19 @@ export function applyRep(
     }
   }
 
+  const slots: SlotStat[] = rep.slots.map((r, i) => {
+    const cur = live.slots[i] ?? emptySlot();
+    if (!r.expected) return cur;
+    const next = { ...cur, n: cur.n + 1 };
+    if (!r.hit) next.miss++;
+    else {
+      next.offSum += r.offsetMs ?? 0;
+      next.offN++;
+      if (!r.inWindow) { if ((r.offsetMs ?? 0) > 0) next.late++; else next.early++; }
+    }
+    return next;
+  });
+
   const nextLive: Live = {
     combo: c.combo,
     bestCombo: c.best,
@@ -127,6 +171,7 @@ export function applyRep(
     hands,
     strokes,
     accents,
+    slots,
   };
   const nextProfile: Profile = {
     ...profile,
@@ -298,4 +343,21 @@ export function strumTip(live: Live, ex: Exercise): Tip {
     };
   }
   return pickTip(live);
+}
+
+export type WeakSpot = { slot: number; rate: number; issue: 'late' | 'early' | 'miss'; meanOffsetMs: number | null; n: number };
+
+/**
+ * Slots that keep going wrong: at least 4 attempts and 40% of them late, early or missed.
+ * Worst first, at most `limit`.
+ */
+export function weakSpots(slots: SlotStat[], limit = 3): WeakSpot[] {
+  const out: WeakSpot[] = [];
+  slots.forEach((s, slot) => {
+    const bad = s.late + s.early + s.miss;
+    if (s.n < 4 || bad < 3 || bad / s.n < 0.4) return;
+    const issue = s.miss >= s.late && s.miss >= s.early ? 'miss' : s.late >= s.early ? 'late' : 'early';
+    out.push({ slot, rate: bad / s.n, issue, meanOffsetMs: s.offN ? s.offSum / s.offN : null, n: s.n });
+  });
+  return out.sort((a, b) => b.rate - a.rate || a.slot - b.slot).slice(0, limit);
 }
