@@ -1,5 +1,5 @@
 import type { Exercise } from '../data/types';
-import { accentStats, rampStep, updateCombo, type RepResult } from '../scoring/score';
+import { accentStats, softStats, rampStep, updateCombo, type RepResult } from '../scoring/score';
 
 export const XP_PER_LEVEL = 1000;
 export const STREAK_MINUTES = 10;
@@ -73,6 +73,7 @@ export type Live = {
   hands: Record<Hand, HandStats>; // pad exercises only: velocity and offset per hand
   strokes: Record<Stroke, HandStats>; // guitar: velocity (peak) and offset per stroke direction
   accents: { landed: number; total: number; bySlot: Record<number, { sum: number; n: number }> }; // strum accents
+  softs: { controlled: number; total: number; bySlot: Record<number, { sum: number; n: number }> }; // pad ghost notes
   slots: SlotStat[]; // per slot of the current pattern: how often it was on time, late, early or missed
 };
 
@@ -82,7 +83,7 @@ const emptySlot = (): SlotStat => ({ n: 0, late: 0, early: 0, miss: 0, offSum: 0
 export const emptyLive = (): Live => ({
   combo: 0, bestCombo: 0, cleanStreak: 0, reps: 0, expected: 0, onTime: 0, offsetSum: 0, offsetN: 0,
   bestCleanBpm: null, hands: { L: emptyHand(), R: emptyHand() }, strokes: { down: emptyHand(), up: emptyHand() },
-  accents: { landed: 0, total: 0, bySlot: {} }, slots: [],
+  accents: { landed: 0, total: 0, bySlot: {} }, softs: { controlled: 0, total: 0, bySlot: {} }, slots: [],
 });
 
 export const MIN_BPM = 30;
@@ -145,6 +146,16 @@ export function applyRep(
     }
   }
 
+  const softs = { controlled: live.softs.controlled, total: live.softs.total, bySlot: { ...live.softs.bySlot } };
+  for (const q of softStats(ex.pattern, rep.slots)) {
+    softs.total++;
+    if (q.controlled) softs.controlled++;
+    if (q.ratio !== null) {
+      const cur = softs.bySlot[q.index] ?? { sum: 0, n: 0 };
+      softs.bySlot[q.index] = { sum: cur.sum + q.ratio, n: cur.n + 1 };
+    }
+  }
+
   const slots: SlotStat[] = rep.slots.map((r, i) => {
     const cur = live.slots[i] ?? emptySlot();
     if (!r.expected) return cur;
@@ -171,6 +182,7 @@ export function applyRep(
     hands,
     strokes,
     accents,
+    softs,
     slots,
   };
   const nextProfile: Profile = {
@@ -249,8 +261,31 @@ export function balance(live: Live): { pct: number; weaker: Hand } | null {
 }
 
 /** Pad tips, first match wins: balance < 90%, then hands' mean offsets > 8 ms apart, then the plain rule. */
-export function drumTip(live: Live, leadWeaker: boolean): Tip {
-  const b = balance(live);
+/** Dynamics tip for exercises with accents or ghost notes: the weakest accent, then the loudest ghost note (after 2 bars). */
+export function dynamicsTip(live: Live, ex: Exercise): Tip | null {
+  let weakAccent: { slot: number; mean: number } | null = null;
+  for (const [slot, v] of Object.entries(live.accents.bySlot)) {
+    if (v.n < 2) continue;
+    const mean = v.sum / v.n;
+    if (mean < 0.15 && (weakAccent === null || mean < weakAccent.mean)) weakAccent = { slot: Number(slot), mean };
+  }
+  if (weakAccent) {
+    const beat = Math.floor(weakAccent.slot / ex.subdivision) + 1;
+    return { tone: 'late', title: `Beat-${beat} accent is getting lost`, text: `Only ${Math.max(0, Math.round(weakAccent.mean * 100))}% louder than the normal hits. Lift the stick higher for the accent.` };
+  }
+  let loud: { slot: number; mean: number } | null = null;
+  for (const [slot, v] of Object.entries(live.softs.bySlot)) {
+    if (v.n < 2) continue;
+    const mean = v.sum / v.n;
+    if (mean > 0.6 && (loud === null || mean > loud.mean)) loud = { slot: Number(slot), mean };
+  }
+  if (loud) return { tone: 'late', title: 'Ghost notes are too loud', text: `They are at ${Math.round(loud.mean * 100)}% of a normal hit; aim for 60% or less. Keep the stick low and let it bounce.` };
+  return null;
+}
+
+export function drumTip(live: Live, leadWeaker: boolean, ex?: Exercise): Tip {
+  // accents and ghost notes are loud or soft on purpose, usually on one hand, so L/R balance means nothing there
+  const b = live.accents.total + live.softs.total > 0 ? null : balance(live);
   if (b && b.pct < 90) {
     const name = handName(b.weaker);
     const other = handName(b.weaker === 'L' ? 'R' : 'L').toLowerCase();
@@ -277,6 +312,8 @@ export function drumTip(live: Live, leadWeaker: boolean): Tip {
       };
     }
   }
+  const dyn = ex ? dynamicsTip(live, ex) : null;
+  if (dyn) return dyn;
   return tip(meanOffset(live));
 }
 

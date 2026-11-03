@@ -7,12 +7,13 @@ const downUp = alt('down', 'up');
 /** Every slot played, picking lanes alternating down/up starting with down. */
 const picking = (n: number): Slot[] => Array.from({ length: n }, (_, i) => ({ play: true, lane: downUp(i) }));
 
-/** Build a pattern from a string of chars: 'x' play, 'X' accent, 'g' ghost, '-' rest. */
+/** Build a pattern from a string of chars: 'x' play, 'X' accent, 's' soft (a played ghost note), 'g' ghost (hand moves, no hit), '-' rest. */
 export function fromString(s: string, lane: (i: number) => Lane | undefined): Slot[] {
   return [...s].map((c, i) => {
     const l = lane(i);
     if (c === 'x') return { play: true, lane: l };
     if (c === 'X') return { play: true, lane: l, accent: true };
+    if (c === 's') return { play: true, lane: l, soft: true };
     if (c === 'g') return { play: false, lane: l, ghost: true };
     return { play: false, lane: l };
   });
@@ -21,6 +22,10 @@ export function fromString(s: string, lane: (i: number) => Lane | undefined): Sl
 /** Sticking string such as "RLRR" repeated to fill `n` slots. */
 const sticking = (pat: string, n: number): Slot[] =>
   Array.from({ length: n }, (_, i) => ({ play: true, lane: pat[i % pat.length] as Lane }));
+
+/** Pads pattern with dynamics: a sticking string cycled over cells (X accent, x normal, s soft). */
+const dyn = (sticking: string, cells: string): Slot[] =>
+  fromString(cells, (i) => sticking[i % sticking.length] as Lane);
 
 const guitar = (
   id: string, name: string, kind: Exercise['kind'], subdivision: Exercise['subdivision'],
@@ -65,6 +70,9 @@ export const EXERCISES: Exercise[] = [
   pads('pads-paradiddle', 'Paradiddle RLRR LRLL', 4, sticking('RLRRLRLL', 16), 70, 4),
   pads('pads-paradiddle-diddle', 'Paradiddle-diddle RLRRLL', 6, sticking('RLRRLL', 24), 60, 4),
   pads('pads-gallop', 'Gallop on pads (R RL)', 4, gallopPads, 80, 3),
+  pads('pads-accent-singles', 'Accented singles (accent every beat)', 4, dyn('RL', 'XxxxXxxxXxxxXxxx'), 70, 3),
+  pads('pads-accent-paradiddle', 'Accented paradiddle', 4, dyn('RLRRLRLL', 'XxxxXxxxXxxxXxxx'), 70, 4),
+  pads('pads-ghost-singles', 'Ghost notes: soft left hand', 4, dyn('RL', 'XsxsXsxsXsxsXsxs'), 70, 4),
 ];
 
 let custom: Exercise[] = [];

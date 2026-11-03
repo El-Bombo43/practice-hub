@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { applyRep, burstRun, upsertRun, weakSpots, strumTip, balance, burstBpm, burstPhase, drumTip, evenness, pickTip, emptyLive, emptyProfile, level, streak, tip, type Live } from './progress';
+import { applyRep, dynamicsTip, burstRun, upsertRun, weakSpots, strumTip, balance, burstBpm, burstPhase, drumTip, evenness, pickTip, emptyLive, emptyProfile, level, streak, tip, type Live } from './progress';
 import { scoreRep } from '../scoring/score';
 import { exerciseById } from '../data/exercises';
 
@@ -238,5 +238,30 @@ describe('burst and endurance run records', () => {
     for (let i = 0; i < 305; i++) p = upsertRun(p, burstRun(undefined, { ...base, id: `r${i}` }, 100, clean));
     expect(p.runs.length).toBe(300);
     expect(p.runs.at(-1)?.id).toBe('r304');
+  });
+});
+
+describe('pad dynamics', () => {
+  const ex = exerciseById('pads-ghost-singles');
+  const times = Array.from({ length: 16 }, (_, i) => i * 0.125);
+  const bar = (soft: number) => scoreRep(ex.pattern, times,
+    ex.pattern.map((s, i) => ({ time: times[i], lane: s.lane, velocity: s.accent ? 1 : s.soft ? soft : 0.7 })), 15, { enforceLanes: true });
+  it('the ghost-note exercise has accents, soft notes and R/L lanes', () => {
+    expect(ex.instrument).toBe('pads');
+    expect(ex.pattern.slice(0, 4).map((s) => [s.lane, !!s.accent, !!s.soft])).toEqual([['R', true, false], ['L', false, true], ['R', false, false], ['L', false, true]]);
+    expect(exerciseById('pads-accent-paradiddle').pattern.filter((s) => s.accent).length).toBe(4);
+  });
+  it('counts ghost notes controlled and tips when they are too loud', () => {
+    let live = emptyLive();
+    let p = emptyProfile();
+    for (let i = 0; i < 2; i++) { const o = applyRep(live, p, ex, 70, bar(0.6)); live = o.live; p = o.profile; }
+    expect(live.softs.total).toBe(16);
+    expect(live.softs.controlled).toBe(0); // 0.6 / 0.7 = 86% of a normal hit
+    const t = drumTip(live, false, ex);
+    expect(t.title).toBe('Ghost notes are too loud');
+    let quiet = emptyLive();
+    for (let i = 0; i < 2; i++) quiet = applyRep(quiet, p, ex, 70, bar(0.3)).live;
+    expect(quiet.softs.controlled).toBe(16);
+    expect(dynamicsTip(quiet, ex)).toBeNull();
   });
 });

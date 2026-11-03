@@ -9,7 +9,9 @@ export function Stats({ snap, ctrl }: { snap: Snapshot; ctrl: Practice }) {
   const mean = meanOffset(live);
   const bal = balance(live);
   const strum = snap.exercise.kind === 'strum';
-  const t = pads ? drumTip(live, snap.leadWeaker) : strum ? strumTip(live, snap.exercise) : pickTip(live);
+  const hasAccents = live.accents.total > 0;
+  const hasSofts = live.softs.total > 0;
+  const t = pads ? drumTip(live, snap.leadWeaker, snap.exercise) : strum ? strumTip(live, snap.exercise) : pickTip(live);
   const ev = pads ? null : evenness(live);
   const r = snap.report;
   return (
@@ -37,7 +39,8 @@ export function Stats({ snap, ctrl }: { snap: Snapshot; ctrl: Practice }) {
     )}
     <section className="panel stats">
       <div className="stat"><span className="k">{strum ? 'Timing' : 'Accuracy'}</span><span className="v">{acc === null ? '–' : `${acc}%`}</span></div>
-      {strum && <div className="stat"><span className="k">Accents landed</span><span className="v">{live.accents.landed}/{live.accents.total}</span></div>}
+      {(strum || hasAccents) && <div className="stat"><span className="k">Accents landed</span><span className="v">{live.accents.landed}/{live.accents.total}</span></div>}
+      {hasSofts && <div className="stat"><span className="k">Ghost notes controlled</span><span className="v">{live.softs.controlled}/{live.softs.total}</span></div>}
       <div className="stat"><span className="k">Combo · best {live.bestCombo}</span><span className="v">×{live.combo}</span></div>
       {strum ? null : pads ? (
         <div className="stat"><span className="k">L / R balance</span><span className="v">{bal ? `${bal.pct}%` : '–'}</span></div>

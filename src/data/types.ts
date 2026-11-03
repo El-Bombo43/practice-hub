@@ -1,6 +1,6 @@
 export type Lane = 'L' | 'R' | 'down' | 'up';
 /** ghost = hand moves, no hit expected */
-export type Slot = { play: boolean; lane?: Lane; accent?: boolean; ghost?: boolean };
+export type Slot = { play: boolean; lane?: Lane; accent?: boolean; ghost?: boolean; soft?: boolean }; // soft = a played ghost note: expected, but quiet
 export type Exercise = {
   id: string;
   name: string;

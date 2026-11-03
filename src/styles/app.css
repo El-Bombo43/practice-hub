@@ -278,3 +278,7 @@ textarea { width: 100%; min-height: 160px; border-radius: 12px; border: 1px soli
 /* weak spots */
 .weak ul { margin: 8px 0; padding-left: 18px; display: flex; flex-direction: column; gap: 4px; font-size: 14px; }
 .col.weak .cell, .scol.weak .cell { outline: 1px dashed var(--muted); outline-offset: -1px; border-radius: 12px; }
+
+.sticking .soft { color: var(--faded); font-size: 0.75em; font-weight: 500; }
+.sticking .acc { color: var(--accent); }
+.dynlbl { font-family: var(--font-mono); font-size: 10px; line-height: 12px; }

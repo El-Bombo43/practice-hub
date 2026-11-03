@@ -148,6 +148,7 @@ export function driftPer10s(points: { t: number; offsetMs: number }[]): number |
   return Math.round((num / den) * 10 * 10) / 10;
 }
 
+export const SOFT_MAX_RATIO = 0.6; // a ghost note should be at most 60% as loud as a normal hit
 export const ACCENT_MIN_RISE = 0.15;
 export type AccentResult = { index: number; pct: number | null; landed: boolean }; // pct: fraction louder than the other strums
 
@@ -159,7 +160,7 @@ export function accentStats(pattern: Slot[], slots: SlotResult[]): AccentResult[
   const others: number[] = [];
   pattern.forEach((p, i) => {
     const r = slots[i];
-    if (p.play && !p.ghost && !p.accent && r.hit && r.velocity !== undefined) others.push(r.velocity);
+    if (p.play && !p.ghost && !p.accent && !p.soft && r.hit && r.velocity !== undefined) others.push(r.velocity);
   });
   const mean = others.length ? others.reduce((a, b) => a + b, 0) / others.length : 0;
   const out: AccentResult[] = [];
@@ -168,6 +169,26 @@ export function accentStats(pattern: Slot[], slots: SlotResult[]): AccentResult[
     const r = slots[i];
     const pct = r.hit && r.velocity !== undefined && mean > 0 ? r.velocity / mean - 1 : null;
     out.push({ index: i, pct, landed: pct !== null && pct >= ACCENT_MIN_RISE - 1e-9 });
+  });
+  return out;
+}
+
+export type SoftResult = { index: number; ratio: number | null; controlled: boolean }; // ratio: loudness vs the normal hits
+
+/** Soft (ghost) notes: loudness as a fraction of the mean normal hit in the bar; controlled when 60% or less. */
+export function softStats(pattern: Slot[], slots: SlotResult[]): SoftResult[] {
+  const normal: number[] = [];
+  pattern.forEach((p, i) => {
+    const r = slots[i];
+    if (p.play && !p.ghost && !p.accent && !p.soft && r.hit && r.velocity !== undefined) normal.push(r.velocity);
+  });
+  const mean = normal.length ? normal.reduce((a, b) => a + b, 0) / normal.length : 0;
+  const out: SoftResult[] = [];
+  pattern.forEach((p, i) => {
+    if (!p.soft || !p.play) return;
+    const r = slots[i];
+    const ratio = r.hit && r.velocity !== undefined && mean > 0 ? r.velocity / mean : null;
+    out.push({ index: i, ratio, controlled: ratio !== null && ratio <= SOFT_MAX_RATIO + 1e-9 });
   });
   return out;
 }

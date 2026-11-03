@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { accentStats, driftPer10s, rampStep, scoreRep, slotTimesFromBeats, updateCombo } from './score';
+import { accentStats, softStats, driftPer10s, rampStep, scoreRep, slotTimesFromBeats, updateCombo } from './score';
 import type { Slot } from '../data/types';
 
 const P: Slot = { play: true };
@@ -165,5 +165,26 @@ describe('accentStats', () => {
     const pattern = [P, A];
     expect(accentStats(pattern, scoreRep(pattern, times(2), [{ time: 0, velocity: 0.5 }], 15).slots)[0]).toEqual({ index: 1, pct: null, landed: false });
     expect(accentStats(pattern, scoreRep(pattern, times(2), [0, 0.125], 15).slots)[0].pct).toBeNull();
+  });
+});
+
+describe('softStats (ghost notes on pads)', () => {
+  const S: Slot = { play: true, soft: true };
+  const A: Slot = { play: true, accent: true };
+  it('a ghost note is controlled at 60% of the normal hits or less', () => {
+    const pattern = [P, S, P, S];
+    const vel = [0.8, 0.4, 0.8, 0.6];
+    const rep = scoreRep(pattern, times(4), vel.map((v, i) => ({ time: i * 0.125, velocity: v })), 15);
+    const [a, b] = softStats(pattern, rep.slots);
+    expect(a.ratio).toBeCloseTo(0.5, 9);
+    expect(a.controlled).toBe(true);
+    expect(b.ratio).toBeCloseTo(0.75, 9);
+    expect(b.controlled).toBe(false);
+  });
+  it('soft notes are left out of the normal-hit mean, and misses are not controlled', () => {
+    const pattern = [P, S, A];
+    const rep = scoreRep(pattern, times(3), [{ time: 0, velocity: 1 }, { time: 0.25, velocity: 1.2 }], 15);
+    expect(softStats(pattern, rep.slots)[0]).toEqual({ index: 1, ratio: null, controlled: false });
+    expect(accentStats(pattern, rep.slots)[0].pct).toBeCloseTo(0.2, 9);
   });
 });

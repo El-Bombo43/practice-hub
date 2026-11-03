@@ -2,6 +2,7 @@ import { hasLanes } from '../data/exercises';
 import type { Exercise, Lane } from '../data/types';
 import type { LastRep, Practice } from '../game/practice';
 import { weakSpots } from '../game/progress';
+import { accentStats, softStats } from '../scoring/score';
 import { fmtOffset } from './format';
 import { StrayNote } from './StrayNote';
 import { StrumTimeline } from './StrumTimeline';
@@ -28,6 +29,11 @@ function HitTimeline({ ctrl, exercise: fallback, last }: { ctrl: Practice; exerc
   const windowMs = last?.windowMs ?? 15;
   const bandW = Math.max(8, 2 * windowMs * scale);
   const rep = last?.rep;
+  const dyn = new Map<number, { text: string; good: boolean }>();
+  if (rep && pads) {
+    for (const a of accentStats(exercise.pattern, rep.slots)) if (a.pct !== null) dyn.set(a.index, { text: `${a.pct >= 0 ? '+' : '−'}${Math.abs(Math.round(a.pct * 100))}%`, good: a.landed });
+    for (const q of softStats(exercise.pattern, rep.slots)) if (q.ratio !== null) dyn.set(q.index, { text: `${Math.round(q.ratio * 100)}%`, good: q.controlled });
+  }
   const weak = new Set(weakSpots(ctrl.getSnapshot().live.slots).map((w) => w.slot));
   const wrong = rep ? rep.slots.filter((s) => s.wrongLane).length : 0;
   const head = usePlayhead(ctrl, cols);
@@ -51,7 +57,9 @@ function HitTimeline({ ctrl, exercise: fallback, last }: { ctrl: Practice; exerc
         {pads && (
           <div className={`sticking${dense ? ' dense' : ''}`} style={grid} aria-label="Sticking">
             {exercise.pattern.map((s, i) => (
-              <span key={i} className={s.lane === 'L' ? 'l' : ''}>{s.play ? s.lane : ''}</span>
+              <span key={i} className={`${s.lane === 'L' ? 'l' : ''}${s.soft ? ' soft' : ''}${s.accent ? ' acc' : ''}`}>
+                {s.accent ? '>' : ''}{s.play ? (s.soft ? s.lane?.toLowerCase() : s.lane) : ''}
+              </span>
             ))}
           </div>
         )}
@@ -99,6 +107,7 @@ function HitTimeline({ ctrl, exercise: fallback, last }: { ctrl: Practice; exerc
                   )}
                 </div>
                 <span className="lbl" style={{ color: labelColor }}>{arrow}{dense || !arrow ? '' : ' '}{label}</span>
+                {pads && dyn.has(i) && <span className="dynlbl" style={{ color: dyn.get(i)?.good ? 'var(--accent)' : 'var(--late)' }}>{dyn.get(i)?.text}</span>}
                 {pads && (
                   <div className="vel">
                     {vel !== null && (
