@@ -2,7 +2,8 @@ import { useState } from 'react';
 import { findExercise } from '../data/exercises';
 import type { Program } from '../data/program';
 import { testRows, type ProgramLog } from '../data/programLog';
-import { baseId, calendarWeeks, cleanMaxSeries, exercisesWithHistory, weekMinutes } from '../game/history';
+import { summaryText, weeklySummary } from '../game/weekly';
+import { baseId, calendarWeeks, cleanMaxSeries, exercisesWithHistory } from '../game/history';
 import { dateKey, streak, type Profile } from '../game/progress';
 
 const SUB: Record<string, string> = { '2': '8ths', '3': 'triplets', '4': '16ths', '6': 'sextuplets' };
@@ -95,6 +96,45 @@ function Trend({ points, unit, label }: { points: { date: string; v: number }[];
   );
 }
 
+function WeekPanel({ profile, program, programLog }: { profile: Profile; program: Program | null; programLog: ProgramLog }) {
+  const [back, setBack] = useState(0); // weeks back from this one
+  const [copied, setCopied] = useState('');
+  const day = new Date();
+  day.setDate(day.getDate() - 7 * back);
+  const s = weeklySummary(profile, programLog, program ? Object.keys(program.tests) : [], instrumentOf, day);
+  const testName = (id: string) => `${id} ${program?.tests[id]?.name ?? ''}`.trim();
+  const copy = async () => {
+    try { await navigator.clipboard.writeText(summaryText(s, exerciseLabel, testName)); setCopied('Copied.'); } catch { setCopied('Could not copy.'); }
+  };
+  return (
+    <section className="panel">
+      <div className="tl-head">
+        <h2>{back === 0 ? 'This week' : back === 1 ? 'Last week' : `${back} weeks ago`} <span className="small-mono">{s.from.slice(5)} to {s.to.slice(5)}</span></h2>
+        <div className="row">
+          <button type="button" className="btn" aria-label="Earlier week" onClick={() => setBack(back + 1)}>‹</button>
+          <button type="button" className="btn" aria-label="Later week" disabled={back === 0} onClick={() => setBack(back - 1)}>›</button>
+        </div>
+      </div>
+      <div className="stats">
+        <div className="stat"><span className="k">Guitar</span><span className="v">{s.minutes.guitar} min</span></div>
+        <div className="stat"><span className="k">Pads</span><span className="v">{s.minutes.pads} min</span></div>
+        <div className="stat"><span className="k">Days played</span><span className="v">{s.practiceDays}</span></div>
+      </div>
+      {s.pbs.length > 0 && (
+        <p className="msg" style={{ lineHeight: 1.6 }}><b>New clean max:</b> {s.pbs.map((p) => `${exerciseLabel(p.exerciseId)} ${p.from === null ? 'first' : p.from} → ${p.to}`).join(' · ')}</p>
+      )}
+      {s.tests.length > 0 && (
+        <p className="msg" style={{ lineHeight: 1.6 }}><b>Tests (CT):</b> {s.tests.map((t) => `${testName(t.id)} ${t.ct}${t.delta === null ? '' : ` (${t.delta >= 0 ? '+' : '−'}${Math.abs(t.delta)})`}`).join(' · ')}</p>
+      )}
+      {s.minutes.total === 0 && <p className="empty">Nothing logged this week.</p>}
+      <div className="row">
+        <button type="button" className="btn" onClick={() => void copy()} disabled={s.minutes.total === 0}>Copy summary</button>
+        {copied && <span className="msg" role="status">{copied}</span>}
+      </div>
+    </section>
+  );
+}
+
 function RunsPanel({ profile, selected }: { profile: Profile; selected: string | undefined }) {
   const runs = profile.runs;
   const mine = (type: 'burst' | 'endurance') => runs.filter((r) => r.type === type && (!selected || r.exerciseId === selected));
@@ -138,7 +178,6 @@ export function History({ profile, program, programLog }: { profile: Profile; pr
   const series = current ? cleanMaxSeries(profile.log, current) : [];
   const weeks = calendarWeeks(profile.dayMinutes);
   const today = dateKey();
-  const week = weekMinutes(profile.log, instrumentOf);
   const recent = [...profile.log].reverse().slice(0, 12);
   const noSessions = profile.log.length === 0;
   const testLines: Line[] = program
@@ -181,13 +220,7 @@ export function History({ profile, program, programLog }: { profile: Profile; pr
           <p className="tl-note" style={{ textAlign: 'left' }}>Rows are Monday to Sunday. Ten minutes or more keeps the streak.</p>
         </section>
 
-        <section className="panel">
-          <h2 className="section-title" style={{ marginBottom: 14 }}>This week</h2>
-          <div className="stats">
-            <div className="stat"><span className="k">Guitar</span><span className="v">{week.guitar} min</span></div>
-            <div className="stat"><span className="k">Pads</span><span className="v">{week.pads} min</span></div>
-          </div>
-        </section>
+        <WeekPanel profile={profile} program={program} programLog={programLog} />
       </div>
 
       {profile.runs.length > 0 && <RunsPanel profile={profile} selected={current} />}

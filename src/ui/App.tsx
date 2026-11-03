@@ -70,6 +70,12 @@ function Loaded({ initial }: { initial: AppData }) {
     () => (program && dayFor(today, program, initial.program.shifts).state === 'during' ? 'program' : 'practice'),
   );
   const toggleHook = useRef<(() => void) | null>(null);
+  const [installEvent, setInstallEvent] = useState<{ prompt: () => Promise<void> } | null>(null);
+  useEffect(() => {
+    const on = (e: Event) => { e.preventDefault(); setInstallEvent(e as unknown as { prompt: () => Promise<void> }); };
+    window.addEventListener('beforeinstallprompt', on);
+    return () => window.removeEventListener('beforeinstallprompt', on);
+  }, []);
   const [midi] = useState(() => new MidiManager());
   const [audio] = useState(() => new AudioInput());
   useAudio(audio);
@@ -236,6 +242,7 @@ function Loaded({ initial }: { initial: AppData }) {
           freeze={() => { frozen.current = true; }}
           onMidi={() => setDialog('midi')}
           onAudio={() => setDialog('audio')}
+          onInstall={installEvent ? () => { void installEvent.prompt(); setInstallEvent(null); } : null}
         />
       )}
       {dialog === 'proglog' && program && (

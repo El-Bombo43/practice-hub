@@ -9,6 +9,7 @@ export function SettingsDialog(props: {
   freeze: () => void; // stop autosave before a reload
   onMidi: () => void;
   onAudio: () => void;
+  onInstall: (() => void) | null; // set when the browser offers to install the app
 }) {
   const { settings: s, onChange } = props;
   const [msg, setMsg] = useState('');
@@ -65,6 +66,13 @@ export function SettingsDialog(props: {
           <span className="k">Input</span>
           <div className="row"><button type="button" className="btn" onClick={props.onMidi}>MIDI pads &amp; calibration…</button>
             <button type="button" className="btn" onClick={props.onAudio}>Guitar input…</button></div>
+        </div>
+        <div className="field">
+          <span className="k">App</span>
+          <div className="row">
+            {props.onInstall ? <button type="button" className="btn" onClick={props.onInstall}>Install Practice Hub</button>
+              : <span className="msg">Works offline after the first load. In Chrome, use the install icon in the address bar to add it as an app.</span>}
+          </div>
         </div>
         <div className="field">
           <span className="k">Backup</span>

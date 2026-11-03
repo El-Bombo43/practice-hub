@@ -10,4 +10,11 @@ import './styles/tokens.css';
 import './styles/app.css';
 import { App } from './ui/App';
 
+// Offline support (production builds only, so the dev server never serves stale files)
+if (import.meta.env.PROD && 'serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register(`${import.meta.env.BASE_URL}sw.js`).catch(() => { /* private mode or blocked: the app still works online */ });
+  });
+}
+
 createRoot(document.getElementById('root') as HTMLElement).render(<App />);
