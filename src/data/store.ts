@@ -1,6 +1,7 @@
 import { get, set } from 'idb-keyval';
 import { defaultRoutine, type Routine } from './routine';
 import { emptyProfile, type Profile } from '../game/progress';
+import type { Sound } from '../audio/sounds';
 import { parseCustom, type CustomPattern } from './custom';
 import { emptyProgramLog, type ProgramLog } from './programLog';
 import { defaultMidiMapping, type MidiMapping } from '../input/midi';
@@ -10,6 +11,7 @@ export type Settings = {
   clickVolume: number; // 0-1
   windowMs: 10 | 15 | 25;
   gapClick: boolean;
+  sound: Sound; // click voice, or a drum backing beat
   calibrationMs: { keyboard: number; midi: number; audio: number };
   midi: MidiMapping;
   audio: { deviceId: string | null; sensitivity: number }; // guitar DI input; sensitivity 0–1
@@ -18,7 +20,7 @@ export type Settings = {
 export const ACCENTS = ['#d4ff3a', '#3ee6d4', '#ff4fd8'];
 
 export const defaultSettings = (): Settings => ({
-  accent: ACCENTS[0], clickVolume: 0.6, windowMs: 15, gapClick: false,
+  accent: ACCENTS[0], clickVolume: 0.6, windowMs: 15, gapClick: false, sound: 'click',
   calibrationMs: { keyboard: 0, midi: 0, audio: 0 },
   midi: defaultMidiMapping(),
   audio: { deviceId: null, sensitivity: 0.6 },

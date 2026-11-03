@@ -121,12 +121,12 @@ export class Practice {
     const { exercise, playBpm, settings } = this.snap;
     return {
       bpm: playBpm, beatsPerBar: exercise.beatsPerBar, subdivision: exercise.subdivision,
-      volume: settings.clickVolume, gapClick: settings.gapClick,
+      volume: settings.clickVolume, gapClick: settings.gapClick, sound: settings.sound,
     };
   }
 
   applySettings(settings: Settings): void {
-    this.metro.configure({ volume: settings.clickVolume, gapClick: settings.gapClick });
+    this.metro.configure({ volume: settings.clickVolume, gapClick: settings.gapClick, sound: settings.sound });
     this.set({ settings });
   }
 
@@ -247,6 +247,9 @@ export class Practice {
   toggle(): void {
     if (this.snap.running) this.pause(); else void this.start();
   }
+
+  /** Set an exact tempo (tap tempo, typed value). */
+  setBpm(bpm: number): void { this.adjustBpm(clampBpm(bpm) - this.snap.bpm); }
 
   adjustBpm(delta: number): void {
     const bpm = clampBpm(this.snap.bpm + delta);

@@ -1,4 +1,5 @@
 import { getCtx, heardNow, noteUnderrun } from './clock';
+import { drumHits, isDrums, type Drum, type Sound } from './sounds';
 
 export type BeatEvent = {
   time: number; // audio-clock seconds the beat is scheduled for
@@ -12,6 +13,7 @@ export type MetronomeConfig = {
   beatsPerBar: number;
   subdivision: number;
   volume: number; // 0-1
+  sound?: Sound;
   gapClick: boolean; // 2 bars on, 1 bar muted (after the count-in)
 };
 
@@ -122,9 +124,88 @@ export class Metronome {
     if (muted) return;
     const accent = this.sub === 0 && this.beat === 0;
     const main = this.sub === 0;
-    const freq = accent ? 1500 : main ? 1000 : 800;
     const level = (accent ? 1 : main ? 0.7 : 0.3) * this.cfg.volume;
-    this.click(t, freq, level);
+    const sound = this.cfg.sound ?? 'click';
+    if (isDrums(sound)) {
+      for (const d of drumHits(sound, this.beat, this.sub, this.cfg.beatsPerBar)) this.drum(t, d, this.cfg.volume, main);
+    } else if (sound === 'wood') this.tone(t, accent ? 900 : main ? 650 : 500, level, 0.035, 'triangle');
+    else if (sound === 'beep') this.tone(t, accent ? 1000 : main ? 800 : 640, level * 0.8, 0.07, 'sine');
+    else this.click(t, accent ? 1500 : main ? 1000 : 800, level);
+  }
+
+  private tone(t: number, freq: number, level: number, dur: number, type: OscillatorType): void {
+    if (level <= 0) return;
+    const ctx = getCtx();
+    const osc = ctx.createOscillator();
+    const g = ctx.createGain();
+    osc.type = type;
+    osc.frequency.setValueAtTime(freq, t);
+    osc.frequency.exponentialRampToValueAtTime(freq * 0.8, t + dur);
+    g.gain.setValueAtTime(0.0001, t);
+    g.gain.exponentialRampToValueAtTime(level, t + 0.002);
+    g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+    osc.connect(g).connect(ctx.destination);
+    osc.start(t);
+    osc.stop(t + dur + 0.02);
+  }
+
+  private noise: AudioBuffer | null = null;
+  private noiseSource(t: number): AudioBufferSourceNode {
+    const ctx = getCtx();
+    if (!this.noise) {
+      this.noise = ctx.createBuffer(1, ctx.sampleRate, ctx.sampleRate);
+      const d = this.noise.getChannelData(0);
+      for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1;
+    }
+    const src = ctx.createBufferSource();
+    src.buffer = this.noise;
+    src.start(t);
+    return src;
+  }
+
+  /** Synthesised kick, snare and hat; quiet enough to sit under the playing. */
+  private drum(t: number, d: Drum, volume: number, onBeat: boolean): void {
+    if (volume <= 0) return;
+    const ctx = getCtx();
+    const g = ctx.createGain();
+    g.connect(ctx.destination);
+    if (d === 'kick') {
+      const osc = ctx.createOscillator();
+      osc.frequency.setValueAtTime(140, t);
+      osc.frequency.exponentialRampToValueAtTime(45, t + 0.12);
+      g.gain.setValueAtTime(volume * 1.1, t);
+      g.gain.exponentialRampToValueAtTime(0.0001, t + 0.22);
+      osc.connect(g);
+      osc.start(t);
+      osc.stop(t + 0.25);
+    } else if (d === 'snare') {
+      const src = this.noiseSource(t);
+      const hp = ctx.createBiquadFilter();
+      hp.type = 'highpass';
+      hp.frequency.value = 1500;
+      g.gain.setValueAtTime(volume * 0.7, t);
+      g.gain.exponentialRampToValueAtTime(0.0001, t + 0.16);
+      src.connect(hp).connect(g);
+      src.stop(t + 0.18);
+      const body = ctx.createOscillator();
+      const bg = ctx.createGain();
+      body.type = 'triangle';
+      body.frequency.value = 190;
+      bg.gain.setValueAtTime(volume * 0.5, t);
+      bg.gain.exponentialRampToValueAtTime(0.0001, t + 0.09);
+      body.connect(bg).connect(ctx.destination);
+      body.start(t);
+      body.stop(t + 0.1);
+    } else {
+      const src = this.noiseSource(t);
+      const hp = ctx.createBiquadFilter();
+      hp.type = 'highpass';
+      hp.frequency.value = 7500;
+      g.gain.setValueAtTime(volume * (onBeat ? 0.28 : 0.16), t);
+      g.gain.exponentialRampToValueAtTime(0.0001, t + 0.045);
+      src.connect(hp).connect(g);
+      src.stop(t + 0.06);
+    }
   }
 
   private click(t: number, freq: number, level: number): void {

@@ -1,7 +1,8 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { isProgramExerciseId } from '../data/program';
 import type { Practice, Snapshot } from '../game/practice';
 import { recentUnderrun } from '../audio/clock';
+import { SOUNDS, tapTempo, type Sound } from '../audio/sounds';
 import type { AudioInput } from '../input/audioOnset';
 import type { MidiManager } from '../input/midi';
 import { useAudio } from './useAudio';
@@ -20,6 +21,7 @@ export function LeftPanel(props: {
   const audio = useAudio(props.audio);
   const { exercise: ex, playBpm: bpm, live, running, settings } = snap;
   const [beat, setBeat] = useState(-1);
+  const taps = useRef<number[]>([]);
   const [status, setStatus] = useState<{ text: string; rest: boolean } | null>(null);
 
   useEffect(() => {
@@ -122,6 +124,12 @@ export function LeftPanel(props: {
           )}
         </button>
         <button type="button" className="round" onClick={() => ctrl.adjustBpm(4)} aria-label="Tempo up 4">+4</button>
+        <button type="button" className="round" aria-label="Tap tempo" title="Tap along to set the tempo" style={{ fontSize: 13 }}
+          onClick={() => {
+            taps.current = [...taps.current.slice(-7), performance.now()];
+            const t = tapTempo(taps.current);
+            if (t) ctrl.setBpm(t);
+          }}>Tap</button>
       </div>
       <div className="toggles">
         <button type="button" className="toggle" aria-pressed={settings.gapClick}
@@ -142,6 +150,13 @@ export function LeftPanel(props: {
               onClick={() => (on ? ctrl.setMode('normal') : ctrl.setMode('endurance', sec))}>Endurance {sec} s</button>
           );
         })}
+        <label className="vol">Sound
+          <select value={settings.sound} aria-label="Click sound"
+            onChange={(e) => ctrl.applySettings({ ...settings, sound: e.target.value as Sound })}
+            style={{ minHeight: 44, borderRadius: 12, border: '1px solid var(--off)', background: 'var(--bg)', padding: '0 8px' }}>
+            {SOUNDS.map((s) => <option key={s.id} value={s.id}>{s.label}</option>)}
+          </select>
+        </label>
         <label className="vol">Click
           <input type="range" min={0} max={1} step={0.05} value={settings.clickVolume} aria-label="Click volume"
             onChange={(e) => ctrl.applySettings({ ...settings, clickVolume: Number(e.target.value) })} />
