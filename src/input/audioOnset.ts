@@ -106,7 +106,31 @@ export class AudioInput {
   /** Re-measure which channel carries the guitar: play for one second afterwards. */
   relock(): void { this.channel = null; this.node?.port.postMessage({ type: 'relock' }); this.emit(); }
 
-  private onMessage(m: { type: string; time?: number; peak?: number; rms?: number; channel?: number }): void {
+  private captureChunks: Float32Array[] | null = null;
+
+  /** Record `seconds` of the (mono) guitar signal as the detector sees it. */
+  capture(seconds: number, onTick?: (left: number) => void): Promise<{ samples: Float32Array; sampleRate: number }> {
+    return new Promise((resolve, reject) => {
+      if (!this.node) { reject(new Error('Connect the input first')); return; }
+      this.captureChunks = [];
+      this.node.port.postMessage({ type: 'capture', on: true });
+      const start = performance.now();
+      const tick = setInterval(() => onTick?.(Math.max(0, seconds - (performance.now() - start) / 1000)), 200);
+      setTimeout(() => {
+        clearInterval(tick);
+        this.node?.port.postMessage({ type: 'capture', on: false });
+        const chunks = this.captureChunks ?? [];
+        this.captureChunks = null;
+        const samples = new Float32Array(chunks.reduce((n, c) => n + c.length, 0));
+        let o = 0;
+        for (const c of chunks) { samples.set(c, o); o += c.length; }
+        resolve({ samples, sampleRate: getCtx().sampleRate });
+      }, seconds * 1000);
+    });
+  }
+
+  private onMessage(m: { type: string; time?: number; peak?: number; rms?: number; channel?: number; data?: Float32Array }): void {
+    if (m.type === 'samples' && m.data) { this.captureChunks?.push(m.data); return; }
     if (m.type === 'level') { this.rms = m.rms ?? 0; this.peak = m.peak ?? 0; return; }
     if (m.type === 'channel') { this.channel = m.channel ?? 0; this.emit(); return; }
     if (m.type === 'onset' && m.time !== undefined) {

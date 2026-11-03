@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { blockAt, chunkAt, fmtClock, itemIndex, testIdFor, totalSeconds } from './programRun';
+import { blockAt, chunkAt, fmtClock, itemIndex, resumeElapsed, testIdFor, testPhaseAt, totalSeconds } from './programRun';
 import type { ProgramBlock, ProgramSession } from './program';
 
 const b = (key: string, start: number, end: number, extra: Partial<ProgramBlock> = {}): ProgramBlock =>
@@ -33,5 +33,40 @@ describe('program run helpers', () => {
   it('formats a clock', () => {
     expect(fmtClock(0)).toBe('0:00');
     expect(fmtClock(605)).toBe('10:05');
+  });
+});
+
+describe('test blocks step on the clock', () => {
+  const retest = b('retest', 5, 20, { kind: 'test', log: 'test', items: [{ ex: 'A1' }, { ex: 'A2' }, { ex: 'A3' }, { ex: 'E1' }, { ex: 'K3' }], tests: ['T1', 'T2', 'T3', 'T4', 'T6'] });
+  it('15 min / 5 tests = 3 min each: 108 s with the click, then 72 s without', () => {
+    expect(testPhaseAt(retest, 300)).toEqual({ idx: 0, phase: 'ct', phaseSecLeft: 108 });
+    expect(testPhaseAt(retest, 300 + 107)).toMatchObject({ idx: 0, phase: 'ct' });
+    expect(testPhaseAt(retest, 300 + 108)).toEqual({ idx: 0, phase: 'mc', phaseSecLeft: 72 });
+    expect(testPhaseAt(retest, 300 + 180)).toMatchObject({ idx: 1, phase: 'ct' });
+    expect(testPhaseAt(retest, 1199)).toMatchObject({ idx: 4, phase: 'mc' });
+    expect(testPhaseAt(retest, 5000)).toMatchObject({ idx: 4, phase: 'mc', phaseSecLeft: 0 });
+  });
+  it('a single test splits its 4 minutes into 144 s + 96 s', () => {
+    const t1 = b('test-T1', 5, 9, { kind: 'test', log: 'test', test: 'T1', items: [{ ex: 'A1' }] });
+    expect(testPhaseAt(t1, 300)).toEqual({ idx: 0, phase: 'ct', phaseSecLeft: 144 });
+    expect(testPhaseAt(t1, 300 + 144)).toMatchObject({ phase: 'mc', phaseSecLeft: 96 });
+  });
+  it('picks the exercise of the current test; other blocks are untouched', () => {
+    expect(itemIndex(retest, 300 + 190, 0)).toBe(1);
+    expect(testPhaseAt(b('main', 0, 8, { kind: 'main', log: 'tempo' }), 10)).toBeNull();
+  });
+});
+
+describe('resuming a session', () => {
+  const now = 1_000_000_000;
+  it('restores the saved position for the same date', () => {
+    expect(resumeElapsed({ date: '2026-11-02', elapsed: 400, savedAt: now - 60_000 }, '2026-11-02', 1800, now)).toBe(400);
+  });
+  it('ignores another date, a finished or empty session, and anything older than 12 h', () => {
+    expect(resumeElapsed({ date: '2026-11-01', elapsed: 400, savedAt: now }, '2026-11-02', 1800, now)).toBe(0);
+    expect(resumeElapsed({ date: '2026-11-02', elapsed: 1800, savedAt: now }, '2026-11-02', 1800, now)).toBe(0);
+    expect(resumeElapsed({ date: '2026-11-02', elapsed: 0, savedAt: now }, '2026-11-02', 1800, now)).toBe(0);
+    expect(resumeElapsed({ date: '2026-11-02', elapsed: 400, savedAt: now - 13 * 3600_000 }, '2026-11-02', 1800, now)).toBe(0);
+    expect(resumeElapsed(null, '2026-11-02', 1800, now)).toBe(0);
   });
 });

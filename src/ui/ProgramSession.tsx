@@ -7,7 +7,7 @@ import {
 import {
   exerciseKey, lastFor, noteKey, readyForNext, setEntry, setSessionFields, tensionTooHigh, testKey, type Entry, type ProgramLog,
 } from '../data/programLog';
-import { blockAt, chunkAt, fmtClock, itemIndex, testIdFor, totalSeconds } from '../data/programRun';
+import { blockAt, chunkAt, fmtClock, itemIndex, resumeElapsed, testIdFor, testPhaseAt, totalSeconds, type Resume } from '../data/programRun';
 import type { Practice, Snapshot } from '../game/practice';
 import type { AudioInput } from '../input/audioOnset';
 import type { MidiManager } from '../input/midi';
@@ -27,6 +27,7 @@ export type ProgramSessionProps = {
 const KIND_LABEL: Record<string, string> = {
   warmup: 'Warm-up', lab: 'Motion lab', main: 'Main', secondary: 'Secondary', combo: 'Combo', wrap: 'Log', test: 'Test', break: 'Break', music: 'Music', rest: 'Rest',
 };
+const RESUME_KEY = 'practice-hub:session-resume';
 const num = (v: string): number | undefined => (v.trim() === '' || Number.isNaN(Number(v)) ? undefined : Number(v));
 
 export function ProgramSessionView(props: ProgramSessionProps) {
@@ -56,19 +57,25 @@ export function ProgramSessionView(props: ProgramSessionProps) {
 function SessionRun(props: ProgramSessionProps & { session: Session; programDate: string; nav: React.ReactNode }) {
   const { program, log, onLog, viewDate, ctrl, snap, session, programDate, active } = props;
   const blocks = session.blocks;
-  const clock = useSessionClock(totalSeconds(session), viewDate);
+  const totalSec = totalSeconds(session);
+  const [resumed] = useState(() => {
+    try { return resumeElapsed(JSON.parse(localStorage.getItem(RESUME_KEY) ?? 'null') as Resume | null, viewDate, totalSec, Date.now()); } catch { return 0; }
+  });
+  const [showResumed, setShowResumed] = useState(resumed > 0);
+  const clock = useSessionClock(totalSec, viewDate, resumed);
   const blockIdx = blockAt(session, clock.elapsed);
   const block = blocks[blockIdx];
   const [picked, setPicked] = useState(0);
   const itemIdx = itemIndex(block, clock.elapsed, picked);
-  const chunk = chunkAt(block, clock.elapsed);
+  const testPhase = testPhaseAt(block, clock.elapsed);
+  const chunk = testPhase ? testPhase.idx * 2 + (testPhase.phase === 'mc' ? 1 : 0) : chunkAt(block, clock.elapsed);
   const item = block.items?.[itemIdx];
   const activeEx: ProgramExercise | undefined = item ? program.exercises[item.ex] : undefined;
   const meta = { programDate, week: session.week };
   const phase = program.program.phases.find((p) => p.n === session.phase);
 
   const hub = useMemo(() => (activeEx ? toHubExercise(activeEx, Math.max(1, block.end - block.start)) : null), [activeEx, block.end, block.start]);
-  const clickOn = clock.running && hasClick(block) && !!hub;
+  const clickOn = clock.running && hasClick(block) && !!hub && testPhase?.phase !== 'mc'; // the motion ceiling is played without a click
 
   // keep the controller in step with the session clock: click and scoring only in click blocks
   useEffect(() => {
@@ -79,6 +86,18 @@ function SessionRun(props: ProgramSessionProps & { session: Session; programDate
   }, [active, clickOn, hub, ctrl]);
   useEffect(() => { if (!active) clock.pause(); }, [active]); // eslint-disable-line react-hooks/exhaustive-deps
   useEffect(() => { setPicked(0); }, [blockIdx]);
+  // remember the position so a reload mid-session can pick up where it left off
+  useEffect(() => {
+    const save = () => {
+      try {
+        if (clock.elapsed > 0 && clock.elapsed < totalSec) localStorage.setItem(RESUME_KEY, JSON.stringify({ date: viewDate, elapsed: clock.elapsed, savedAt: Date.now() } satisfies Resume));
+        else if (clock.elapsed >= totalSec) localStorage.removeItem(RESUME_KEY);
+      } catch { /* storage unavailable: no resume, nothing else changes */ }
+    };
+    save();
+    window.addEventListener('pagehide', save);
+    return () => window.removeEventListener('pagehide', save);
+  }, [Math.floor(clock.elapsed / 3), clock.running]); // eslint-disable-line react-hooks/exhaustive-deps
   useEffect(() => { // Space and the footswitch drive the session while this screen is showing
     if (!active) return;
     props.registerToggle(() => clock.toggle());
@@ -115,7 +134,7 @@ function SessionRun(props: ProgramSessionProps & { session: Session; programDate
     onLog((l) => setEntry(l, viewDate, { programDate, week: session.week }, activeKey, { ct: best, auto: true }));
   }, [best, hub, activeKey, snap.exercise.id]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  const total = totalSeconds(session);
+  const total = totalSec;
   const repeating = hasRepeat(log.shifts, viewDate);
 
   return (
@@ -127,6 +146,9 @@ function SessionRun(props: ProgramSessionProps & { session: Session; programDate
             <h2 className="ex-name" style={{ fontSize: 22 }}>
               {session.type === 'rest' ? 'Rest day' : session.type === 'kickoff' ? 'Kickoff: baseline' : `${session.main ?? 'Session'}${session.secondary ? ` + ${session.secondary}` : ''}`}
             </h2>
+            {showResumed && !clock.running && clock.elapsed > 0 && (
+              <span className="msg">Resumed at {fmtClock(clock.elapsed)}. <button type="button" className="link-btn" onClick={() => { clock.seek(0); setShowResumed(false); }}>Start over</button></span>
+            )}
             {programDate !== viewDate && <span className="msg">Repeating a week: today replays program day {programDate}.</span>}
           </div>
           {total > 0 && (
@@ -163,6 +185,17 @@ function SessionRun(props: ProgramSessionProps & { session: Session; programDate
             <span className="eyebrow">{KIND_LABEL[block.kind]} · {block.start}–{block.end} min</span>
             <h3 className="ex-name" style={{ fontSize: 20 }}>{block.title}</h3>
             <p className="blocktext">{block.text}</p>
+            {testPhase && (
+              <div className={`phase${testPhase.phase === 'mc' ? ' mc' : ''}`} role="status">
+                <b>{testPhase.phase === 'ct' ? 'Clean tempo: click on' : 'Motion ceiling: no click'}</b>
+                <span>
+                  {testPhase.phase === 'ct'
+                    ? 'Highest bpm with 4 clean bars, tension 3/10 or lower, on 2 of 3 tries.'
+                    : 'Fastest smooth motion you can hold for 5–10 seconds, even if it is messy. Rest between tries.'}
+                </span>
+                <span className="mono big">{fmtClock(testPhase.phaseSecLeft)}</span>
+              </div>
+            )}
             {!hasClick(block) && block.kind !== 'rest' && block.kind !== 'wrap' && block.kind !== 'music' && (
               <p className="msg">No click and no scoring in this block.</p>
             )}
@@ -179,7 +212,7 @@ function SessionRun(props: ProgramSessionProps & { session: Session; programDate
                 <article key={i} className={`excard${on ? ' on' : ''}`}>
                   <div className="exhead">
                     <strong>{ex.id} · {ex.name}{it.focus ? ` (${it.focus})` : ''}</strong>
-                    {!block.chunks && (block.items?.length ?? 0) > 1 && !on && (
+                    {!block.chunks && !testPhase && (block.items?.length ?? 0) > 1 && !on && (
                       <button type="button" className="link-btn" onClick={() => setPicked(i)}>Use this</button>
                     )}
                     {on && block.chunks && <span className="pill">now</span>}

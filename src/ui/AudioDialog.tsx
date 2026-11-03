@@ -3,11 +3,12 @@ import type { Settings } from '../data/store';
 import type { Practice } from '../game/practice';
 import type { AudioDevice, AudioInput } from '../input/audioOnset';
 import { CalibrationSection } from './CalibrationSection';
+import { CapturePanel } from './CapturePanel';
 import { useAudio } from './useAudio';
 
 const dbToPct = (db: number): number => Math.max(0, Math.min(100, ((db + 60) / 60) * 100));
 
-export function AudioDialog(props: { ctrl: Practice; audio: AudioInput; settings: Settings; onClose: () => void }) {
+export function AudioDialog(props: { ctrl: Practice; audio: AudioInput; settings: Settings; refractoryMs: number; onClose: () => void }) {
   const { ctrl, settings: s } = props;
   const audio = useAudio(props.audio);
   const [devices, setDevices] = useState<AudioDevice[]>([]);
@@ -92,6 +93,9 @@ export function AudioDialog(props: { ctrl: Practice; audio: AudioInput; settings
             onChange={(e) => { const v = Number(e.target.value); setAudio({ sensitivity: v }); audio.setSensitivity(v); }} />
           <span className="msg">Raise it if soft strokes are missed; lower it if you see extra detections.</span>
         </div>
+
+        <CapturePanel audio={audio} sensitivity={s.audio.sensitivity} refractoryMs={props.refractoryMs}
+          onSensitivity={(v) => { setAudio({ sensitivity: v }); audio.setSensitivity(v); }} />
 
         <hr />
         <CalibrationSection ctrl={ctrl} settings={s} sources={['audio']} hint="Mute the strings and pick on each click." />

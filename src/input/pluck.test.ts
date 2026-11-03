@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { kFromSensitivity, OnsetDetector } from './onsetCore';
+import { detectAll, encodeWav, kFromSensitivity, OnsetDetector, sensitivityFor } from './onsetCore';
 
 function rng(seed: number) {
   let s = seed >>> 0;
@@ -99,5 +99,36 @@ describe('thick strings: a wound low E has a duller attack than the high E', () 
     times.forEach((t, i) => addPluck(x, sr, t, 82.4, i % 2 ? 0.18 : 0.32, i + 3, 0.6, 0.2));
     const found = detect(x, sr);
     expect(found.length).toBe(times.length);
+  });
+});
+
+describe('capture analysis and auto-tune', () => {
+  const sr = 48000;
+  const make = () => {
+    const times = Array.from({ length: 12 }, (_, i) => 0.5 + i * 0.4);
+    const x = new Float32Array(Math.round(sr * 6));
+    times.forEach((t, i) => addPluck(x, sr, t, i % 2 ? 82.4 : 246.9, 0.3, i + 1));
+    return { x, times };
+  };
+  it('detectAll returns one onset per pick, in seconds', () => {
+    const { x, times } = make();
+    const found = detectAll(x, sr, kFromSensitivity(0.6));
+    expect(found.length).toBe(12);
+    found.forEach((o, i) => expect(Math.abs(o.time - times[i])).toBeLessThan(0.006));
+  });
+  it('sensitivityFor lands on a setting that finds the number of picks played', () => {
+    const { x } = make();
+    const r = sensitivityFor(x, sr, 12);
+    expect(r.count).toBe(12);
+    expect(detectAll(x, sr, kFromSensitivity(r.sensitivity)).length).toBe(12);
+  });
+  it('encodes a valid 16-bit mono WAV header', () => {
+    const w = new DataView(encodeWav(new Float32Array([0, 0.5, -0.5, 1]), 44100));
+    expect(String.fromCharCode(w.getUint8(0), w.getUint8(1), w.getUint8(2), w.getUint8(3))).toBe('RIFF');
+    expect(w.getUint32(24, true)).toBe(44100);
+    expect(w.getUint32(40, true)).toBe(8);
+    expect(w.getInt16(46, true)).toBe(16384);
+    expect(w.getInt16(50, true)).toBe(32767);
+    expect(w.byteLength).toBe(52);
   });
 });

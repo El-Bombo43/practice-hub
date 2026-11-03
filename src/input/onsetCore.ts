@@ -81,6 +81,8 @@ class Band {
   private recentPos = 0;
   private recentN = 0;
   private prevDb = -120;
+  private statAge = 0;
+  private stat = { median: -120, max: -120 };
   e = 0;
   db = -120;
   rms = 0;
@@ -116,7 +118,9 @@ class Band {
     let refE = 0;
     for (let j = lo; j < lo + 4; j++) refE += this.recent[(this.recentPos - j + 32) % 16];
     refE /= 4;
-    const { median, max } = medianAndMax(this.hist, this.histN);
+    // the 1 s median/max barely move between hops, so refresh them every 4th hop (sorting 375 values per band per hop is the cost)
+    if (this.statAge++ % 4 === 0) this.stat = medianAndMax(this.hist, this.histN);
+    const { median, max } = this.stat;
     return { thr: Math.max(Math.min(median + k, max - CAP_DB), minDb), refDb: 10 * Math.log10(refE + 1e-12) };
   }
 
@@ -212,6 +216,42 @@ export class OnsetDetector {
     }
     for (const b of this.bands) b.commit();
   }
+}
+
+/** Run the detector over a whole recording; returns the onset times in seconds and their peak loudness. */
+export function detectAll(samples: Float32Array, sampleRate: number, k: number, refractoryMs = REFRACTORY_MS): { time: number; peak: number }[] {
+  const det = new OnsetDetector({ sampleRate, k, refractoryMs });
+  const out: { time: number; peak: number }[] = [];
+  for (let i = 0; i < samples.length; i += HOP) {
+    for (const o of det.process(samples.subarray(i, Math.min(samples.length, i + HOP)), i)) out.push({ time: o.sample / sampleRate, peak: o.peak });
+  }
+  return out;
+}
+
+/**
+ * The sensitivity (0–1) whose detections best match the number of picks the player says they played.
+ * Among equally good settings it takes the middle of the run, so the answer sits away from either failure edge.
+ */
+export function sensitivityFor(samples: Float32Array, sampleRate: number, picks: number, refractoryMs = REFRACTORY_MS): { sensitivity: number; count: number } {
+  const steps = Array.from({ length: 11 }, (_, i) => i / 10); // each run is ~0.3 s per 10 s of audio, so keep it coarse
+  const counts = steps.map((s) => detectAll(samples, sampleRate, kFromSensitivity(s), refractoryMs).length);
+  const best = Math.min(...counts.map((c) => Math.abs(c - picks)));
+  const good = steps.filter((_, i) => Math.abs(counts[i] - picks) === best);
+  const mid = good[Math.floor((good.length - 1) / 2)];
+  return { sensitivity: mid, count: counts[steps.indexOf(mid)] };
+}
+
+/** 16-bit mono PCM WAV, for saving a capture. */
+export function encodeWav(samples: Float32Array, sampleRate: number): ArrayBuffer {
+  const buf = new ArrayBuffer(44 + samples.length * 2);
+  const v = new DataView(buf);
+  const str = (o: number, t: string) => { for (let i = 0; i < t.length; i++) v.setUint8(o + i, t.charCodeAt(i)); };
+  str(0, 'RIFF'); v.setUint32(4, 36 + samples.length * 2, true); str(8, 'WAVE'); str(12, 'fmt ');
+  v.setUint32(16, 16, true); v.setUint16(20, 1, true); v.setUint16(22, 1, true);
+  v.setUint32(24, sampleRate, true); v.setUint32(28, sampleRate * 2, true); v.setUint16(32, 2, true); v.setUint16(34, 16, true);
+  str(36, 'data'); v.setUint32(40, samples.length * 2, true);
+  for (let i = 0; i < samples.length; i++) v.setInt16(44 + i * 2, Math.round(Math.max(-1, Math.min(1, samples[i])) * 32767), true);
+  return buf;
 }
 
 /** Mono rule: the channel with the highest energy (RMS) over the first second. Ties/silence → channel 0. */

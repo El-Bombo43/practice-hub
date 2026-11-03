@@ -1,12 +1,16 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 
 /** One timer for a whole session (seconds). Stops itself at `totalSec`. */
-export function useSessionClock(totalSec: number, resetKey: string) {
-  const [elapsed, setElapsed] = useState(0);
+export function useSessionClock(totalSec: number, resetKey: string, initial = 0) {
+  const [elapsed, setElapsed] = useState(initial);
   const [running, setRunning] = useState(false);
   const last = useRef(0);
 
-  useEffect(() => { setElapsed(0); setRunning(false); }, [resetKey]);
+  const first = useRef(true);
+  useEffect(() => {
+    if (first.current) { first.current = false; return; } // the first render already started at `initial`
+    setElapsed(0); setRunning(false);
+  }, [resetKey]);
   useEffect(() => {
     if (!running) return;
     last.current = performance.now();

@@ -245,7 +245,7 @@ function Loaded({ initial }: { initial: AppData }) {
       {dialog === 'summary' && (
         <SummaryDialog profile={snap.profile} sessionXp={snap.sessionXp} sessionPbs={snap.sessionPbs} onClose={() => setDialog(null)} />
       )}
-      {dialog === 'audio' && <AudioDialog ctrl={ctrl} audio={audio} settings={snap.settings} onClose={() => setDialog(null)} />}
+      {dialog === 'audio' && <AudioDialog ctrl={ctrl} audio={audio} settings={snap.settings} refractoryMs={Math.min(80, Math.max(35, 60000 / snap.playBpm / snap.exercise.subdivision / 2))} onClose={() => setDialog(null)} />}
       {dialog === 'midi' && <MidiDialog ctrl={ctrl} midi={midi} settings={snap.settings} onClose={() => setDialog(null)} />}
     </div>
   );
