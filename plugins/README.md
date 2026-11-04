@@ -15,7 +15,7 @@ cargo xtask bundle <package> --release    # builds target/bundled/<Name>.vst3 fo
 Linux builds need the system libraries listed in `.github/workflows/plugins.yml`.
 
 ## CI (`.github/workflows/plugins.yml`)
-- `test`: unit tests, a Linux bundle of every plugin, and **pluginval** at strictness 5 (headless load, state, automation, threading).
+- `test`: unit tests, a Linux bundle of every plugin, and **pluginval** at strictness 5 (load, parameters, state, audio processing, threading). GUI tests are skipped because CI has no OpenGL: check each editor window by hand.
 - `windows`: a Windows x64 `.vst3` per plugin, uploaded as the **windows-vst3** artifact on the run (Actions tab → the run → Artifacts).
 
 ## Install in Ableton (Windows)
