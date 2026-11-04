@@ -112,6 +112,11 @@ impl Biquad {
         self.z1 = 0.0;
         self.z2 = 0.0;
     }
+    /// Set the state to the steady state for a constant input `x` (a unity-DC-gain filter then outputs `x`).
+    pub fn init_dc(&mut self, x: f64) {
+        self.z2 = (self.b2 - self.a2) * x;
+        self.z1 = (self.b1 - self.a1 + self.b2 - self.a2) * x;
+    }
 }
 
 /// One-pole smoother coefficient for a time constant (seconds): y += (x - y) * (1 - coef).
