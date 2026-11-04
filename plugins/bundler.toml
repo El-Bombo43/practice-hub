@@ -1,0 +1,3 @@
+# Display names for the bundles `cargo xtask bundle` produces (the key is the Cargo package name).
+[scaffold_gain]
+name = "Practice Hub Scaffold Gain"

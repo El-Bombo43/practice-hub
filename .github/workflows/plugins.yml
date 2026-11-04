@@ -1,0 +1,62 @@
+name: VST3 plugins
+on:
+  push:
+    branches: [main]
+    paths: ['plugins/**', '.github/workflows/plugins.yml']
+  pull_request:
+    paths: ['plugins/**', '.github/workflows/plugins.yml']
+  workflow_dispatch:
+
+defaults:
+  run:
+    working-directory: plugins
+
+jobs:
+  # Unit tests, then a Linux bundle that pluginval loads headless: catches state, parameter and
+  # threading mistakes before anything is installed in Ableton.
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
+        with: { workspaces: plugins }
+      - name: System libraries for the egui GUI
+        run: sudo apt-get update && sudo apt-get install -y pkg-config libgl1-mesa-dev libx11-dev libx11-xcb-dev libxcb1-dev libxcb-icccm4-dev libxcb-dri2-0-dev libxcb-xfixes0-dev libxcb-shape0-dev libxcursor-dev libxkbcommon-dev libxkbcommon-x11-dev libasound2-dev xvfb
+      - run: cargo test --workspace --release
+      - name: Bundle every plugin (Linux)
+        run: |
+          pkgs=$(cargo metadata --no-deps --format-version 1 | python3 -c "import json,sys; print(' '.join(p['name'] for p in json.load(sys.stdin)['packages'] if p['name']!='xtask'))")
+          echo "plugins: $pkgs"
+          cargo xtask bundle $pkgs --release
+      - name: pluginval (strictness 5)
+        run: |
+          curl -sSL -o pluginval.zip https://github.com/Tracktion/pluginval/releases/latest/download/pluginval_Linux.zip
+          unzip -q pluginval.zip
+          for b in target/bundled/*.vst3; do
+            echo "== $b"
+            xvfb-run -a ./pluginval --strictness-level 5 --validate-in-process --output-dir pluginval-logs "$b"
+          done
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with: { name: pluginval-logs, path: plugins/pluginval-logs }
+
+  # The files you install: a Windows x64 .vst3 per plugin, downloadable from the run's Artifacts.
+  windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
+        with: { workspaces: plugins }
+      - name: Bundle every plugin (Windows)
+        shell: bash
+        run: |
+          pkgs=$(cargo metadata --no-deps --format-version 1 | python -c "import json,sys; print(' '.join(p['name'] for p in json.load(sys.stdin)['packages'] if p['name']!='xtask'))")
+          echo "plugins: $pkgs"
+          cargo xtask bundle $pkgs --release
+      - uses: actions/upload-artifact@v4
+        with:
+          name: windows-vst3
+          path: plugins/target/bundled/*.vst3
+          if-no-files-found: error

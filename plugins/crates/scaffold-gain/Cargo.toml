@@ -1,0 +1,14 @@
+[package]
+name = "scaffold_gain"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+publish = false
+description = "Pipeline-proof placeholder plugin: a gain with a small egui window"
+
+[lib]
+crate-type = ["cdylib", "lib"]
+
+[dependencies]
+nih_plug = { git = "https://github.com/robbert-vdh/nih-plug.git", rev = "de421011f41a6d10fc8c7a6084e4f4dee0143683", default-features = false, features = ["vst3"] }
+nih_plug_egui = { git = "https://github.com/robbert-vdh/nih-plug.git", rev = "de421011f41a6d10fc8c7a6084e4f4dee0143683" }

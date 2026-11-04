@@ -2,6 +2,7 @@ name: Deploy to GitHub Pages
 on:
   push:
     branches: [main]
+    paths-ignore: ['plugins/**', 'docs/**', '.github/workflows/plugins.yml']
   workflow_dispatch:
 permissions:
   contents: read
