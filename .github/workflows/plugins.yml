@@ -62,3 +62,33 @@ jobs:
           name: windows-vst3
           path: plugins/target/bundled/*.vst3
           if-no-files-found: error
+
+  # Headroom for macOS: a universal (Apple Silicon + Intel) VST3, ad-hoc code-signed (Apple Silicon refuses unsigned
+  # code), zipped with the install steps. Not notarised.
+  macos:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+        with: { targets: "aarch64-apple-darwin,x86_64-apple-darwin" }
+      - uses: Swatinem/rust-cache@v2
+        with: { workspaces: plugins }
+      - name: Bundle Headroom (universal) and sign it
+        run: |
+          cargo xtask bundle-universal headroom --release
+          codesign --force --deep --sign - target/bundled/Headroom.vst3
+          codesign --verify --deep --verbose=2 target/bundled/Headroom.vst3
+          lipo -info target/bundled/Headroom.vst3/Contents/MacOS/* || true
+          mkdir -p mac-dist && cp -R target/bundled/Headroom.vst3 mac-dist/ && cp crates/headroom/INSTALL-mac.txt mac-dist/
+          (cd mac-dist && zip -qry ../Headroom-mac.zip Headroom.vst3 INSTALL-mac.txt)
+      - name: pluginval (macOS)
+        continue-on-error: true
+        run: |
+          curl -sSL -o pluginval.zip https://github.com/Tracktion/pluginval/releases/latest/download/pluginval_macOS.zip
+          unzip -q pluginval.zip
+          ./pluginval.app/Contents/MacOS/pluginval --strictness-level 5 --skip-gui-tests --validate-in-process target/bundled/Headroom.vst3
+      - uses: actions/upload-artifact@v4
+        with:
+          name: headroom-mac
+          path: plugins/Headroom-mac.zip
+          if-no-files-found: error

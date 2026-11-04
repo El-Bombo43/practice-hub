@@ -813,6 +813,18 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "ed5909b6e89a2db4456e54cd5f673791d7eca6732202bbf2a9cc504fe2f9b84a"
 
 [[package]]
+name = "headroom"
+version = "0.1.0"
+dependencies = [
+ "nih_plug",
+ "nih_plug_egui 0.0.0",
+ "parking_lot",
+ "phub_common",
+ "png",
+ "serde",
+]
+
+[[package]]
 name = "hermit-abi"
 version = "0.1.19"
 source = "registry+https://github.com/rust-lang/crates.io-index"

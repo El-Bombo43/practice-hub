@@ -1,0 +1,17 @@
+Headroom (macOS) - install steps
+
+1. Copy Headroom.vst3 to ~/Library/Audio/Plug-Ins/VST3/
+
+2. In Terminal, run:
+     xattr -dr com.apple.quarantine ~/Library/Audio/Plug-Ins/VST3/Headroom.vst3
+   This clears the "downloaded from the internet" block. Do it once for every new build you install.
+
+3. In Ableton Live: Settings > Plug-Ins, turn ON "Use VST3 Plug-In System Folders", then click Rescan.
+
+4. On the same Settings page, turn "Multiple Plug-In Windows" ON and "Auto-Hide Plug-In Windows" OFF,
+   so the Headroom window stays open while you select other tracks.
+
+5. Put Headroom LAST on the Master track, after the limiter.
+
+Notes: the plugin is ad-hoc code-signed, not notarised. It is a universal binary (Apple Silicon and Intel).
+Windows: Full 960x560, Strip 1200x132 / 860x132, Compact 480x170 (use the buttons at the top of the window).
