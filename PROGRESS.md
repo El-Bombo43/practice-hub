@@ -8,6 +8,7 @@ Trainer (metronome, scoring, routine, XP/PBs, History), MIDI pads, guitar audio 
 - Practice: "Slots to watch" (≥4 attempts, ≥40% late/early/missed; dashed columns; "drop 10%" button). Burst/endurance runs saved and shown in History (tables + trend lines). Pads: accent + ghost-note (`Slot.soft`, ≤60% of normal) scoring with 3 new exercises; L/R balance tip is skipped when dynamics are on purpose.
 - Sound: click / wood / beep / rock beat / half-time beat (synthesised), tap tempo. Weekly summary in History (week picker, copy as text). PWA: manifest, icons, service worker (network-first pages, stale-while-revalidate assets), install button in Settings.
 - Fixes/extras: leaving the Program tab pauses its click; chunk-switch flash no longer remounts the card. Badges (22, in History; checked as profile/program log change; toast on unlock). Keyboard cheat sheet in Settings. Probed a "low-string boost" for the detector: no gain (the one remaining miss is a low E over loud ringing E4, a band-overlap limit), so not built.
+- VST3 plugins: `plugins/` (Rust/nih-plug, pinned rev) with a scaffold gain plugin; CI builds a Windows `.vst3` artifact and runs unit tests + pluginval (GUI tests skipped: no OpenGL on the runner). See `plugins/README.md`, `docs/vst3-plugin-spec-guide.md`.
 ## Decisions
 - Program exercises are `prog-*` ids. Auto-tune searches 11 sensitivity steps (each run ≈0.3 s per 10 s of audio).
 ## Known issues / next
