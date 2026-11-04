@@ -3,6 +3,9 @@
 pub mod analyzer;
 pub mod dsp;
 pub mod fmt;
+pub mod geom;
+pub mod gui;
+pub mod presets;
 pub mod params;
 
 use analyzer::Shared;
@@ -67,6 +70,10 @@ impl Plugin for Contour {
         self.params.clone()
     }
 
+    fn editor(&mut self, _async_executor: AsyncExecutor<Self>) -> Option<Box<dyn Editor>> {
+        gui::create(self.params.clone(), self.shared.clone())
+    }
+
     fn initialize(&mut self, _layout: &AudioIOLayout, config: &BufferConfig, _ctx: &mut impl InitContext<Self>) -> bool {
         self.engine.reset(config.sample_rate as f64);
         self.shared.sample_rate.store(config.sample_rate.to_bits(), Ordering::Relaxed);
@@ -84,6 +91,9 @@ impl Plugin for Contour {
     fn process(&mut self, buffer: &mut Buffer, aux: &mut AuxiliaryBuffers, _ctx: &mut impl ProcessContext<Self>) -> ProcessStatus {
         let n = buffer.samples();
         self.engine.set_settings(&self.params.band_settings(), self.params.global_settings());
+        if !self.params.editor_state.is_open() {
+            self.shared.solo.store(-1, Ordering::Relaxed); // solo is editor state: gone when the window closes
+        }
         let solo = self.shared.solo.load(Ordering::Relaxed);
         self.engine.set_solo((solo >= 0).then_some(solo as usize));
 

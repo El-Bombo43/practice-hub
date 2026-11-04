@@ -26,3 +26,7 @@ Linux builds need the system libraries listed in `.github/workflows/plugins.yml`
 
 ## Licence
 nih-plug's VST3 support is GPL-3.0. Sharing binaries means sharing source under the GPL.
+
+## Notes
+- `vendor/nih_plug_egui` is nih-plug's egui adapter with one method made public (see `vendor/README.md`). CI bundles only the packages under `crates/`.
+- `crates/contour/` is the EQ; its spec is `crates/contour/SPEC.md`.

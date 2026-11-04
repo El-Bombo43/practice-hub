@@ -26,7 +26,7 @@ jobs:
       - run: cargo test --workspace --release
       - name: Bundle every plugin (Linux)
         run: |
-          pkgs=$(cargo metadata --no-deps --format-version 1 | python3 -c "import json,sys; print(' '.join(p['name'] for p in json.load(sys.stdin)['packages'] if p['name']!='xtask'))")
+          pkgs=$(cargo metadata --no-deps --format-version 1 | python3 -c "import json,sys; print(' '.join(p['name'] for p in json.load(sys.stdin)['packages'] if '/crates/' in p['manifest_path'].replace(chr(92),'/')))")
           echo "plugins: $pkgs"
           cargo xtask bundle $pkgs --release
       - name: pluginval (strictness 5)
@@ -54,7 +54,7 @@ jobs:
       - name: Bundle every plugin (Windows)
         shell: bash
         run: |
-          pkgs=$(cargo metadata --no-deps --format-version 1 | python -c "import json,sys; print(' '.join(p['name'] for p in json.load(sys.stdin)['packages'] if p['name']!='xtask'))")
+          pkgs=$(cargo metadata --no-deps --format-version 1 | python -c "import json,sys; print(' '.join(p['name'] for p in json.load(sys.stdin)['packages'] if '/crates/' in p['manifest_path'].replace(chr(92),'/')))")
           echo "plugins: $pkgs"
           cargo xtask bundle $pkgs --release
       - uses: actions/upload-artifact@v4
