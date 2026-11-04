@@ -1,0 +1,19 @@
+[package]
+name = "chamber"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+publish = false
+description = "Chamber: an algorithmic reverb (Plate / Hall / Room) with tail EQ, modulation, ducking and freeze"
+
+[lib]
+crate-type = ["cdylib", "lib"]
+
+[dependencies]
+nih_plug = { git = "https://github.com/robbert-vdh/nih-plug.git", rev = "de421011f41a6d10fc8c7a6084e4f4dee0143683", default-features = false, features = ["vst3"] }
+nih_plug_egui = { path = "../../vendor/nih_plug_egui" }
+serde = { version = "1", features = ["derive"] }
+
+[dev-dependencies]
+png = "0.17"
+realfft = "3"

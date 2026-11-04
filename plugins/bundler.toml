@@ -4,3 +4,6 @@ name = "Practice Hub Scaffold Gain"
 
 [contour]
 name = "Contour"
+
+[chamber]
+name = "Chamber"

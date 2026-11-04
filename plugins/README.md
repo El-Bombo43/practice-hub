@@ -29,4 +29,4 @@ nih-plug's VST3 support is GPL-3.0. Sharing binaries means sharing source under 
 
 ## Notes
 - `vendor/nih_plug_egui` is nih-plug's egui adapter with one method made public (see `vendor/README.md`). CI bundles only the packages under `crates/`.
-- `crates/contour/` is the EQ; its spec is `crates/contour/SPEC.md`.
+- `crates/contour/` is the EQ (spec: `crates/contour/SPEC.md`); `crates/chamber/` is the reverb (Plate / Hall / Room; spec: `crates/chamber/SPEC.md`). Specs live beside their crates because CI bundles whatever is under `crates/`.
