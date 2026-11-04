@@ -7,3 +7,12 @@ name = "Contour"
 
 [chamber]
 name = "Chamber"
+
+[vox_strip]
+name = "Vox Strip"
+
+[punch]
+name = "Punch"
+
+[snap]
+name = "Snap"

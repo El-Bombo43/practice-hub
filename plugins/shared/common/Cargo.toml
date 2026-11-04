@@ -1,0 +1,11 @@
+[package]
+name = "phub_common"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+publish = false
+description = "Shared GUI toolkit, DSP helpers and offscreen renderer for the Practice Hub plugins"
+
+[dependencies]
+nih_plug = { git = "https://github.com/robbert-vdh/nih-plug.git", rev = "de421011f41a6d10fc8c7a6084e4f4dee0143683", default-features = false }
+nih_plug_egui = { path = "../../vendor/nih_plug_egui" }

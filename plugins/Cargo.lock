@@ -1557,6 +1557,14 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "9b4f627cb1b25917193a259e49bdad08f671f8d9708acfd5fe0a8c1455d87220"
 
 [[package]]
+name = "phub_common"
+version = "0.1.0"
+dependencies = [
+ "nih_plug",
+ "nih_plug_egui 0.0.0",
+]
+
+[[package]]
 name = "pin-project"
 version = "1.1.13"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1659,6 +1667,16 @@ name = "profiling"
 version = "1.0.18"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "3d595e54a326bc53c1c197b32d295e14b169e3cfeaa8dc82b529f947fba6bcf5"
+
+[[package]]
+name = "punch"
+version = "0.1.0"
+dependencies = [
+ "nih_plug",
+ "nih_plug_egui 0.0.0",
+ "phub_common",
+ "png",
+]
 
 [[package]]
 name = "quote"
@@ -1977,6 +1995,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "snap"
+version = "0.1.0"
+dependencies = [
+ "nih_plug",
+ "nih_plug_egui 0.0.0",
+ "phub_common",
+ "png",
+]
+
+[[package]]
 name = "strength_reduce"
 version = "0.2.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2227,6 +2255,16 @@ name = "version_check"
 version = "0.9.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "0b928f33d975fc6ad9f86c8f283853ad26bdd5b10b7f1542aa2fa15e2289105a"
+
+[[package]]
+name = "vox_strip"
+version = "0.1.0"
+dependencies = [
+ "nih_plug",
+ "nih_plug_egui 0.0.0",
+ "phub_common",
+ "png",
+]
 
 [[package]]
 name = "vst3-com"
