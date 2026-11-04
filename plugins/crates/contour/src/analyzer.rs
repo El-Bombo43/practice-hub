@@ -130,11 +130,14 @@ impl Analyzer {
             }
             let b0 = ((lo / bin_hz).floor() as usize).min(mags.len() - 1);
             let b1 = ((hi / bin_hz).ceil() as usize).clamp(b0 + 1, mags.len());
-            let mut p = 0.0f32;
-            for m in &mags[b0..b1] {
-                p += m * m;
-            }
-            p /= (b1 - b0) as f32;
+            let p = if b1 - b0 <= 2 {
+                // narrower than a couple of FFT bins (low frequencies): interpolate instead of showing steps
+                let pos = (f / bin_hz).clamp(0.0, (mags.len() - 2) as f32);
+                let (i0, fr) = (pos.floor() as usize, pos.fract());
+                mags[i0] * mags[i0] * (1.0 - fr) + mags[i0 + 1] * mags[i0 + 1] * fr
+            } else {
+                mags[b0..b1].iter().map(|m| m * m).sum::<f32>() / (b1 - b0) as f32
+            };
             let mut db = 10.0 * p.max(1e-12).log10();
             db += TILT_DB_PER_OCT * (f / 1000.0).log2();
             let cur = tr.db[i];

@@ -40,6 +40,18 @@ impl TypeParam {
     pub const ALL: [TypeParam; 8] = [
         Self::Bell, Self::LowShelf, Self::HighShelf, Self::TiltShelf, Self::LowCut, Self::HighCut, Self::Notch, Self::BandPass,
     ];
+    pub fn from_filter(f: FilterType) -> Self {
+        match f {
+            FilterType::Bell => Self::Bell,
+            FilterType::LowShelf => Self::LowShelf,
+            FilterType::HighShelf => Self::HighShelf,
+            FilterType::TiltShelf => Self::TiltShelf,
+            FilterType::LowCut => Self::LowCut,
+            FilterType::HighCut => Self::HighCut,
+            FilterType::Notch => Self::Notch,
+            FilterType::BandPass => Self::BandPass,
+        }
+    }
     pub fn filter(self) -> FilterType {
         match self {
             Self::Bell => FilterType::Bell,
@@ -152,6 +164,12 @@ pub struct BandParams {
 
 impl BandParams {
     pub fn new(n: usize) -> Self {
+        Self::new_from(n, &BandSettings::default())
+    }
+
+    /// A band whose *defaults* are the given settings. Used by the offscreen renderer in the tests to show a
+    /// populated EQ; the plugin itself always uses `new`.
+    pub fn new_from(n: usize, d: &BandSettings) -> Self {
         let db = |name: &str, default: f32, min: f32, max: f32| {
             FloatParam::new(format!("{n} {name}"), default, FloatRange::Linear { min, max })
                 .with_step_size(0.01)
@@ -159,31 +177,31 @@ impl BandParams {
                 .with_string_to_value(Arc::new(|s| parse_db(s)))
         };
         Self {
-            used: BoolParam::new(format!("{n} Used"), false),
-            on: BoolParam::new(format!("{n} Enabled"), true),
-            ftype: EnumParam::new(format!("{n} Type"), TypeParam::Bell),
-            freq: FloatParam::new(format!("{n} Freq"), 1000.0, log_range(10.0, 30_000.0))
+            used: BoolParam::new(format!("{n} Used"), d.used),
+            on: BoolParam::new(format!("{n} Enabled"), d.enabled),
+            ftype: EnumParam::new(format!("{n} Type"), TypeParam::from_filter(d.ftype)),
+            freq: FloatParam::new(format!("{n} Freq"), d.freq, log_range(10.0, 30_000.0))
                 .with_value_to_string(Arc::new(fmt_freq))
                 .with_string_to_value(Arc::new(parse_freq)),
-            gain: db("Gain", 0.0, -30.0, 30.0),
-            q: FloatParam::new(format!("{n} Q"), 1.0, log_range(0.025, 40.0))
+            gain: db("Gain", d.gain_db, -30.0, 30.0),
+            q: FloatParam::new(format!("{n} Q"), d.q, log_range(0.025, 40.0))
                 .with_value_to_string(Arc::new(fmt_q))
                 .with_string_to_value(Arc::new(parse_q)),
-            slope: EnumParam::new(format!("{n} Slope"), SlopeParam::S12),
-            dynamic: BoolParam::new(format!("{n} Dynamic"), false),
-            thresh: FloatParam::new(format!("{n} Threshold"), -20.0, FloatRange::Linear { min: -60.0, max: 0.0 })
+            slope: EnumParam::new(format!("{n} Slope"), SlopeParam::from_db_per_oct(d.slope)),
+            dynamic: BoolParam::new(format!("{n} Dynamic"), d.dynamic),
+            thresh: FloatParam::new(format!("{n} Threshold"), d.thresh_db, FloatRange::Linear { min: -60.0, max: 0.0 })
                 .with_value_to_string(Arc::new(|v| fmt_db(v, 1)))
                 .with_string_to_value(Arc::new(|s| parse_db(s))),
-            range: FloatParam::new(format!("{n} Range"), -6.0, FloatRange::Linear { min: -30.0, max: 30.0 })
+            range: FloatParam::new(format!("{n} Range"), d.range_db, FloatRange::Linear { min: -30.0, max: 30.0 })
                 .with_value_to_string(Arc::new(|v| fmt_db(v, 1)))
                 .with_string_to_value(Arc::new(|s| parse_db(s))),
-            attack: FloatParam::new(format!("{n} Attack"), 10.0, log_range(0.5, 200.0))
+            attack: FloatParam::new(format!("{n} Attack"), d.attack_ms, log_range(0.5, 200.0))
                 .with_value_to_string(Arc::new(fmt_ms))
                 .with_string_to_value(Arc::new(parse_ms)),
-            release: FloatParam::new(format!("{n} Release"), 150.0, log_range(10.0, 2000.0))
+            release: FloatParam::new(format!("{n} Release"), d.release_ms, log_range(10.0, 2000.0))
                 .with_value_to_string(Arc::new(fmt_ms))
                 .with_string_to_value(Arc::new(parse_ms)),
-            ext: BoolParam::new(format!("{n} Ext Sidechain"), false),
+            ext: BoolParam::new(format!("{n} Ext Sidechain"), d.ext),
         }
     }
 
@@ -274,6 +292,13 @@ pub struct ContourParams {
 
 impl Default for ContourParams {
     fn default() -> Self {
+        Self::from_settings(&[BandSettings::default(); BAND_COUNT])
+    }
+}
+
+impl ContourParams {
+    /// Params whose band defaults are `bands` (the plugin uses `Default`; the offscreen renderer uses this).
+    pub fn from_settings(bands: &[BandSettings; BAND_COUNT]) -> Self {
         Self {
             editor_state: EguiState::from_size(960, 560),
             prefs: Arc::new(RwLock::new(GuiPrefs::default())),
@@ -285,22 +310,22 @@ impl Default for ContourParams {
             gain_scale: FloatParam::new("Gain Scale", 100.0, FloatRange::Linear { min: 0.0, max: 200.0 })
                 .with_value_to_string(Arc::new(fmt_percent))
                 .with_string_to_value(Arc::new(parse_percent)),
-            b1: BandParams::new(1),
-            b2: BandParams::new(2),
-            b3: BandParams::new(3),
-            b4: BandParams::new(4),
-            b5: BandParams::new(5),
-            b6: BandParams::new(6),
-            b7: BandParams::new(7),
-            b8: BandParams::new(8),
-            b9: BandParams::new(9),
-            b10: BandParams::new(10),
-            b11: BandParams::new(11),
-            b12: BandParams::new(12),
-            b13: BandParams::new(13),
-            b14: BandParams::new(14),
-            b15: BandParams::new(15),
-            b16: BandParams::new(16),
+            b1: BandParams::new_from(1, &bands[0]),
+            b2: BandParams::new_from(2, &bands[1]),
+            b3: BandParams::new_from(3, &bands[2]),
+            b4: BandParams::new_from(4, &bands[3]),
+            b5: BandParams::new_from(5, &bands[4]),
+            b6: BandParams::new_from(6, &bands[5]),
+            b7: BandParams::new_from(7, &bands[6]),
+            b8: BandParams::new_from(8, &bands[7]),
+            b9: BandParams::new_from(9, &bands[8]),
+            b10: BandParams::new_from(10, &bands[9]),
+            b11: BandParams::new_from(11, &bands[10]),
+            b12: BandParams::new_from(12, &bands[11]),
+            b13: BandParams::new_from(13, &bands[12]),
+            b14: BandParams::new_from(14, &bands[13]),
+            b15: BandParams::new_from(15, &bands[14]),
+            b16: BandParams::new_from(16, &bands[15]),
         }
     }
 }

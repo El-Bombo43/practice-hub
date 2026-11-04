@@ -73,36 +73,38 @@ impl Local {
     }
 }
 
+/// Fonts and the dark theme. Called once when the window opens (and by the offscreen renderer in the tests).
+pub fn setup(ctx: &egui::Context) {
+    let mut fonts = FontDefinitions::default();
+    fonts.font_data.insert("sora".into(), Arc::new(FontData::from_static(include_bytes!("../assets/Sora-Regular.ttf"))));
+    fonts.font_data.insert("sora-semibold".into(), Arc::new(FontData::from_static(include_bytes!("../assets/Sora-SemiBold.ttf"))));
+    fonts.font_data.insert("plex".into(), Arc::new(FontData::from_static(include_bytes!("../assets/IBMPlexMono-Regular.ttf"))));
+    fonts.font_data.insert("plex-bold".into(), Arc::new(FontData::from_static(include_bytes!("../assets/IBMPlexMono-Bold.ttf"))));
+    fonts.families.insert(FontFamily::Name("sora".into()), vec!["sora".into(), "sora-semibold".into()]);
+    fonts.families.insert(FontFamily::Name("mono".into()), vec!["plex".into(), "plex-bold".into()]);
+    fonts.families.entry(FontFamily::Proportional).or_default().insert(0, "sora".into());
+    fonts.families.entry(FontFamily::Monospace).or_default().insert(0, "plex".into());
+    ctx.set_fonts(fonts);
+    let mut v = egui::Visuals::dark();
+    v.panel_fill = BG;
+    v.window_fill = PANEL;
+    v.override_text_color = Some(TEXT);
+    v.widgets.noninteractive.bg_fill = PANEL;
+    v.widgets.inactive.bg_fill = Color32::from_rgb(0x1c, 0x1c, 0x20);
+    v.widgets.inactive.weak_bg_fill = Color32::from_rgb(0x1c, 0x1c, 0x20);
+    v.widgets.hovered.weak_bg_fill = Color32::from_rgb(0x26, 0x26, 0x2c);
+    v.selection.bg_fill = ACCENT.gamma_multiply(0.35);
+    v.window_corner_radius = 6.0.into();
+    ctx.set_visuals(v);
+}
+
+pub fn new_local() -> Local {
+    Local::new()
+}
+
 pub fn create(params: Arc<ContourParams>, shared: Arc<Shared>) -> Option<Box<dyn Editor>> {
     let state: Arc<EguiState> = params.editor_state.clone();
-    create_egui_editor(
-        state,
-        Local::new(),
-        |ctx, _| {
-            let mut fonts = FontDefinitions::default();
-            fonts.font_data.insert("sora".into(), Arc::new(FontData::from_static(include_bytes!("../assets/Sora-Regular.ttf"))));
-            fonts.font_data.insert("sora-semibold".into(), Arc::new(FontData::from_static(include_bytes!("../assets/Sora-SemiBold.ttf"))));
-            fonts.font_data.insert("plex".into(), Arc::new(FontData::from_static(include_bytes!("../assets/IBMPlexMono-Regular.ttf"))));
-            fonts.font_data.insert("plex-bold".into(), Arc::new(FontData::from_static(include_bytes!("../assets/IBMPlexMono-Bold.ttf"))));
-            fonts.families.insert(FontFamily::Name("sora".into()), vec!["sora".into(), "sora-semibold".into()]);
-            fonts.families.insert(FontFamily::Name("mono".into()), vec!["plex".into(), "plex-bold".into()]);
-            fonts.families.entry(FontFamily::Proportional).or_default().insert(0, "sora".into());
-            fonts.families.entry(FontFamily::Monospace).or_default().insert(0, "plex".into());
-            ctx.set_fonts(fonts);
-            let mut v = egui::Visuals::dark();
-            v.panel_fill = BG;
-            v.window_fill = PANEL;
-            v.override_text_color = Some(TEXT);
-            v.widgets.noninteractive.bg_fill = PANEL;
-            v.widgets.inactive.bg_fill = Color32::from_rgb(0x1c, 0x1c, 0x20);
-            v.widgets.inactive.weak_bg_fill = Color32::from_rgb(0x1c, 0x1c, 0x20);
-            v.widgets.hovered.weak_bg_fill = Color32::from_rgb(0x26, 0x26, 0x2c);
-            v.selection.bg_fill = ACCENT.gamma_multiply(0.35);
-            v.window_corner_radius = 6.0.into();
-            ctx.set_visuals(v);
-        },
-        move |ctx, setter, local| update(ctx, setter, local, &params, &shared),
-    )
+    create_egui_editor(state, Local::new(), |ctx, _| setup(ctx), move |ctx, setter, local| update(ctx, setter, local, &params, &shared))
 }
 
 // ---------------------------------------------------------------------------------------------
@@ -168,7 +170,7 @@ fn apply_preset_band(setter: &ParamSetter, b: &BandParams, p: &PresetBand) {
 
 // ---------------------------------------------------------------------------------------------
 
-fn update(ctx: &egui::Context, setter: &ParamSetter, local: &mut Local, params: &Arc<ContourParams>, shared: &Arc<Shared>) {
+pub fn update(ctx: &egui::Context, setter: &ParamSetter, local: &mut Local, params: &Arc<ContourParams>, shared: &Arc<Shared>) {
     let (w, _) = params.editor_state.size();
     ctx.set_zoom_factor((w as f32 / DESIGN_W).clamp(0.5, 2.5));
     let mut prefs = params.prefs.read().clone();
@@ -177,7 +179,7 @@ fn update(ctx: &egui::Context, setter: &ParamSetter, local: &mut Local, params: 
     egui::TopBottomPanel::top("top").exact_height(36.0).frame(egui::Frame::new().fill(PANEL).inner_margin(egui::Margin::symmetric(12, 4))).show(ctx, |ui| {
         top_bar(ui, setter, params, &mut prefs);
     });
-    egui::TopBottomPanel::bottom("bottom").exact_height(54.0).frame(egui::Frame::new().fill(PANEL).inner_margin(egui::Margin::symmetric(12, 4))).show(ctx, |ui| {
+    egui::TopBottomPanel::bottom("bottom").exact_height(72.0).frame(egui::Frame::new().fill(PANEL).inner_margin(egui::Margin::symmetric(12, 4))).show(ctx, |ui| {
         bottom_bar(ui, setter, params, local);
     });
     egui::CentralPanel::default().frame(egui::Frame::new().fill(BG)).show(ctx, |ui| {
@@ -259,11 +261,11 @@ fn top_bar(ui: &mut egui::Ui, setter: &ParamSetter, params: &Arc<ContourParams>,
 
 fn bottom_bar(ui: &mut egui::Ui, setter: &ParamSetter, params: &Arc<ContourParams>, local: &mut Local) {
     ui.with_layout(egui::Layout::right_to_left(egui::Align::Center), |ui| {
-        knob(ui, setter, &params.out_gain, "Output", ACCENT, 34.0, local);
+        knob(ui, setter, &params.out_gain, "Output", ACCENT, 30.0, local);
         ui.add_space(16.0);
         toggle(ui, setter, &params.auto_gain, "Auto Gain", ACCENT);
         ui.add_space(16.0);
-        knob(ui, setter, &params.gain_scale, "Gain Scale", ACCENT, 34.0, local);
+        knob(ui, setter, &params.gain_scale, "Gain Scale", ACCENT, 30.0, local);
     });
 }
 
@@ -421,7 +423,8 @@ fn type_of(i: usize, params: &ContourParams) -> TypeParam {
 #[allow(clippy::too_many_arguments)]
 fn graph(ui: &mut egui::Ui, ctx: &egui::Context, setter: &ParamSetter, local: &mut Local, params: &Arc<ContourParams>, shared: &Arc<Shared>, prefs: &mut crate::params::GuiPrefs) {
     let full = ui.available_rect_before_wrap();
-    let g = Rect::from_min_max(full.min, pos2(full.max.x - 42.0, full.max.y));
+    // the bottom 18 px of the graph area carry the frequency labels, so the band panel never covers them
+    let g = Rect::from_min_max(full.min, pos2(full.max.x - 42.0, full.max.y - 18.0));
     let painter = ui.painter_at(full);
     let fs = f32::from_bits(shared.sample_rate.load(Ordering::Relaxed)) as f64;
     let settings = params.band_settings();
@@ -434,13 +437,14 @@ fn graph(ui: &mut egui::Ui, ctx: &egui::Context, setter: &ParamSetter, local: &m
     let y_of_an = |db: f32| g.top() + (-db.clamp(DB_FLOOR, 0.0)) / -DB_FLOOR * g.height();
 
     painter.rect_filled(g, 0.0, BG);
+    painter.rect_filled(Rect::from_min_max(pos2(full.left(), g.bottom()), pos2(g.right(), full.bottom())), 0.0, PANEL);
 
     // grid
     for f in [20.0, 50.0, 100.0, 200.0, 500.0, 1000.0, 2000.0, 5000.0, 10_000.0, 20_000.0f32] {
         let x = x_of(f);
         painter.line_segment([pos2(x, g.top()), pos2(x, g.bottom())], Stroke::new(1.0_f32, GRID));
         let label = if f >= 1000.0 { format!("{}k", (f / 1000.0) as u32) } else { format!("{}", f as u32) };
-        painter.text(pos2(x + 3.0, g.bottom() - 4.0), Align2::LEFT_BOTTOM, label, mono(10.0), MUTED);
+        painter.text(pos2(x, g.bottom() + 9.0), Align2::CENTER_CENTER, label, mono(10.0), MUTED);
     }
     let step = grid_step(range);
     let mut gain = -range;
@@ -449,7 +453,7 @@ fn graph(ui: &mut egui::Ui, ctx: &egui::Context, setter: &ParamSetter, local: &m
         let zero = gain.abs() < 0.01;
         painter.line_segment([pos2(g.left(), y), pos2(g.right(), y)], Stroke::new(1.0_f32, if zero { Color32::from_rgb(0x3a, 0x3a, 0x42) } else { GRID }));
         if (gain / step).round() == gain / step && (zero || gain.abs() as i32 % (step as i32 * 2).max(1) == 0 || range <= 6.0) {
-            painter.text(pos2(g.left() + 4.0, y - 2.0), Align2::LEFT_BOTTOM, format!("{gain:+.0}"), mono(10.0), MUTED);
+            painter.text(pos2(g.left() + 4.0, y - 2.0), Align2::LEFT_BOTTOM, if zero { "0".to_string() } else { format!("{gain:+.0}") }, mono(10.0), MUTED);
         }
         gain += step;
     }
