@@ -1,6 +1,6 @@
 //! The editor: a Pro-Q-style graph (spectrum, curve, draggable nodes), a floating band panel, top and bottom bars.
 
-use crate::analyzer::{Analyzer, Shared, DB_FLOOR};
+use crate::analyzer::{find_peak, Analyzer, Shared, DB_FLOOR};
 use crate::dsp::response::band_db;
 use crate::dsp::{BandSettings, BAND_COUNT};
 use crate::fmt::{fmt_freq, note_name};
@@ -54,22 +54,34 @@ pub struct Local {
     menu_band: Option<usize>,
     solo_hold: Option<(usize, Instant)>,
     solo_latched: Option<usize>,
+    last_click: Option<Pos2>,
+    /// bands selected together (box select); the first is the primary selection
+    multi: Vec<usize>,
+    box_start: Option<Pos2>,
+    box_now: Option<Pos2>,
+    peak_hover: Option<f32>,
+    last_created: Option<Instant>,
 }
 
-struct Drag {
+struct Member {
     band: usize,
-    start: Pos2,
     f_ln: f32,
     gain: f32,
     q_ln: f32,
-    axis_horizontal: Option<bool>,
     gain_type: bool,
     cut: bool,
 }
 
+/// A node drag. With several bands selected (box select) they all move together, relative to where they started.
+struct Drag {
+    start: Pos2,
+    axis_horizontal: Option<bool>,
+    members: Vec<Member>,
+}
+
 impl Local {
     fn new() -> Self {
-        Self { analyzer: Analyzer::new(480), drag: None, editing: None, menu_band: None, solo_hold: None, solo_latched: None }
+        Self { analyzer: Analyzer::new(480), drag: None, editing: None, menu_band: None, solo_hold: None, solo_latched: None, last_click: None, multi: Vec::new(), box_start: None, box_now: None, peak_hover: None, last_created: None }
     }
 }
 
@@ -551,10 +563,37 @@ fn graph(ui: &mut egui::Ui, ctx: &egui::Context, setter: &ParamSetter, local: &m
         } else {
             painter.circle_stroke(center, NODE_R, Stroke::new(1.5_f32, c.gamma_multiply(0.4)));
         }
-        if sel == Some(bi) {
+        if sel == Some(bi) || local.multi.contains(&bi) {
             painter.circle_stroke(center, NODE_R + 3.5, Stroke::new(1.8_f32, ACCENT));
         }
         painter.text(center + vec2(0.0, -NODE_R - 9.0), Align2::CENTER_CENTER, format!("{}", bi + 1), mono(10.0), if s.enabled { TEXT } else { MUTED });
+    }
+
+    // selection box
+    if let (Some(a), Some(b)) = (local.box_start, local.box_now) {
+        let r = Rect::from_two_pos(a, b);
+        painter.rect_filled(r, 0.0, ACCENT.gamma_multiply(0.08));
+        painter.rect_stroke(r, 0.0, Stroke::new(1.0_f32, ACCENT.gamma_multiply(0.6)), epaint::StrokeKind::Inside);
+    }
+
+    // spectrum grab: highlight the prominent peak under the cursor; a click there creates a band
+    local.peak_hover = None;
+    if let (Some(p), None) = (hover_pos, hit) {
+        if (post || pre) && local.drag.is_none() && local.box_start.is_none() {
+            let tr = if post { &local.analyzer.post } else { &local.analyzer.pre };
+            let f_cursor = frac_to_freq((p.x - g.left()) / g.width());
+            let an = &local.analyzer;
+            if let Some(i) = find_peak(&tr.db, |k| an.point_freq(k), f_cursor, 6.0) {
+                let (pf, pdb) = (an.point_freq(i), tr.db[i]);
+                let (px, py) = (x_of(pf), y_of_an(pdb));
+                if (px - p.x).abs() < 40.0 {
+                    local.peak_hover = Some(pf);
+                    painter.line_segment([pos2(px, py), pos2(px, g.bottom())], Stroke::new(1.0_f32, ACCENT.gamma_multiply(0.5)));
+                    painter.circle_stroke(pos2(px, py), 6.0, Stroke::new(1.5_f32, ACCENT));
+                    painter.text(pos2(px + 10.0, py - 8.0), Align2::LEFT_BOTTOM, format!("{} · click to add a band", fmt_freq(pf)), sora(10.0), ACCENT);
+                }
+            }
+        }
     }
 
     // hover tooltip / readout
@@ -588,14 +627,20 @@ fn graph_input(
 
     // Delete key removes the selected band
     if ctx.input(|i| i.key_pressed(egui::Key::Delete)) {
-        if let Some(b) = prefs.selected.filter(|&b| settings[b].used) {
-            reset_band(setter, params.band(b));
-            prefs.selected = None;
+        let mut doomed: Vec<usize> = local.multi.iter().copied().filter(|&b| settings[b].used).collect();
+        if doomed.is_empty() {
+            doomed.extend(prefs.selected.filter(|&b| settings[b].used));
         }
+        for b in doomed {
+            reset_band(setter, params.band(b));
+        }
+        prefs.selected = None;
+        local.multi.clear();
     }
 
     // wheel over a node: Q (Ctrl: dynamic range)
-    let scroll = ctx.input(|i| i.raw_scroll_delta.y);
+    // egui turns Shift+wheel into a *horizontal* scroll, so read both axes
+    let scroll = ctx.input(|i| i.raw_scroll_delta.x + i.raw_scroll_delta.y);
     if let (Some(b), true) = (hit, scroll.abs() > 0.1 && resp.hovered()) {
         let bp = params.band(b);
         if ctrl {
@@ -613,62 +658,93 @@ fn graph_input(
         prefs.selected = Some(b);
     }
 
-    // press: start dragging a node
+    // press: start dragging a node (all selected nodes move together), or draw a selection box on empty space
     if resp.drag_started() {
         let origin = ui.input(|i| i.pointer.press_origin());
-        if let Some(b) = origin.and_then(|o| hit_node(node_pts, (o.x, o.y), HIT_R)) {
-            let s = &settings[b];
-            let bp = params.band(b);
-            prefs.selected = Some(b);
-            setter.begin_set_parameter(&bp.freq);
-            if s.ftype.uses_gain() {
-                setter.begin_set_parameter(&bp.gain);
-            } else if s.ftype.is_cut() {
-                setter.begin_set_parameter(&bp.q);
+        match origin.and_then(|o| hit_node(node_pts, (o.x, o.y), HIT_R).map(|b| (o, b))) {
+            Some((o, b)) => {
+                if !local.multi.contains(&b) {
+                    local.multi = vec![b];
+                }
+                prefs.selected = Some(b);
+                let members: Vec<Member> = local.multi.iter().filter(|&&m| settings[m].used).map(|&m| {
+                    let s = &settings[m];
+                    let bp = params.band(m);
+                    setter.begin_set_parameter(&bp.freq);
+                    if s.ftype.uses_gain() {
+                        setter.begin_set_parameter(&bp.gain);
+                    } else if s.ftype.is_cut() {
+                        setter.begin_set_parameter(&bp.q);
+                    }
+                    Member { band: m, f_ln: s.freq.ln(), gain: s.gain_db, q_ln: s.q.ln(), gain_type: s.ftype.uses_gain(), cut: s.ftype.is_cut() }
+                }).collect();
+                local.drag = Some(Drag { start: o, axis_horizontal: None, members });
             }
-            local.drag = Some(Drag {
-                band: b, start: origin.unwrap(), f_ln: s.freq.ln(), gain: s.gain_db, q_ln: s.q.ln(), axis_horizontal: None,
-                gain_type: s.ftype.uses_gain(), cut: s.ftype.is_cut(),
-            });
+            None => {
+                local.box_start = origin;
+                local.box_now = origin;
+            }
         }
     }
     if resp.dragged() {
-        if let (Some(d), Some(p)) = (local.drag.as_mut(), ui.input(|i| i.pointer.latest_pos())) {
-            let speed = if shift { 0.1 } else { 1.0 };
-            let (mut dx, mut dy) = ((p.x - d.start.x) * speed, (p.y - d.start.y) * speed);
-            if ctrl {
-                // constrain to the axis moved first
-                if d.axis_horizontal.is_none() && (dx.abs() > 4.0 || dy.abs() > 4.0) {
-                    d.axis_horizontal = Some(dx.abs() >= dy.abs());
-                }
-                match d.axis_horizontal {
-                    Some(true) => dy = 0.0,
-                    Some(false) => dx = 0.0,
-                    None => {}
-                }
+        if let Some(p) = ui.input(|i| i.pointer.latest_pos()) {
+            if local.box_start.is_some() {
+                local.box_now = Some(p);
             }
-            let bp = params.band(d.band);
-            let span = (F_MAX / F_MIN).ln();
-            let f = (d.f_ln + dx / g.width() * span).exp().clamp(F_MIN, F_MAX);
-            setter.set_parameter(&bp.freq, f);
-            if d.gain_type {
-                let gain = (d.gain - dy / g.height() * 2.0 * range).clamp(-30.0, 30.0);
-                setter.set_parameter(&bp.gain, gain);
-            } else if d.cut {
-                setter.set_parameter(&bp.q, (d.q_ln - dy * 0.01).exp().clamp(0.025, 40.0));
+            if let Some(d) = local.drag.as_mut() {
+                let speed = if shift { 0.1 } else { 1.0 };
+                let (mut dx, mut dy) = ((p.x - d.start.x) * speed, (p.y - d.start.y) * speed);
+                if ctrl {
+                    // constrain to the axis moved first
+                    if d.axis_horizontal.is_none() && (dx.abs() > 4.0 || dy.abs() > 4.0) {
+                        d.axis_horizontal = Some(dx.abs() >= dy.abs());
+                    }
+                    match d.axis_horizontal {
+                        Some(true) => dy = 0.0,
+                        Some(false) => dx = 0.0,
+                        None => {}
+                    }
+                }
+                let span = (F_MAX / F_MIN).ln();
+                for m in &d.members {
+                    let bp = params.band(m.band);
+                    setter.set_parameter(&bp.freq, (m.f_ln + dx / g.width() * span).exp().clamp(F_MIN, F_MAX));
+                    if m.gain_type {
+                        setter.set_parameter(&bp.gain, (m.gain - dy / g.height() * 2.0 * range).clamp(-30.0, 30.0));
+                    } else if m.cut {
+                        setter.set_parameter(&bp.q, (m.q_ln - dy * 0.01).exp().clamp(0.025, 40.0));
+                    }
+                }
             }
         }
     }
     if resp.drag_stopped() {
         if let Some(d) = local.drag.take() {
-            let bp = params.band(d.band);
-            setter.end_set_parameter(&bp.freq);
-            if d.gain_type {
-                setter.end_set_parameter(&bp.gain);
-            } else if d.cut {
-                setter.end_set_parameter(&bp.q);
+            for m in &d.members {
+                let bp = params.band(m.band);
+                setter.end_set_parameter(&bp.freq);
+                if m.gain_type {
+                    setter.end_set_parameter(&bp.gain);
+                } else if m.cut {
+                    setter.end_set_parameter(&bp.q);
+                }
             }
         }
+        if let (Some(a), Some(b)) = (local.box_start.take(), local.box_now.take()) {
+            // a drag over empty space selects every node inside the box
+            let (x0, x1, y0, y1) = (a.x.min(b.x), a.x.max(b.x), a.y.min(b.y), a.y.max(b.y));
+            if (x1 - x0) > 4.0 || (y1 - y0) > 4.0 {
+                local.multi = node_pts.iter().enumerate().filter_map(|(i, p)| p.filter(|(x, y)| *x >= x0 && *x <= x1 && *y >= y0 && *y <= y1).map(|_| i)).collect();
+                prefs.selected = local.multi.first().copied();
+            }
+        }
+    }
+
+    // egui calls any two clicks within 0.3 s a double-click, wherever they land; require them to be at the same spot
+    let click_pos = resp.interact_pointer_pos();
+    let double = resp.double_clicked() && matches!((click_pos, local.last_click), (Some(c), Some(l)) if c.distance(l) <= 8.0);
+    if resp.clicked() || resp.double_clicked() {
+        local.last_click = click_pos;
     }
 
     // clicks
@@ -680,12 +756,35 @@ fn graph_input(
                     prefs.selected = None;
                 }
             }
-            Some(b) => prefs.selected = Some(b),
-            None => prefs.selected = None,
+            Some(b) => {
+                prefs.selected = Some(b);
+                local.multi = vec![b];
+            }
+            None => {
+                // a click on a highlighted spectrum peak creates a bell there (spectrum grab); otherwise it deselects
+                let used: Vec<bool> = settings.iter().map(|s| s.used).collect();
+                match (local.peak_hover, first_unused(&used)) {
+                    (Some(f), Some(b)) => {
+                        let bp = params.band(b);
+                        reset_band(setter, bp);
+                        set_bool(setter, &bp.used, true);
+                        set_float(setter, &bp.freq, f);
+                        set_float(setter, &bp.q, 2.0);
+                        prefs.selected = Some(b);
+                        local.multi = vec![b];
+                        local.last_created = Some(Instant::now());
+                    }
+                    _ => {
+                        prefs.selected = None;
+                        local.multi.clear();
+                    }
+                }
+            }
         }
     }
-    if resp.double_clicked() {
+    if double {
         match hit {
+            Some(_) if local.last_created.map_or(false, |t| t.elapsed().as_millis() < 500) => {} // the second click of a grab
             Some(b) => set_bool(setter, &params.band(b).on, !settings[b].enabled),
             None => {
                 if let Some(p) = resp.interact_pointer_pos() {

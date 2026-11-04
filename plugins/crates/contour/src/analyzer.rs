@@ -146,6 +146,38 @@ impl Analyzer {
     }
 }
 
+/// The most prominent spectral peak near `cursor_hz`: a local maximum within about a third of an octave that stands at
+/// least `min_prominence_db` above the valleys around it. `freq_of(i)` gives the frequency of display point `i`.
+pub fn find_peak(db: &[f32], freq_of: impl Fn(usize) -> f32, cursor_hz: f32, min_prominence_db: f32) -> Option<usize> {
+    let n = db.len();
+    if n < 5 || cursor_hz <= 0.0 {
+        return None;
+    }
+    let (lo, hi) = (cursor_hz / 1.26, cursor_hz * 1.26);
+    let mut best: Option<(usize, f32)> = None;
+    for i in 1..n - 1 {
+        let f = freq_of(i);
+        if f < lo || f > hi || db[i] < db[i - 1] || db[i] < db[i + 1] || db[i] <= DB_FLOOR + 3.0 {
+            continue;
+        }
+        // valleys: the lowest level before a higher point (or an octave away) on each side
+        let valley = |step: isize| {
+            let mut m = db[i];
+            let mut j = i as isize + step;
+            while j >= 0 && (j as usize) < n && db[j as usize] <= db[i] && (freq_of(j as usize) / f).log2().abs() <= 1.0 {
+                m = m.min(db[j as usize]);
+                j += step;
+            }
+            m
+        };
+        let prominence = db[i] - valley(-1).max(valley(1));
+        if prominence >= min_prominence_db && best.map_or(true, |(_, v)| db[i] > v) {
+            best = Some((i, db[i]));
+        }
+    }
+    best.map(|(i, _)| i)
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -180,6 +212,39 @@ mod tests {
         a.update(&ring, false, fs, 1.5);
         let after = a.post.db.iter().cloned().fold(f32::MIN, f32::max);
         assert!((loud - after - 1.5).abs() < 0.1, "{loud} -> {after}");
+    }
+
+    fn log_pts(n: usize) -> impl Fn(usize) -> f32 {
+        move |i| 10.0 * 3000.0f32.powf(i as f32 / (n - 1) as f32)
+    }
+
+    #[test]
+    fn find_peak_picks_the_prominent_peak_near_the_cursor() {
+        let n = 480;
+        let f = log_pts(n);
+        let mut db = vec![-70.0f32; n];
+        // a peak at ~1 kHz, 20 dB over the floor, and a smaller bump at ~3 kHz
+        for i in 0..n {
+            let x = (f(i) / 1000.0).ln();
+            db[i] += 20.0 * (-x * x / 0.002).exp();
+            let y = (f(i) / 3000.0).ln();
+            db[i] += 8.0 * (-y * y / 0.002).exp();
+        }
+        let i = find_peak(&db, &f, 950.0, 6.0).expect("peak");
+        assert!((f(i) - 1000.0).abs() < 25.0, "{}", f(i));
+        assert!(find_peak(&db, &f, 300.0, 6.0).is_none(), "nothing near 300 Hz");
+        assert!(find_peak(&db, &f, 2900.0, 6.0).is_some(), "the 8 dB bump counts at 6 dB");
+        assert!(find_peak(&db, &f, 2900.0, 12.0).is_none(), "but not at 12 dB");
+    }
+
+    #[test]
+    fn find_peak_ignores_a_flat_or_sloping_spectrum() {
+        let n = 300;
+        let f = log_pts(n);
+        let flat = vec![-50.0f32; n];
+        assert!(find_peak(&flat, &f, 1000.0, 6.0).is_none());
+        let slope: Vec<f32> = (0..n).map(|i| -80.0 + i as f32 * 0.1).collect();
+        assert!(find_peak(&slope, &f, 1000.0, 6.0).is_none());
     }
 
     #[test]
