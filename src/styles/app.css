@@ -248,10 +248,11 @@ input[type='text'] { min-height: 44px; border-radius: 12px; border: 1px solid va
 .blockbtn.now { border-color: var(--accent); box-shadow: 0 0 0 4px color-mix(in srgb, var(--accent) 12%, transparent); }
 .blockbtn.done { background: #111113; color: var(--faded); border-color: var(--inset); }
 .prog-main { display: flex; flex-direction: column; gap: 20px; min-width: 0; }
-.blockcard { display: flex; flex-direction: column; gap: 12px; }
-.blockcard.flash { animation: chunk-flash 0.9s ease-out; }
+/* the flash is a separate ring so a chunk switch never remounts the card (and drops focus from a field being typed in) */
+.blockcard { display: flex; flex-direction: column; gap: 12px; position: relative; }
+.flashring { position: absolute; inset: 0; border-radius: var(--r-panel); pointer-events: none; animation: chunk-flash 0.9s ease-out forwards; }
 @keyframes chunk-flash { 0% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--accent) 70%, transparent); border-color: var(--accent); } 100% { box-shadow: 0 0 0 14px transparent; } }
-@media (prefers-reduced-motion: reduce) { .blockcard.flash { animation: none; } }
+@media (prefers-reduced-motion: reduce) { .flashring { animation: none; } }
 .blocktext { margin: 0; font-size: 15px; line-height: 1.5; color: #d6d6d2; }
 .excard { border: 1px solid var(--panel-border); border-radius: var(--r-card); padding: 14px 16px; background: var(--bg); display: flex; flex-direction: column; gap: 8px; }
 .excard.on { border-color: var(--accent); }
@@ -282,3 +283,9 @@ textarea { width: 100%; min-height: 160px; border-radius: 12px; border: 1px soli
 .sticking .soft { color: var(--faded); font-size: 0.75em; font-weight: 500; }
 .sticking .acc { color: var(--accent); }
 .dynlbl { font-family: var(--font-mono); font-size: 10px; line-height: 12px; }
+
+/* badges */
+.badges { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 10px; }
+.badges li { display: flex; flex-direction: column; gap: 2px; padding: 12px 14px; border: 1px solid var(--panel-border); border-radius: var(--r-card); background: var(--bg); color: var(--faded); }
+.badges li b { font-size: 14px; font-weight: 600; } .badges li span { font-size: 12px; line-height: 1.4; }
+.badges li.got { border-color: var(--accent); color: var(--text); } .badges li.got span { color: var(--accent); }

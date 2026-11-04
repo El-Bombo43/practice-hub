@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { findExercise } from '../data/exercises';
 import type { Program } from '../data/program';
 import { testRows, type ProgramLog } from '../data/programLog';
+import { BADGES } from '../game/achievements';
 import { summaryText, weeklySummary } from '../game/weekly';
 import { baseId, calendarWeeks, cleanMaxSeries, exercisesWithHistory } from '../game/history';
 import { dateKey, streak, type Profile } from '../game/progress';
@@ -93,6 +94,24 @@ function Trend({ points, unit, label }: { points: { date: string; v: number }[];
       <text x={w - p} y={h - 3} textAnchor="end">{last.date.slice(5)}</text>
       <text x={x(points.length - 1)} y={y(last.v) - 8} textAnchor="end" style={{ fill: 'var(--text)', fontWeight: 700 }}>{last.v}{unit}</text>
     </svg>
+  );
+}
+
+function BadgesPanel({ profile }: { profile: Profile }) {
+  const have = profile.badges;
+  const earned = BADGES.filter((b) => have[b.id]).length;
+  return (
+    <section className="panel">
+      <h2 className="section-title" style={{ marginBottom: 12 }}>Badges <span className="small-mono">{earned}/{BADGES.length}</span></h2>
+      <ul className="badges">
+        {BADGES.map((b) => (
+          <li key={b.id} className={have[b.id] ? 'got' : ''}>
+            <b>{b.title}</b>
+            <span>{have[b.id] ? `Earned ${have[b.id].slice(5)}` : b.hint}</span>
+          </li>
+        ))}
+      </ul>
+    </section>
   );
 }
 
@@ -222,6 +241,8 @@ export function History({ profile, program, programLog }: { profile: Profile; pr
 
         <WeekPanel profile={profile} program={program} programLog={programLog} />
       </div>
+
+      <BadgesPanel profile={profile} />
 
       {profile.runs.length > 0 && <RunsPanel profile={profile} selected={current} />}
 

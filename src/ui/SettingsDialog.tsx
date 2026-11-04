@@ -68,6 +68,14 @@ export function SettingsDialog(props: {
             <button type="button" className="btn" onClick={props.onAudio}>Guitar input…</button></div>
         </div>
         <div className="field">
+          <span className="k">Keyboard</span>
+          <ul className="msg" style={{ margin: 0, paddingLeft: 18, lineHeight: 1.7 }}>
+            <li><b className="mono">Space</b>: start or pause (the whole session on the Program tab)</li>
+            <li><b className="mono">F</b> / <b className="mono">J</b>: left or downstroke / right or upstroke. Hold <b className="mono">Shift</b> for an accent.</li>
+            <li>A footswitch can be mapped to start/pause and next exercise under MIDI pads.</li>
+          </ul>
+        </div>
+        <div className="field">
           <span className="k">App</span>
           <div className="row">
             {props.onInstall ? <button type="button" className="btn" onClick={props.onInstall}>Install Practice Hub</button>

@@ -51,7 +51,7 @@ export function ProgramSessionView(props: ProgramSessionProps) {
   );
   if (day.state === 'before') return shell(<p className="empty">The program starts on {program.program.kickoff}, in {day.daysUntil} day{day.daysUntil === 1 ? '' : 's'}.</p>);
   if (day.state === 'after') return shell(<p className="empty">The program ended on {program.program.end}. Re-baseline and start the next block.</p>);
-  if (!day.session) return shell(<p className="empty">No session is scheduled for this date.</p>);
+  if (!day.session || day.session.blocks.length === 0) return shell(<p className="empty">No session is scheduled for this date.</p>);
   return <SessionRun key={viewDate} {...props} session={day.session} programDate={day.programDate} nav={nav} />;
 }
 
@@ -182,7 +182,8 @@ function SessionRun(props: ProgramSessionProps & { session: Session; programDate
         </ol>
 
         <div className="prog-main">
-          <section className={`panel blockcard${flash ? ' flash' : ''}`} key={`${block.key}-${flash}`}>
+          <section className="panel blockcard" key={block.key}>
+            {flash > 0 && <span key={flash} className="flashring" aria-hidden="true" />}
             <span className="eyebrow">{KIND_LABEL[block.kind]} · {block.start}–{block.end} min</span>
             <h3 className="ex-name" style={{ fontSize: 20 }}>{block.title}</h3>
             <p className="blocktext">{block.text}</p>

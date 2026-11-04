@@ -7,6 +7,7 @@ Trainer (metronome, scoring, routine, XP/PBs, History), MIDI pads, guitar audio 
 - Guitar: Capture panel (10 s recording → waveform + detected picks, "I played N picks" → auto-sets sensitivity, WAV download). Detector median/max now refreshed every 4th hop (speed).
 - Practice: "Slots to watch" (≥4 attempts, ≥40% late/early/missed; dashed columns; "drop 10%" button). Burst/endurance runs saved and shown in History (tables + trend lines). Pads: accent + ghost-note (`Slot.soft`, ≤60% of normal) scoring with 3 new exercises; L/R balance tip is skipped when dynamics are on purpose.
 - Sound: click / wood / beep / rock beat / half-time beat (synthesised), tap tempo. Weekly summary in History (week picker, copy as text). PWA: manifest, icons, service worker (network-first pages, stale-while-revalidate assets), install button in Settings.
+- Fixes/extras: leaving the Program tab pauses its click; chunk-switch flash no longer remounts the card. Badges (22, in History; checked as profile/program log change; toast on unlock). Keyboard cheat sheet in Settings. Probed a "low-string boost" for the detector: no gain (the one remaining miss is a low E over loud ringing E4, a band-overlap limit), so not built.
 ## Decisions
 - Program exercises are `prog-*` ids. Auto-tune searches 11 sensitivity steps (each run ≈0.3 s per 10 s of audio).
 ## Known issues / next

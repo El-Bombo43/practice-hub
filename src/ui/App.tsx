@@ -7,6 +7,8 @@ import type { ProgramLog } from '../data/programLog';
 import { defaultRoutine, type Routine, type RoutineItem } from '../data/routine';
 import { loadData, saveData, type AppData } from '../data/store';
 import { Practice } from '../game/practice';
+import { newBadges } from '../game/achievements';
+import { baseId } from '../game/history';
 import { dateKey, streak } from '../game/progress';
 import { AudioInput } from '../input/audioOnset';
 import { useAudio } from './useAudio';
@@ -70,6 +72,19 @@ function Loaded({ initial }: { initial: AppData }) {
     () => (program && dayFor(today, program, initial.program.shifts).state === 'during' ? 'program' : 'practice'),
   );
   const toggleHook = useRef<(() => void) | null>(null);
+  // badges: check when something that can earn one changes (not on every second of practice time)
+  const minutesTotal = Math.floor(Object.values(snap.profile.dayMinutes).reduce((a, b) => a + b, 0));
+  const badgeKey = `${snap.profile.xp}|${snap.profile.runs.length}|${minutesTotal}|${Object.keys(snap.profile.personalBests).length}|${snap.profile.bestCombo}`;
+  useEffect(() => {
+    const pickRate = (id: string, bpm: number): number | null => {
+      const ex = findExercise(baseId(id));
+      if (!ex || ex.instrument !== 'guitar' || ex.kind !== 'picking') return null;
+      const sub = id.includes('@') ? Number(id.split('@')[1]) : ex.subdivision;
+      return (bpm * sub) / 60;
+    };
+    const got = newBadges({ profile: snap.profile, programLog, pickRate }, snap.profile.badges);
+    if (got.length) ctrl.grantBadges(got);
+  }, [badgeKey, programLog]); // eslint-disable-line react-hooks/exhaustive-deps
   const [installEvent, setInstallEvent] = useState<{ prompt: () => Promise<void> } | null>(null);
   useEffect(() => {
     const on = (e: Event) => { e.preventDefault(); setInstallEvent(e as unknown as { prompt: () => Promise<void> }); };
@@ -166,7 +181,7 @@ function Loaded({ initial }: { initial: AppData }) {
     commit(items.length ? items : defaultRoutine().items, keep >= 0 ? keep : routine.step);
   };
   const goView = (v: 'practice' | 'program' | 'history') => {
-    if (v === 'history') ctrl.pause();
+    if (v === 'history' || view === 'program') ctrl.pause(); // leaving the program stops its click; the routine's exercise is restored below
     if (v === 'practice') startItem(routine.items[routine.step]); // back to the routine's exercise (a program block may have changed it)
     setView(v);
   };

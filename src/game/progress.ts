@@ -22,6 +22,7 @@ export type Profile = {
   dayMinutes: Record<string, number>; // local date → minutes practised
   log: LogEntry[];
   runs: Run[]; // burst and endurance runs, for the History charts
+  badges: Record<string, string>; // badge id → date earned
 };
 
 /** A burst stint (updated in place as it goes) or one finished endurance run. */
@@ -51,7 +52,7 @@ export function burstRun(prev: Run | undefined, base: Pick<Run, 'id' | 'date' | 
 }
 
 export const emptyProfile = (): Profile => ({
-  xp: 0, bestCombo: 0, personalBests: {}, lastBpm: {}, subdivision: {}, dayMinutes: {}, log: [], runs: [],
+  xp: 0, bestCombo: 0, personalBests: {}, lastBpm: {}, subdivision: {}, dayMinutes: {}, log: [], runs: [], badges: {},
 });
 
 export type Hand = 'L' | 'R';

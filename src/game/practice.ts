@@ -248,6 +248,20 @@ export class Practice {
     if (this.snap.running) this.pause(); else void this.start();
   }
 
+  /** Record newly earned badges and announce the first one. */
+  grantBadges(earned: { id: string; title: string }[]): void {
+    if (!earned.length) return;
+    const date = dateKey();
+    const badges = { ...this.snap.profile.badges };
+    for (const b of earned) badges[b.id] = date;
+    if (this.toastTimer) clearTimeout(this.toastTimer);
+    this.set({
+      profile: { ...this.snap.profile, badges },
+      toast: `Badge: ${earned[0].title}${earned.length > 1 ? ` (+${earned.length - 1} more)` : ''}`,
+    });
+    this.toastTimer = setTimeout(() => this.set({ toast: null }), 3000);
+  }
+
   /** Set an exact tempo (tap tempo, typed value). */
   setBpm(bpm: number): void { this.adjustBpm(clampBpm(bpm) - this.snap.bpm); }
 
