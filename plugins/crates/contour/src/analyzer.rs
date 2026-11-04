@@ -1,0 +1,191 @@
+//! Spectrum analyser: the audio thread drops mono samples into a ring (only while the editor is open); the editor
+//! thread windows and transforms them.
+
+use parking_lot::Mutex;
+use realfft::{RealFftPlanner, RealToComplex};
+use std::sync::Arc;
+
+pub const RING: usize = 16_384;
+pub const FFT_SIZE: usize = 8192;
+
+pub struct Ring {
+    pub pre: Vec<f32>,
+    pub post: Vec<f32>,
+    pub pos: usize,
+}
+
+impl Ring {
+    pub fn new() -> Self {
+        Self { pre: vec![0.0; RING], post: vec![0.0; RING], pos: 0 }
+    }
+
+    pub fn push(&mut self, pre: &[f32], post: &[f32]) {
+        for (a, b) in pre.iter().zip(post.iter()) {
+            self.pre[self.pos] = *a;
+            self.post[self.pos] = *b;
+            self.pos = (self.pos + 1) % RING;
+        }
+    }
+
+    /// The most recent `FFT_SIZE` samples in time order.
+    pub fn latest(&self, which_pre: bool, out: &mut [f32]) {
+        let src = if which_pre { &self.pre } else { &self.post };
+        let n = out.len();
+        for (i, o) in out.iter_mut().enumerate() {
+            *o = src[(self.pos + RING - n + i) % RING];
+        }
+    }
+}
+
+impl Default for Ring {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
+/// Shared between the audio and editor threads.
+pub struct Shared {
+    pub ring: Mutex<Ring>,
+    pub dyn_db: [std::sync::atomic::AtomicU32; 16],
+    pub solo: std::sync::atomic::AtomicI32,
+    pub sample_rate: std::sync::atomic::AtomicU32,
+}
+
+impl Shared {
+    pub fn new() -> Self {
+        Self {
+            ring: Mutex::new(Ring::new()),
+            dyn_db: std::array::from_fn(|_| std::sync::atomic::AtomicU32::new(0)),
+            solo: std::sync::atomic::AtomicI32::new(-1),
+            sample_rate: std::sync::atomic::AtomicU32::new(48_000f32.to_bits()),
+        }
+    }
+}
+
+impl Default for Shared {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
+/// Smoothed, tilted spectrum over log-spaced display points. One per trace (pre / post).
+pub struct Trace {
+    pub db: Vec<f32>,
+}
+
+pub struct Analyzer {
+    fft: Arc<dyn RealToComplex<f32>>,
+    window: Vec<f32>,
+    scratch_in: Vec<f32>,
+    spectrum: Vec<realfft::num_complex::Complex<f32>>,
+    pub points: usize,
+    pub pre: Trace,
+    pub post: Trace,
+}
+
+pub const DB_FLOOR: f32 = -90.0;
+/// Display tilt: +4.5 dB per octave above 1 kHz (and the same below), so a typical mix looks roughly flat.
+pub const TILT_DB_PER_OCT: f32 = 4.5;
+
+impl Analyzer {
+    pub fn new(points: usize) -> Self {
+        let mut planner = RealFftPlanner::<f32>::new();
+        let fft = planner.plan_fft_forward(FFT_SIZE);
+        let window = (0..FFT_SIZE).map(|i| 0.5 - 0.5 * (2.0 * std::f32::consts::PI * i as f32 / FFT_SIZE as f32).cos()).collect();
+        Self {
+            spectrum: fft.make_output_vec(),
+            fft,
+            window,
+            scratch_in: vec![0.0; FFT_SIZE],
+            points,
+            pre: Trace { db: vec![DB_FLOOR; points] },
+            post: Trace { db: vec![DB_FLOOR; points] },
+        }
+    }
+
+    /// Frequency (Hz) of display point `i` of `points`, 10 Hz to 30 kHz, log spaced.
+    pub fn point_freq(&self, i: usize) -> f32 {
+        10.0 * (3000.0f32).powf(i as f32 / (self.points - 1) as f32)
+    }
+
+    /// Update one trace from the ring. `decay` is the per-frame fall (dB) for a falling level: bigger is faster.
+    pub fn update(&mut self, ring: &Ring, pre: bool, fs: f32, decay_db: f32) {
+        ring.latest(pre, &mut self.scratch_in);
+        for (s, w) in self.scratch_in.iter_mut().zip(self.window.iter()) {
+            *s *= *w;
+        }
+        let _ = self.fft.process(&mut self.scratch_in, &mut self.spectrum);
+        let bin_hz = fs / FFT_SIZE as f32;
+        // amplitude scaling: a bin-centred full-scale sine has magnitude 1 (Hann coherent gain 0.5)
+        let norm = 2.0 / (FFT_SIZE as f32 * 0.5);
+        let mags: Vec<f32> = self.spectrum.iter().map(|c| c.norm() * norm).collect();
+        let tr = if pre { &mut self.pre } else { &mut self.post };
+        for i in 0..self.points {
+            let f = 10.0 * (3000.0f32).powf(i as f32 / (self.points - 1) as f32);
+            // smoothing about 1/6 octave: average power over [f / 2^(1/12), f * 2^(1/12)]
+            let (lo, hi) = (f / 1.0595, f * 1.0595);
+            if lo >= fs / 2.0 {
+                tr.db[i] = DB_FLOOR; // above Nyquist: nothing to show
+                continue;
+            }
+            let b0 = ((lo / bin_hz).floor() as usize).min(mags.len() - 1);
+            let b1 = ((hi / bin_hz).ceil() as usize).clamp(b0 + 1, mags.len());
+            let mut p = 0.0f32;
+            for m in &mags[b0..b1] {
+                p += m * m;
+            }
+            p /= (b1 - b0) as f32;
+            let mut db = 10.0 * p.max(1e-12).log10();
+            db += TILT_DB_PER_OCT * (f / 1000.0).log2();
+            let cur = tr.db[i];
+            tr.db[i] = if db > cur { db } else { (cur - decay_db).max(db) };
+        }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn a_sine_peaks_at_its_frequency() {
+        let fs = 48_000.0;
+        let mut ring = Ring::new();
+        let x: Vec<f32> = (0..RING).map(|i| (2.0 * std::f32::consts::PI * 1000.0 * i as f32 / fs).sin()).collect();
+        ring.push(&x, &x);
+        let mut a = Analyzer::new(400);
+        for _ in 0..3 {
+            a.update(&ring, false, fs, 100.0);
+        }
+        let (idx, peak) = a.post.db.iter().enumerate().fold((0, f32::MIN), |m, (i, v)| if *v > m.1 { (i, *v) } else { m });
+        let f = a.point_freq(idx);
+        assert!((f - 1000.0).abs() / 1000.0 < 0.05, "peak at {f} Hz");
+        // the 1/6-octave power average spreads a pure tone over ~20 bins, so a full-scale sine reads about -8 to -11 dB
+        assert!(peak > -14.0 && peak < -6.0, "peak {peak} dB (1 kHz has no tilt)");
+    }
+
+    #[test]
+    fn falling_levels_decay_gradually() {
+        let fs = 48_000.0;
+        let mut ring = Ring::new();
+        let tone: Vec<f32> = (0..RING).map(|i| (2.0 * std::f32::consts::PI * 1000.0 * i as f32 / fs).sin()).collect();
+        ring.push(&tone, &tone);
+        let mut a = Analyzer::new(200);
+        a.update(&ring, false, fs, 1.5);
+        let loud = a.post.db.iter().cloned().fold(f32::MIN, f32::max);
+        ring.push(&vec![0.0; RING], &vec![0.0; RING]);
+        a.update(&ring, false, fs, 1.5);
+        let after = a.post.db.iter().cloned().fold(f32::MIN, f32::max);
+        assert!((loud - after - 1.5).abs() < 0.1, "{loud} -> {after}");
+    }
+
+    #[test]
+    fn ring_returns_the_latest_samples_in_order() {
+        let mut r = Ring::new();
+        let x: Vec<f32> = (0..(RING + 100)).map(|i| i as f32).collect();
+        r.push(&x, &x);
+        let mut out = vec![0.0; 4];
+        r.latest(false, &mut out);
+        assert_eq!(out, vec![(RING + 96) as f32, (RING + 97) as f32, (RING + 98) as f32, (RING + 99) as f32]);
+    }
+}
