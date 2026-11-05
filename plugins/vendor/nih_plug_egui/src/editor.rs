@@ -109,7 +109,10 @@ where
 
                 // If the window was requested to resize
                 if let Some(new_size) = egui_state.requested_size.swap(None) {
-                    // Ask the plugin host to resize to self.size()
+                    // The host reads the size back through `Editor::size()` while handling `request_resize()`, so the
+                    // new size must already be in the state, or the host resizes the window to the *old* size while
+                    // the content is drawn at the new one (the window then looks broken until reopened).
+                    let old = egui_state.size.swap(new_size);
                     if context.request_resize() {
                         // Resize the content of egui window
                         queue.resize(PhySize::new(new_size.0, new_size.1));
@@ -117,9 +120,8 @@ where
                             new_size.0 as f32,
                             new_size.1 as f32,
                         )));
-
-                        // Update the state
-                        egui_state.size.store(new_size);
+                    } else {
+                        egui_state.size.store(old);
                     }
                 }
 
