@@ -156,6 +156,7 @@ pub struct Engine {
     pub display: Display,
     /// test hook: run the shifter even when the shift is zero
     pub force_psola: bool,
+    scr: [Vec<f32>; 3],
     peak_in: f32,
     peak_out: f32,
 }
@@ -170,6 +171,7 @@ impl Engine {
         let lat = (fs * 0.001 * if s.track { TRACK_LATENCY_MS } else { MIX_LATENCY_MS }).round() as usize;
         let ring_len = lat + (fs / 55.0) as usize * 10 + 4096;
         let acc_len = ((fs / 55.0) as usize * 6).next_power_of_two();
+        let cap_scr = (fs / 55.0) as usize * 3 + 256;
         let mut e = Self {
             fs,
             s: *s,
@@ -199,6 +201,7 @@ impl Engine {
             out_g: Ramp::new(db_to_gain(s.out_gain_db)),
             display: Display { in_midi: f32::NAN, out_midi: f32::NAN, target: -1, voiced: false },
             force_psola: false,
+            scr: [Vec::with_capacity(cap_scr), Vec::with_capacity(cap_scr * 2), Vec::with_capacity(cap_scr)],
             peak_in: 0.0,
             peak_out: 0.0,
         };
@@ -313,13 +316,16 @@ impl Engine {
             let cand = r + ti;
             let half = (ti / 2).max(2);
             let reach = (0.3 * t) as i64;
-            let mut refseg = vec![0.0f32; 2 * half as usize + 1];
+            let [mut refseg, mut region, mut scores] = std::mem::take(&mut self.scr);
+            refseg.clear();
+            refseg.resize(2 * half as usize + 1, 0.0);
             self.mono.copy_range(r - half, &mut refseg);
             let e1 = refseg.iter().map(|v| v * v).sum::<f32>() + 1e-9;
             let region_len = 2 * reach as usize + 2 * half as usize + 1;
-            let mut region = vec![0.0f32; region_len];
+            region.clear();
+            region.resize(region_len, 0.0);
             self.mono.copy_range(cand - reach - half, &mut region);
-            let mut scores: Vec<f32> = Vec::with_capacity(2 * reach as usize + 1);
+            scores.clear();
             for sh in 0..=2 * reach as usize {
                 let win = &region[sh..sh + refseg.len()];
                 let dot: f32 = refseg.iter().zip(win).map(|(a, b)| a * b).sum();
@@ -334,6 +340,7 @@ impl Engine {
             } else {
                 0.0
             };
+            self.scr = [refseg, region, scores];
             let c = (cand + bi as i64 - reach) as f64 + frac + (last - r as f64);
             if c <= last + 1.0 {
                 break;

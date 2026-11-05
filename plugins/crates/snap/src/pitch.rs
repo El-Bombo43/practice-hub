@@ -67,6 +67,8 @@ pub struct Detector {
     /// lag (decimated samples) of the last good estimate: continuity prior against octave jumps
     prev_tau: f32,
     miss: u32,
+    scratch_seg: Vec<f32>,
+    scratch_vals: Vec<f32>,
 }
 
 impl Detector {
@@ -82,7 +84,7 @@ impl Detector {
             b.set_coeffs(&Biquad::lowpass(fs as f64, 3000.0, std::f64::consts::FRAC_1_SQRT_2));
         }
         let lag = ((w + tau_max) / 2 + w / 2) * d;
-        Self { fs, d, lp, dbuf: Ring::new(2 * (w + tau_max) + 16), phase: 0, tau_min, tau_max, w, seg: vec![0.0; w + tau_max + 2], cmnd: vec![0.0; tau_max + 2], lag_samples: lag, prev_tau: 0.0, miss: 0 }
+        Self { fs, d, lp, dbuf: Ring::new(2 * (w + tau_max) + 16), phase: 0, tau_min, tau_max, w, seg: vec![0.0; w + tau_max + 2], cmnd: vec![0.0; tau_max + 2], lag_samples: lag, prev_tau: 0.0, miss: 0, scratch_seg: Vec::with_capacity(1600 + (fs / fmin) as usize * 2 + 256), scratch_vals: Vec::with_capacity(64) }
     }
 
     pub fn reset(&mut self) {
@@ -198,7 +200,7 @@ impl Detector {
     }
 
     /// Full-rate refinement: minimise the difference function over lags near `tau0`.
-    fn refine(&self, mono: &Ring, tau0: f32) -> f32 {
+    fn refine(&mut self, mono: &Ring, tau0: f32) -> f32 {
         let e = mono.n as i64 - 1;
         let wf = ((2.5 * tau0) as usize).clamp(64, 1600);
         let span = self.d as i64 + 2;
@@ -208,10 +210,13 @@ impl Detector {
             return self.fs / tau0;
         }
         let len = wf + hi as usize + 1;
-        let mut seg = vec![0.0f32; len];
+        let mut seg = std::mem::take(&mut self.scratch_seg);
+        seg.clear();
+        seg.resize(len, 0.0); // within the capacity reserved at construction: no allocation
         mono.copy_range(e - len as i64 + 1, &mut seg);
         let newest = &seg[len - wf..];
-        let mut vals: Vec<f32> = Vec::with_capacity((hi - lo + 1) as usize);
+        let mut vals = std::mem::take(&mut self.scratch_vals);
+        vals.clear();
         let mut best = (f32::MAX, lo);
         for tau in lo..=hi {
             let past = &seg[len - wf - tau as usize..len - tau as usize];
@@ -223,7 +228,10 @@ impl Detector {
         }
         let k = (best.1 - lo) as usize;
         let frac = if k > 0 && k + 1 < vals.len() { parabolic(vals[k - 1], vals[k], vals[k + 1]) } else { 0.0 };
-        self.fs / (best.1 as f32 + frac)
+        let f0 = self.fs / (best.1 as f32 + frac);
+        self.scratch_seg = seg;
+        self.scratch_vals = vals;
+        f0
     }
 }
 

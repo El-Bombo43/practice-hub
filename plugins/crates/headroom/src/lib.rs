@@ -111,7 +111,7 @@ impl Plugin for Headroom {
         // publish; if the editor holds a lock right now, try again next block
         if self.params.editor_state.is_open() {
             if let Some(mut s) = self.shared.snap.try_lock() {
-                *s = self.meter.snapshot().clone();
+                s.copy_from(self.meter.snapshot());
             }
             if let Some(mut b) = self.shared.bars.try_lock() {
                 if self.meter.reset_pending {

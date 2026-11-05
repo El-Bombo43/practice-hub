@@ -6,7 +6,6 @@ use std::f64::consts::PI;
 
 pub const BAR_SECONDS: f32 = 0.02;
 pub const MAX_BARS: usize = 60_000; // 20 minutes of 20 ms bars
-const MAX_BLOCKS: usize = 400_000;
 
 #[derive(Clone, Copy, Debug, Default)]
 pub struct Bar {
@@ -58,6 +57,18 @@ impl Default for Snapshot {
 }
 
 impl Snapshot {
+    /// Copy without allocating (the audio thread publishes this every block).
+    pub fn copy_from(&mut self, o: &Snapshot) {
+        let mut list = std::mem::take(&mut self.over_list);
+        list.clone_from(&o.over_list);
+        *self = Snapshot { over_list: list, ..o.clone_without_list() };
+    }
+    fn clone_without_list(&self) -> Snapshot {
+        Snapshot { over_list: Vec::new(), ..self.shallow() }
+    }
+    fn shallow(&self) -> Snapshot {
+        Snapshot { momentary: self.momentary, short_term: self.short_term, integrated: self.integrated, lra: self.lra, tp_max: self.tp_max, sample_peak: self.sample_peak, max_momentary: self.max_momentary, max_short: self.max_short, overs: self.overs, clips: self.clips, correlation: self.correlation, tp_now: self.tp_now, over_list: Vec::new() }
+    }
     /// PLR: highest true peak minus integrated loudness.
     pub fn plr(&self) -> f32 {
         self.tp_max[0].max(self.tp_max[1]) - self.integrated
@@ -98,6 +109,40 @@ fn k_weighting(fs: f64) -> [Biquad; 2] {
     rlb.a1 = 2.0 * (k * k - 1.0) / a0;
     rlb.a2 = (1.0 - k / q + k * k) / a0;
     [shelf, rlb]
+}
+
+/// Loudness histogram (0.05 LU bins from -70 LUFS up): gating and percentiles without storing every block, so a long
+/// session costs constant memory and the audio thread never allocates.
+const HBINS: usize = 1700;
+struct Hist {
+    count: Vec<u32>,
+    power: Vec<f64>,
+}
+impl Hist {
+    fn new() -> Self {
+        Self { count: vec![0; HBINS], power: vec![0.0; HBINS] }
+    }
+    fn clear(&mut self) {
+        self.count.iter_mut().for_each(|c| *c = 0);
+        self.power.iter_mut().for_each(|c| *c = 0.0);
+    }
+    fn add(&mut self, p: f64) {
+        let l = lufs(p);
+        if l > -70.0 {
+            let b = (((l + 70.0) / 0.05) as usize).min(HBINS - 1);
+            self.count[b] += 1;
+            self.power[b] += p;
+        }
+    }
+    /// (blocks, mean power) of the bins at or above `from`
+    fn mean_from(&self, from: usize) -> (u64, f64) {
+        let n: u64 = self.count[from..].iter().map(|c| *c as u64).sum();
+        let sum: f64 = self.power[from..].iter().sum();
+        (n, if n > 0 { sum / n as f64 } else { 0.0 })
+    }
+    fn bin_above(l: f32) -> usize {
+        (((l + 70.0) / 0.05).floor() as i64 + 1).clamp(0, HBINS as i64 - 1) as usize
+    }
 }
 
 const TP_TAPS: usize = 48;
@@ -151,8 +196,8 @@ pub struct Meter {
     hop_fill: usize,
     hop_pow: f64,
     subs: VecDeque<f64>, // mean power of the last <=30 sub-blocks (100 ms each), channels summed
-    blocks: Vec<f64>,    // 400 ms block powers for the integrated gate
-    short_terms: Vec<f64>, // 3 s window powers for LRA
+    blocks: Hist,      // 400 ms block powers for the integrated gate
+    short_terms: Hist, // 3 s window powers for LRA
     bar_len: usize,
     bar_fill: usize,
     bar_tp: f32,
@@ -160,6 +205,7 @@ pub struct Meter {
     st_now: f32,
     pub bars: Vec<Bar>,
     pub dropped_bars: usize,
+    hops: u64,
     pub bars_total: u64,
     pub reset_pending: bool,
     snap: Snapshot,
@@ -183,8 +229,8 @@ impl Meter {
             hop_fill: 0,
             hop_pow: 0.0,
             subs: VecDeque::new(),
-            blocks: Vec::new(),
-            short_terms: Vec::new(),
+            blocks: Hist::new(),
+            short_terms: Hist::new(),
             bar_len: (fs * BAR_SECONDS as f64).round() as usize,
             bar_fill: 0,
             bar_tp: 0.0,
@@ -192,6 +238,7 @@ impl Meter {
             st_now: f32::NEG_INFINITY,
             bars: Vec::new(),
             dropped_bars: 0,
+            hops: 0,
             bars_total: 0,
             reset_pending: false,
             snap: Snapshot::default(),
@@ -221,8 +268,12 @@ impl Meter {
         self.bars.clear();
         self.dropped_bars = 0;
         self.bars_total = 0;
+        self.hops = 0;
         self.reset_pending = true;
-        self.snap = Snapshot::default();
+        let mut keep = std::mem::take(&mut self.snap.over_list);
+        keep.clear();
+        keep.reserve(4096);
+        self.snap = Snapshot { over_list: keep, ..Snapshot::default() };
         self.over_open = None;
         self.clip_quiet = None;
         self.corr = [0.0; 3];
@@ -237,32 +288,38 @@ impl Meter {
     }
 
     fn integrated(&self) -> f32 {
-        let above: Vec<f64> = self.blocks.iter().copied().filter(|p| lufs(*p) > -70.0).collect();
-        if above.is_empty() {
+        let (n, mean) = self.blocks.mean_from(0);
+        if n == 0 {
             return f32::NEG_INFINITY;
         }
-        let rel = lufs(above.iter().sum::<f64>() / above.len() as f64) - 10.0;
-        let kept: Vec<f64> = above.into_iter().filter(|p| lufs(*p) > rel).collect();
-        if kept.is_empty() {
-            return f32::NEG_INFINITY;
-        }
-        lufs(kept.iter().sum::<f64>() / kept.len() as f64)
+        let rel = lufs(mean) - 10.0;
+        let (n, mean) = self.blocks.mean_from(Hist::bin_above(rel));
+        if n == 0 { f32::NEG_INFINITY } else { lufs(mean) }
     }
 
     /// EBU Tech 3342: 3 s loudness values, absolute gate -70, relative gate -20 LU, 10th to 95th percentile.
     fn lra(&self) -> f32 {
-        let above: Vec<f64> = self.short_terms.iter().copied().filter(|p| lufs(*p) > -70.0).collect();
-        if above.is_empty() {
+        let (n, mean) = self.short_terms.mean_from(0);
+        if n == 0 {
             return 0.0;
         }
-        let rel = lufs(above.iter().sum::<f64>() / above.len() as f64) - 20.0;
-        let mut l: Vec<f32> = above.iter().map(|p| lufs(*p)).filter(|v| *v > rel).collect();
-        if l.len() < 2 {
+        let from = Hist::bin_above(lufs(mean) - 20.0);
+        let total: u64 = self.short_terms.count[from..].iter().map(|c| *c as u64).sum();
+        if total < 2 {
             return 0.0;
         }
-        l.sort_by(|a, b| a.partial_cmp(b).unwrap());
-        let at = |q: f32| l[((l.len() - 1) as f32 * q).round() as usize];
-        at(0.95) - at(0.10)
+        let pct = |q: f32| -> f32 {
+            let target = ((total - 1) as f32 * q).round() as u64;
+            let mut acc = 0u64;
+            for b in from..HBINS {
+                acc += self.short_terms.count[b] as u64;
+                if acc > target {
+                    return -70.0 + (b as f32 + 0.5) * 0.05;
+                }
+            }
+            0.0
+        };
+        pct(0.95) - pct(0.10)
     }
 
     fn finish_hop(&mut self) {
@@ -277,19 +334,16 @@ impl Meter {
             let m: f64 = self.subs.iter().rev().take(4).sum::<f64>() / 4.0;
             self.snap.momentary = lufs(m);
             self.snap.max_momentary = self.snap.max_momentary.max(self.snap.momentary);
-            if self.blocks.len() < MAX_BLOCKS {
-                self.blocks.push(m);
-            }
+            self.blocks.add(m);
         }
         if n >= 30 {
             let s: f64 = self.subs.iter().sum::<f64>() / 30.0;
             self.snap.short_term = lufs(s);
             self.st_now = self.snap.short_term;
             self.snap.max_short = self.snap.max_short.max(self.snap.short_term);
-            if self.short_terms.len() < MAX_BLOCKS {
-                self.short_terms.push(s);
-            }
-            if self.short_terms.len() % 10 == 0 {
+            self.short_terms.add(s);
+            self.hops += 1;
+            if self.hops % 10 == 0 {
                 self.snap.lra = self.lra();
             }
         }

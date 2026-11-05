@@ -74,8 +74,11 @@ pub fn update(ctx: &egui::Context, setter: &ParamSetter, local: &mut Local, para
         local.snap = s.clone();
     }
     if let Some(b) = shared.bars.try_lock() {
-        local.first_index = b.first_index;
-        local.bars = b.bars.iter().copied().collect();
+        // Full shows the whole song; the small layouts only ever draw the last minute
+        let want = if st.mode == Mode::Full { b.bars.len() } else { (st.history_s.max(30) as usize * 50).min(b.bars.len()) };
+        local.bars.clear();
+        local.bars.extend(b.bars.iter().skip(b.bars.len() - want).copied());
+        local.first_index = b.first_index + (b.bars.len() - want) as u64;
     }
     local.bar_beats = *shared.bar_beats.lock();
     if local.bar_beats <= 0.0 {
